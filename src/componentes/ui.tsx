@@ -62,12 +62,14 @@ export function CabecalhoPagina({
   acoes?: ReactNode
 }) {
   return (
-    <header className="anim-entrar flex flex-wrap items-end justify-between gap-4 border-b border-linha pb-5">
-      <div>
-        {rotulo && <p className="eyebrow mb-2">{rotulo}</p>}
-        <h1 className="titulo-pagina">{titulo}</h1>
+    <header className="listras anim-entrar rounded-[18px] p-3 sm:p-4">
+      <div className="bilhete flex flex-wrap items-end justify-between gap-4 px-5 py-5 sm:px-7">
+        <div>
+          {rotulo && <p className="eyebrow mb-2">{rotulo}</p>}
+          <h1 className="titulo-pagina">{titulo}</h1>
+        </div>
+        {acoes}
       </div>
-      {acoes}
     </header>
   )
 }

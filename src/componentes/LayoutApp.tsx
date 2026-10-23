@@ -151,7 +151,7 @@ export default function LayoutApp() {
         </div>
       )}
 
-      <main className="min-w-0 px-4 py-10 sm:px-8 lg:px-14 lg:py-12">
+      <main className="fundo-listras min-w-0 px-4 py-10 sm:px-8 lg:px-14 lg:py-12">
         <div key={pathname} className="anim-entrar mx-auto max-w-6xl">
           <Outlet />
         </div>

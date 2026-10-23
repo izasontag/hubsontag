@@ -71,7 +71,8 @@ body {
 }
 
 .titulo-pagina em,
-.titulo-secao em {
+.titulo-secao em,
+.titulo-sub em {
   font-family: var(--font-script);
   font-style: normal;
   font-weight: 600;
@@ -287,6 +288,11 @@ body {
 /* listras azuis, de cor chapada (sem degradê) */
 .listras {
   background-image: repeating-linear-gradient(90deg, var(--color-azul-claro) 0 14px, var(--color-azul-pastel) 14px 28px);
+}
+
+/* listras bem suaves no fundo das páginas internas (os cartões ficam por cima, opacos) */
+.fundo-listras {
+  background-image: repeating-linear-gradient(90deg, transparent 0 16px, rgb(139 94 63 / 0.045) 16px 32px);
 }
 
 /* borda festonada: semicírculos pendurados na parte de baixo do bloco */
