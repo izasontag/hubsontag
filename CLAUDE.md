@@ -14,10 +14,10 @@ Este arquivo é a especificação do projeto. Leia-o inteiro antes de qualquer t
 
 ## O que é o hub
 
-Um sistema web com dois ambientes, cada um com login próprio:
+Um sistema web com dois ambientes:
 
-1. **Área interna:** onde eu (e, no futuro, minha equipe) gerencio clientes, calendários editoriais, financeiro e ideias.
-2. **Portal do cliente:** onde cada cliente vê só o que é dele, aprova posts, acompanha o calendário e consulta o manual da marca.
+1. **Área interna (com login):** onde eu (e, no futuro, minha equipe) gerencio clientes, calendários editoriais, financeiro e ideias.
+2. **Portal do cliente (sem login, por link secreto, como o compartilhar do Notion):** onde cada cliente vê só o que é dele, aprova posts, acompanha o calendário e consulta o manual da marca.
 
 Princípios:
 
@@ -64,9 +64,9 @@ Princípios:
 | --- | --- |
 | `dona` (eu) | Tudo, incluindo o financeiro da agência e o financeiro pessoal |
 | `equipe` | Clientes em que trabalha, calendários, manuais e banco de ideias desses clientes. **Nunca** vê financeiro |
-| `cliente` | Só o próprio portal: posts a partir do status "Em aprovação", calendário, manual da marca, materiais e relatórios |
+| Cliente (sem conta) | Não tem login. Abre o link secreto do próprio portal e vê só: posts a partir do status "Em aprovação", calendário, manual da marca, materiais e relatórios. Pode aprovar, pedir ajuste e comentar |
 
-O papel fica na tabela `perfis`. As regras de RLS devem refletir exatamente esta tabela.
+O papel de `dona` e `equipe` fica na tabela `perfis`. Clientes não têm conta nem perfil. As regras de RLS devem refletir exatamente esta tabela.
 
 ## Modelo de dados
 
@@ -74,12 +74,12 @@ Nomes de tabelas e colunas em português, sem acento, em `snake_case`. Toda tabe
 
 ### Pessoas e acesso
 
-- **perfis**: `id` (= usuário do Supabase Auth), `nome`, `email`, `papel` (`dona`, `equipe`, `cliente`), `cliente_id` (preenchido só para clientes)
+- **perfis**: `id` (= usuário do Supabase Auth), `nome`, `email`, `papel` (`dona`, `equipe`). Só quem tem login (dona e equipe)
 - **equipe_clientes**: `perfil_id`, `cliente_id` (quais clientes cada pessoa da equipe atende)
 
 ### Clientes
 
-- **clientes**: `nome`, `instagram`, `nicho`, `contato`, `status` (`ativo`, `pausado`, `encerrado`), `data_inicio`, `cor_destaque`, `observacoes`
+- **clientes**: `nome`, `token_portal` (código longo e aleatório do link secreto), `portal_ativo` (sim/não), `instagram`, `nicho`, `contato`, `status` (`ativo`, `pausado`, `encerrado`), `data_inicio`, `cor_destaque`, `observacoes`
 - **manual_marca** (um por cliente): `cliente_id` e um campo por capítulo, em texto ou JSON:
   - `essencia` (quem é, propósito, missão, história)
   - `posicionamento` (promessa, diferenciais)
@@ -104,8 +104,8 @@ Nomes de tabelas e colunas em português, sem acento, em `snake_case`. Toda tabe
 - **post_midias**: `post_id`, `caminho_storage`, `ordem` (artes do carrossel ou capa do vídeo)
 - **tags**: `nome`, `cor`, `cliente_id` (vazio = tag geral)
 - **post_tags**: `post_id`, `tag_id`
-- **comentarios**: `post_id`, `autor_id`, `texto`, `referencia` (opcional: qual arte ou trecho da legenda)
-- **aprovacoes**: `post_id`, `autor_id`, `decisao` (`aprovado`, `ajuste_pedido`), `mensagem`, `criado_em` (registro permanente de quem aprovou e quando)
+- **comentarios**: `post_id`, `autor_id` (vazio quando vem do portal do cliente), `origem` (`interno`, `portal`), `texto`, `referencia` (opcional: qual arte ou trecho da legenda)
+- **aprovacoes**: `post_id`, `autor_id` (vazio quando vem do portal), `decisao` (`aprovado`, `ajuste_pedido`), `mensagem`, `criado_em` (registro permanente de que o cliente do link aprovou e quando)
 - **feed_atual**: `cliente_id`, `caminho_storage`, `ordem` (prints dos posts já publicados, para a prévia do feed)
 
 ### Financeiro da agência (só dona)
@@ -132,9 +132,11 @@ Nomes de tabelas e colunas em português, sem acento, em `snake_case`. Toda tabe
 
 ### Regras de segurança importantes
 
-- Cliente só lê linhas com o próprio `cliente_id`.
-- Cliente só vê posts com status `em_aprovacao` ou posteriores, e nunca vê `prazo_interno`. Para isso, o portal lê de uma **view** (`portal_posts`) que expõe só as colunas permitidas.
-- Cliente pode criar `comentarios` e `aprovacoes` apenas nos próprios posts. Ao aprovar, o status do post muda para `aprovado`; ao pedir ajuste, para `ajuste_pedido`.
+- O portal **não acessa as tabelas direto**. Ele só chama funções do Supabase (RPC) que recebem o `token_portal` e devolvem apenas os dados daquele cliente. Visitante anônimo não lê nenhuma tabela.
+- O cliente só vê posts com status `em_aprovacao` ou posteriores, e nunca vê `prazo_interno`, financeiro, acessos nem histórico. As funções expõem só as colunas permitidas.
+- O cliente pode criar `comentarios` e `aprovacoes` apenas nos posts do próprio token, por funções específicas. Ao aprovar, o status do post muda para `aprovado`; ao pedir ajuste, para `ajuste_pedido`.
+- A dona pode desativar (`portal_ativo`) ou trocar o `token_portal` a qualquer momento. O token tem 32 caracteres ou mais, impossível de adivinhar.
+- Imagens do portal usam links temporários assinados, gerados pelas funções.
 - Equipe nunca acessa tabelas de financeiro (agência ou pessoal) nem `acessos_cliente`.
 
 ## Páginas
@@ -162,7 +164,7 @@ Nomes de tabelas e colunas em português, sem acento, em `snake_case`. Toda tabe
 - Clicar no dia abre o post com todos os campos, artes, comentários e números.
 - Filtro por tag e por status. No celular, a grade vira uma lista por dia.
 
-### Portal do cliente (`/portal`)
+### Portal do cliente (`/portal/:token`, sem login)
 
 - **Início**: posts esperando aprovação, próximos posts da semana, recado da Izadora
 - **Aprovações**: galeria dos posts em aprovação, com botões **Aprovar** e **Pedir ajuste** e campo de comentário
@@ -173,8 +175,9 @@ Nomes de tabelas e colunas em português, sem acento, em `snake_case`. Toda tabe
 
 ### Login
 
-- `/entrar`: login por e-mail com link mágico ou senha (Supabase Auth). Depois do login, a pessoa vai para `/app` ou `/portal` conforme o papel.
-- Clientes e equipe são convidados pela dona; ninguém se cadastra sozinho.
+- `/entrar`: login por e-mail e senha (Supabase Auth), só para a dona e a equipe. Depois do login, vai para `/app`.
+- A equipe é convidada pela dona; ninguém se cadastra sozinho.
+- Clientes não fazem login: a dona copia o link do portal na ficha do cliente e envia a ele.
 
 ## Fases de construção
 
@@ -204,9 +207,9 @@ Construa uma fase por vez. Cada fase precisa estar funcionando e publicada antes
 
 ### Fase 3: portal do cliente e aprovação
 
-- Convite de clientes, view `portal_posts` e RLS do portal.
+- Link secreto por cliente (copiar, desativar, trocar), funções RPC do portal e RLS.
 - Páginas do portal, aprovação com registro de data e hora, comentários e prévia do feed.
-- **Pronto quando:** um cliente de teste entra, vê só os posts dele, aprova um e pede ajuste em outro, e eu vejo isso na área interna.
+- **Pronto quando:** um cliente de teste abre o link, vê só os posts dele, aprova um e pede ajuste em outro, e eu vejo isso na área interna.
 
 ### Fase 4: financeiro
 
