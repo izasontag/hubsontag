@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Aviso, btnSecundario, Cartao, inputCls, Titulo } from '../../componentes/ui'
+import { Aviso, btnPrimario, btnSecundario, Campo, Cartao, inputCls, Titulo } from '../../componentes/ui'
 import { supabase } from '../../lib/supabase'
 import type { Cliente } from '../../lib/tipos'
 
@@ -14,6 +14,7 @@ export default function LinkPortal({
 }) {
   const [msg, setMsg] = useState('')
   const [erro, setErro] = useState('')
+  const [recado, setRecado] = useState(cliente.recado_portal ?? '')
   const link = `${window.location.origin}/portal/${cliente.token_portal}`
 
   async function atualizar(campos: Partial<Cliente>, sucesso: string) {
@@ -26,7 +27,7 @@ export default function LinkPortal({
       .select()
       .single()
     if (error || !data) {
-      setErro('Não foi possível atualizar o link.')
+      setErro('Não foi possível atualizar.')
       return
     }
     onChange(data as Cliente)
@@ -38,7 +39,7 @@ export default function LinkPortal({
     setErro('')
     try {
       await navigator.clipboard.writeText(link)
-      setMsg('Link copiado.')
+      setMsg('Link copiado. Agora é só enviar ao cliente.')
     } catch {
       setErro('Não deu para copiar sozinho. Selecione o link e copie.')
     }
@@ -53,14 +54,17 @@ export default function LinkPortal({
     <Cartao className="space-y-4">
       <Titulo>Portal do cliente</Titulo>
       <p className="text-sm text-texto-suave">
-        Link secreto para o cliente ver o que é dele, sem criar conta. As páginas do portal chegam na
-        Fase 3; o link já fica reservado.
+        Link secreto para o cliente ver o que é dele, aprovar posts e comentar, sem criar conta. Quem tiver o link
+        acessa, então envie só ao cliente.
       </p>
       <input readOnly className={inputCls} value={link} onFocus={(e) => e.target.select()} aria-label="Link do portal" />
       <div className="flex flex-wrap gap-3">
-        <button className={btnSecundario} onClick={() => void copiar()}>
+        <button className={btnPrimario} onClick={() => void copiar()}>
           Copiar link
         </button>
+        <a className={btnSecundario} href={link} target="_blank" rel="noreferrer">
+          Abrir o portal
+        </a>
         <button
           className={btnSecundario}
           onClick={() =>
@@ -76,7 +80,21 @@ export default function LinkPortal({
           Trocar link
         </button>
       </div>
-      <p className="text-sm">Situação: {cliente.portal_ativo ? 'ativo' : 'desativado'}</p>
+      <p className="text-sm">Situação: {cliente.portal_ativo ? 'ativo' : 'desativado (o link não abre)'}</p>
+      <form
+        className="space-y-2"
+        onSubmit={(e) => {
+          e.preventDefault()
+          void atualizar({ recado_portal: recado.trim() || null }, 'Recado salvo.')
+        }}
+      >
+        <Campo rotulo="Recado no início do portal (opcional)">
+          <textarea rows={3} className={inputCls} value={recado} onChange={(e) => setRecado(e.target.value)} />
+        </Campo>
+        <button type="submit" className={btnSecundario}>
+          Salvar recado
+        </button>
+      </form>
       {msg && <Aviso tipo="ok">{msg}</Aviso>}
       {erro && <Aviso tipo="erro">{erro}</Aviso>}
     </Cartao>

@@ -8,6 +8,14 @@ import ClientePagina from './paginas/ClientePagina'
 import Clientes from './paginas/Clientes'
 import Entrar from './paginas/Entrar'
 import Painel from './paginas/Painel'
+import PortalAprovacoes from './paginas/portal/PortalAprovacoes'
+import PortalCalendario from './paginas/portal/PortalCalendario'
+import PortalFeed from './paginas/portal/PortalFeed'
+import PortalInicio from './paginas/portal/PortalInicio'
+import PortalLayout from './paginas/portal/PortalLayout'
+import PortalManual from './paginas/portal/PortalManual'
+import PortalMateriais from './paginas/portal/PortalMateriais'
+import PortalRelatorios from './paginas/portal/PortalRelatorios'
 
 export default function App() {
   return (
@@ -28,6 +36,15 @@ export default function App() {
             <Route path="clientes" element={<Clientes />} />
             <Route path="clientes/novo" element={<ClienteNovo />} />
             <Route path="clientes/:id" element={<ClientePagina />} />
+          </Route>
+          <Route path="/portal/:token" element={<PortalLayout />}>
+            <Route index element={<PortalInicio />} />
+            <Route path="aprovacoes" element={<PortalAprovacoes />} />
+            <Route path="feed" element={<PortalFeed />} />
+            <Route path="calendario" element={<PortalCalendario />} />
+            <Route path="manual" element={<PortalManual />} />
+            <Route path="materiais" element={<PortalMateriais />} />
+            <Route path="relatorios" element={<PortalRelatorios />} />
           </Route>
           <Route path="*" element={<Navigate to="/app" replace />} />
         </Routes>

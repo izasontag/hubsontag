@@ -21,6 +21,7 @@ export interface Cliente {
   data_inicio: string | null
   cor_destaque: string
   observacoes: string | null
+  recado_portal: string | null
 }
 
 export const CAPITULOS = [
@@ -178,3 +179,51 @@ export interface PostCompleto extends Post {
 }
 
 export type ClienteResumo = Pick<Cliente, 'id' | 'nome' | 'cor_destaque'>
+
+// ---------------- Portal do cliente ----------------
+
+export interface PortalDados {
+  nome: string
+  instagram: string | null
+  nicho: string | null
+  cor_destaque: string
+  recado: string | null
+}
+
+export interface PortalComentario {
+  id: string
+  origem: 'interno' | 'portal'
+  texto: string
+  referencia: string | null
+  criado_em: string
+}
+
+export interface PortalAprovacao {
+  decisao: 'aprovado' | 'ajuste_pedido'
+  mensagem: string | null
+  criado_em: string
+}
+
+export interface PortalPost {
+  id: string
+  data_publicacao: string
+  horario: string | null
+  formato: FormatoPost
+  pilar: string | null
+  formato_cbs: string | null
+  tema: string | null
+  gancho: string | null
+  copy: string | null
+  legenda: string | null
+  status: StatusPost
+  desempenho: Desempenho | null
+  alcance: number | null
+  salvamentos: number | null
+  compartilhamentos: number | null
+  comentarios_qtd: number | null
+  nota_desempenho: string | null
+  tags: { nome: string; cor: string }[]
+  midias: string[]
+  comentarios: PortalComentario[]
+  aprovacoes: PortalAprovacao[]
+}

@@ -22,3 +22,12 @@ body {
   color: var(--color-texto);
   font-family: var(--font-sans);
 }
+
+@media print {
+  body {
+    background: #fff;
+  }
+  .nao-imprimir {
+    display: none !important;
+  }
+}

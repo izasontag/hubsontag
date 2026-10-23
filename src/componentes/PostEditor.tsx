@@ -10,6 +10,7 @@ import {
   STATUS_POST_ROTULO,
 } from '../lib/tipos'
 import type { ClienteResumo, Desempenho, FormatoPost, Midia, PostCompleto, StatusPost, Tag } from '../lib/tipos'
+import ConversaPost from './ConversaPost'
 import { Aviso, btnPrimario, btnSecundario, Campo, inputCls } from './ui'
 
 interface Props {
@@ -394,6 +395,7 @@ export default function PostEditor({ post, dataInicial, clienteIdInicial, client
             </>
           )}
         </section>
+        {postId && <ConversaPost postId={postId} onMudou={onSalvo} />}
       </div>
     </div>
   )
