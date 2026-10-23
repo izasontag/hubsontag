@@ -14,11 +14,11 @@
   --color-areia: #ebe3d4;
   --color-musgo-claro: #e5e9db;
   --color-marrom-claro: #f1e4d9;
-  /* azul-poeirento e papel (estilo colagem) */
-  --color-azul: #4f7391;
-  --color-azul-escuro: #3a5873;
-  --color-azul-claro: #cfe0f3;
-  --color-azul-pastel: #e4eef8;
+  /* tons terrosos e papel vintage (os nomes "azul-*" ficaram por histórico: hoje são caramelo/bege) */
+  --color-azul: #8b5e3f;
+  --color-azul-escuro: #5c3a24;
+  --color-azul-claro: #e9d6bf;
+  --color-azul-pastel: #f3e9db;
   --color-mostarda: #f1e6b0;
   --color-oliva: #a8a06e;
 
@@ -458,4 +458,20 @@ body {
   .inclina {
     transform: none !important;
   }
+}
+
+
+/* textura de papel antigo por cima de tudo (só visual; não atrapalha cliques) */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.4;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.42  0 0 0 0 0.3  0 0 0 0 0.2  0 0 0 0.35 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+@media print {
+  body::after { display: none; }
 }

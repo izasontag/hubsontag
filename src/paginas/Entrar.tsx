@@ -1,4 +1,4 @@
-import { LogoMonograma } from '../componentes/Logo'
+import { LogoCompleta } from '../componentes/Logo'
 import { useState } from 'react'
 import type { CSSProperties, FormEvent } from 'react'
 import { Navigate } from 'react-router-dom'
@@ -31,10 +31,9 @@ export default function Entrar() {
         <p className="eyebrow anim-entrar !text-superficie/90">Agência de conteúdo · cobertura de stories</p>
         <div className="relative flex items-center gap-8">
           <div>
-            <LogoMonograma ponto="var(--color-azul-claro)" className="anim-entrar mb-6 h-20 w-auto text-superficie sm:h-24" />
-            <h1 className="anim-entrar font-titulo text-4xl font-medium uppercase leading-none tracking-[0.3em] text-superficie sm:text-5xl" style={{ '--i': 1 } as CSSProperties}>
-              Sontag
-              <span className="mt-3 block text-sm tracking-[0.55em] text-azul-claro sm:text-base">Media</span>
+            <h1 className="anim-entrar" style={{ '--i': 1 } as CSSProperties}>
+              <span className="sr-only">Sontag Media</span>
+              <LogoCompleta claro className="[&_svg]:h-24 sm:[&_svg]:h-32 [&_span]:text-lg sm:[&_span]:text-xl" />
             </h1>
             <p className="anim-entrar mt-5 font-titulo text-2xl font-medium italic text-superficie" style={{ '--i': 3 } as CSSProperties}>
               Para que todos vejam e saibam.

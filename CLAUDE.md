@@ -45,17 +45,12 @@ Princípios:
 
 ## Identidade visual
 
-- Tons sóbrios: cinza, marrom e verde musgo.
-- Cores base:
-  - Fundo: `#EDEBE7`
-  - Superfície (cartões): `#F7F6F3`
-  - Texto principal: `#2B2724`
-  - Texto secundário: `#5E5953`
-  - Marrom: `#6B4F3A`
-  - Verde musgo: `#5C6B47`
-  - Linhas e bordas: `#C9C3BA`
-- Títulos em fonte serifada (Cormorant Garamond, do Google Fonts). Textos em Helvetica (`'Helvetica Neue', Helvetica, Arial, sans-serif`).
-- Cantos pouco arredondados (2 a 4 px), muito respiro, sem gradientes, sem emojis na interface.
+- **Visual vintage / colagem em tons terrosos** (atualizado): papel creme, caramelo e bege, com textura de papel antigo (`body::after` em `global.css`).
+- Cores (tokens em `src/estilos/global.css`; os nomes `azul-*` ficaram por histórico e hoje são caramelo/bege): fundo `#F4EFE6`, superfície `#FBF9F4`, texto `#2B2724`, marrom-escuro `#4B2E1E`, caramelo (`azul`) `#8B5E3F`, caramelo-escuro `#5C3A24`, bege `#E9D6BF`, bege-claro `#F3E9DB`, mostarda `#F1E6B0`, musgo/oliva para detalhes.
+- Fontes: Cormorant Garamond (títulos), Allura (acentos manuscritos em uma palavra), Helvetica (texto). Base de 15px: letras delicadas, nada gigante.
+- Elementos: botões em pílula, cantos grandes (10 a 18px), listras, bordas recortadas, bilhetes, papel rasgado, polaroid com fita, carimbo, faixa de texto rolando, movimento suave.
+- **Logo:** monograma "sm" de traço único com o "m" em laço (`src/componentes/Logo.tsx`, `public/logo-sontag.svg`) + "AG." na vertical, como nas referências. Não escrever "Sontag" por extenso na logo.
+- Login: "Agência de conteúdo · cobertura de stories" no topo e a frase "Para que todos vejam e saibam." abaixo da logo.
 - **A marca se apresenta como "Storymaker & Marketing"** (login, painel, faixa do portal e título da aba do navegador).
 - **Estilo editorial, vivo e elegante:** títulos grandes em Cormorant Garamond com uma palavra em itálico para destacar, legendas pequenas em caixa alta com espaçamento, sombras suaves nos cartões, números grandes em Helvetica leve (a serifada faz o zero parecer a letra O), avatares com iniciais na cor do cliente. O portal abre com uma faixa na cor de destaque do cliente, com anéis finos decorativos.
 - **Movimento suave:** entrada com fade e leve deslize, escalonada em listas; cartões que sobem ao passar o mouse; sublinhado animado nos menus; números que contam; barras de progresso que preenchem; janelas que surgem com fade; imagens com fade ao carregar; blocos que aparecem ao rolar a página. Tudo em CSS e um pouco de JavaScript, sem biblioteca de animação. **Sempre respeitar `prefers-reduced-motion`** e nunca animar o que atrapalhe a leitura.

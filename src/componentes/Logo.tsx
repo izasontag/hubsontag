@@ -12,14 +12,13 @@ export function LogoMonograma({ className = '', titulo = 'Sontag Media', ponto =
   )
 }
 
-// Logo completa: monograma + nome em caixa alta espaçada, sóbria.
-export function LogoCompleta({ className = '' }: { className?: string }) {
+// Logo completa: monograma + "AG." na vertical, como nas referências (sem escrever o nome por extenso).
+export function LogoCompleta({ className = '', claro = false }: { className?: string; claro?: boolean }) {
   return (
-    <span className={`inline-flex items-center gap-3 text-marrom-escuro ${className}`}>
-      <LogoMonograma className="h-9 w-auto shrink-0" />
-      <span className="border-l border-marrom-escuro/30 pl-3">
-        <span className="block font-titulo text-[1.05rem] font-semibold uppercase leading-none tracking-[0.28em]">Sontag</span>
-        <span className="mt-1 block text-[0.58rem] uppercase leading-none tracking-[0.42em] text-azul-escuro">Media</span>
+    <span className={`inline-flex items-end gap-1.5 ${claro ? 'text-superficie' : 'text-marrom-escuro'} ${className}`} aria-hidden>
+      <LogoMonograma className="h-10 w-auto shrink-0" ponto="transparent" />
+      <span className={`mb-1 font-titulo text-base font-bold uppercase leading-none tracking-[0.25em] ${claro ? 'text-azul-claro' : 'text-azul'} [writing-mode:vertical-rl] rotate-180`}>
+        AG.
       </span>
     </span>
   )
