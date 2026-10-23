@@ -105,9 +105,9 @@ export default function Painel() {
 
   return (
     <div className="space-y-10">
-      <Ticker itens={['Storymaker & Marketing', 'Sontag Media', 'Cada história, com cuidado']} className="rounded-full bg-azul-claro py-2 text-[0.7rem] tracking-[0.25em] text-azul-escuro" />
+      <Ticker itens={['Agência de conteúdo', 'Storymaker & Social Media', 'Para que todos vejam e saibam']} className="rounded-full bg-azul-claro py-2 text-[0.7rem] tracking-[0.25em] text-azul-escuro" />
       <CabecalhoPagina
-        rotulo={`Storymaker & Marketing · ${dataLonga}`}
+        rotulo={dataLonga}
         titulo={
           <>
             {saudacao(agora)}, <em>{primeiroNome}</em>

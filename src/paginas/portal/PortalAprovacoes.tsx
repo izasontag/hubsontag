@@ -22,7 +22,7 @@ function PostAprovacao({ post }: { post: PortalPost }) {
       {post.status === 'ajuste_pedido' && (
         <>
           <p className="text-sm text-texto-suave">
-            Você pediu ajuste{ajuste ? ` em ${formatarDataHora(ajuste.criado_em)}` : ''}. Quando a Sontag Media terminar, o
+            Você pediu ajuste{ajuste ? ` em ${formatarDataHora(ajuste.criado_em)}` : ''}. Quando a Sontag terminar, o
             post volta para aprovação.
           </p>
           <Conversa post={post} />

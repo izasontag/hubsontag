@@ -57,7 +57,7 @@ function Navegacao() {
           Ideias
         </NavLink>
       </Grupo>
-      <Grupo titulo="Casamentos">
+      <Grupo titulo="Coberturas">
         <NavLink to="/app/eventos" className={item}>
           <IconeEventos />
           Eventos
@@ -81,7 +81,7 @@ function Navegacao() {
 
 function Marca() {
   return (
-    <NavLink to="/app" end className="block px-6 pb-3 pt-8" aria-label="Sontag Media, início">
+    <NavLink to="/app" end className="block px-6 pb-3 pt-8" aria-label="Sontag, início">
       <LogoCompleta />
       <span className="eyebrow mt-3 block !text-[0.55rem]">Agência de conteúdo</span>
     </NavLink>
@@ -129,7 +129,7 @@ export default function LayoutApp() {
 
       {/* celular: barra de cima com botão de menu */}
       <header className="nao-imprimir festao-baixo sticky top-0 z-40 flex items-center justify-between bg-superficie px-4 lg:hidden">
-        <NavLink to="/app" end className="py-3" aria-label="Sontag Media, início">
+        <NavLink to="/app" end className="py-3" aria-label="Sontag, início">
           <LogoCompleta />
         </NavLink>
         <button type="button" onClick={() => setAberto(true)} aria-label="Abrir menu" aria-expanded={aberto} className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-full text-azul-escuro transition-colors hover:bg-azul-pastel">

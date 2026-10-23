@@ -15,7 +15,7 @@ export function Conversa({ post }: { post: PortalPost }) {
     ...post.comentarios.map((c) => ({
       quando: c.criado_em,
       chave: `c${c.id}`,
-      quem: c.origem === 'portal' ? 'Você' : 'Sontag Media',
+      quem: c.origem === 'portal' ? 'Você' : 'Sontag',
       texto: c.texto,
       destaque: null as string | null,
     })),

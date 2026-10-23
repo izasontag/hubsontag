@@ -11,6 +11,7 @@ import PainelTarefas from '../componentes/PainelTarefas'
 import AbaPortal from './cliente/AbaPortal'
 import AprovacoesCliente from './cliente/AprovacoesCliente'
 import CalendarioCliente from './cliente/CalendarioCliente'
+import Roteiros from '../componentes/Roteiros'
 import ManualMarca from './cliente/ManualMarca'
 
 export default function ClientePagina() {
@@ -19,7 +20,7 @@ export default function ClientePagina() {
   const [cliente, setCliente] = useState<Cliente | null>(null)
   const [erro, setErro] = useState('')
   const abaParam = params.get('aba')
-  const aba = abaParam === 'manual' || abaParam === 'calendario' || abaParam === 'portal' || abaParam === 'aprovacoes' || abaParam === 'plano' || abaParam === 'relatorios' ? abaParam : 'ficha'
+  const aba = abaParam === 'manual' || abaParam === 'calendario' || abaParam === 'portal' || abaParam === 'aprovacoes' || abaParam === 'plano' || abaParam === 'relatorios' || abaParam === 'roteiros' ? abaParam : 'ficha'
 
   useEffect(() => {
     if (!id) return
@@ -34,7 +35,7 @@ export default function ClientePagina() {
       })
   }, [id])
 
-  const botaoAba = (chave: 'ficha' | 'aprovacoes' | 'calendario' | 'plano' | 'manual' | 'relatorios' | 'portal', rotulo: string) => (
+  const botaoAba = (chave: 'ficha' | 'aprovacoes' | 'calendario' | 'plano' | 'roteiros' | 'manual' | 'relatorios' | 'portal', rotulo: string) => (
     <button
       onClick={() => setParams(chave === 'ficha' ? {} : { aba: chave })}
       aria-current={aba === chave ? 'page' : undefined}
@@ -75,6 +76,7 @@ export default function ClientePagina() {
             {botaoAba('aprovacoes', 'Aprovações')}
             {botaoAba('calendario', 'Calendário')}
             {botaoAba('plano', 'Plano de ação')}
+            {botaoAba('roteiros', 'Roteiros')}
             {botaoAba('manual', 'Manual da marca')}
             {botaoAba('relatorios', 'Relatórios')}
             {botaoAba('portal', 'Portal')}
@@ -84,6 +86,7 @@ export default function ClientePagina() {
             {aba === 'aprovacoes' && <AprovacoesCliente cliente={cliente} />}
             {aba === 'calendario' && <CalendarioCliente cliente={cliente} />}
             {aba === 'plano' && <PainelTarefas clienteId={cliente.id} />}
+            {aba === 'roteiros' && <Roteiros clienteId={cliente.id} />}
             {aba === 'manual' && <ManualMarca cliente={cliente} />}
             {aba === 'relatorios' && <Relatorios cliente={cliente} />}
             {aba === 'portal' && <AbaPortal cliente={cliente} onChange={setCliente} />}

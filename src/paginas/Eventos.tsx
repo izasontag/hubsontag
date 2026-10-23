@@ -33,8 +33,7 @@ function CartaoEvento({ e, destaque, indice }: { e: EventoComChecklist; destaque
         <span className="min-w-0 flex-1 space-y-2">
           <span className="block font-titulo text-2xl font-semibold leading-tight">{e.nome}</span>
           <span className="block text-sm text-texto-suave">
-            {e.tipo === 'casamento' ? 'Casamento' : 'Evento'}
-            {e.local && ` · ${e.local}`} · {contagem(e.data_evento)}
+            {e.local ? `${e.local} · ` : ''}{contagem(e.data_evento)}
           </span>
           <span className="flex items-center gap-3 text-xs text-texto-suave">
             <span className="h-1.5 flex-1 rounded-sm bg-areia" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100} aria-label={`Checklist de ${e.nome}: ${feitos} de ${total}`}>
@@ -97,11 +96,11 @@ export default function Eventos() {
   return (
     <div className="space-y-8">
       <CabecalhoPagina
-        rotulo="Casamentos e eventos"
+        rotulo="Coberturas e eventos"
         titulo="Eventos"
         acoes={
           dona ? (
-            <button className={btnPrimario} onClick={() => setForm({ nome: '', tipo: 'casamento', data: hoje, horario: '', local: '', contato: '' })}>
+            <button className={btnPrimario} onClick={() => setForm({ nome: '', tipo: 'evento', data: hoje, horario: '', local: '', contato: '' })}>
               Novo evento
             </button>
           ) : undefined
@@ -112,14 +111,8 @@ export default function Eventos() {
           <form onSubmit={criar} className="space-y-4">
             <Titulo>Novo evento</Titulo>
             <div className="grid gap-4 sm:grid-cols-2">
-              <Campo rotulo="Nome (casal ou cliente)">
+              <Campo rotulo="Nome do evento ou do cliente">
                 <input required className={inputCls} value={form.nome} onChange={(e) => setForm({ ...form, nome: e.target.value })} />
-              </Campo>
-              <Campo rotulo="Tipo">
-                <select className={inputCls} value={form.tipo} onChange={(e) => setForm({ ...form, tipo: e.target.value as 'casamento' | 'evento' })}>
-                  <option value="casamento">Casamento</option>
-                  <option value="evento">Evento</option>
-                </select>
               </Campo>
               <Campo rotulo="Data do evento">
                 <input type="date" required className={inputCls} value={form.data} onChange={(e) => setForm({ ...form, data: e.target.value })} />

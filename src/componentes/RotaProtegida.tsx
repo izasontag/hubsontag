@@ -10,7 +10,7 @@ export default function RotaProtegida({ children }: { children: ReactNode }) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <p className="anim-respirar font-titulo text-3xl text-marrom" role="status">
-          Sontag <em>Media</em>
+          <em>Sontag</em>
         </p>
       </div>
     )

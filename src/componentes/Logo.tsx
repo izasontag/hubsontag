@@ -2,7 +2,7 @@
 const TRACO_S = 'M58 46C58 30 22 28 22 52C22 72 58 62 58 88C58 110 20 108 20 94'
 const TRACO_M = 'M80 110V34C108 34 124 52 126 76C127 98 106 104 104 86C102 64 122 34 152 34C178 34 190 54 190 110'
 
-export function LogoMonograma({ className = '', titulo = 'Sontag Media', ponto = 'var(--color-azul)' }: { className?: string; titulo?: string; ponto?: string }) {
+export function LogoMonograma({ className = '', titulo = 'Sontag', ponto = 'var(--color-azul)' }: { className?: string; titulo?: string; ponto?: string }) {
   return (
     <svg viewBox="0 0 214 130" className={className} role="img" aria-label={titulo} fill="none" strokeWidth="13" strokeLinejoin="round">
       <path d={TRACO_S} stroke="currentColor" />

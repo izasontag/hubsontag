@@ -46,7 +46,7 @@ export default function PortalManual() {
       )}
       <article className="space-y-10">
         <header className="hidden border-b border-linha pb-4 print:block">
-          <p className="text-xs uppercase tracking-wide text-texto-suave">Manual da marca · Sontag Media</p>
+          <p className="text-xs uppercase tracking-wide text-texto-suave">Manual da marca · Sontag</p>
           <h1 className="font-titulo text-4xl font-semibold">{dados?.nome}</h1>
         </header>
         {capitulos.map((c, i) => (

@@ -22,11 +22,11 @@ function Estrutura() {
       <main className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 text-center">
         <Aneis className="absolute h-[40rem] w-[40rem] text-linha opacity-60" />
         <div className="anim-entrar relative max-w-md">
-          <p className="eyebrow mb-3">Sontag Media</p>
+          <p className="eyebrow mb-3">Sontag</p>
           <h1 className="titulo-pagina">
             Link <em>indisponível</em>
           </h1>
-          <p className="mt-4 text-texto-suave">Este link não está ativo. Peça um novo link à Sontag Media.</p>
+          <p className="mt-4 text-texto-suave">Este link não está ativo. Peça um novo link à Sontag.</p>
         </div>
       </main>
     )
@@ -48,7 +48,7 @@ function Estrutura() {
           <div className="relative mx-auto flex max-w-4xl items-center justify-between gap-6 px-4 pb-10 pt-9">
             <div className="min-w-0">
               <p className="eyebrow anim-aparecer" style={{ color: 'inherit', opacity: 0.85 }}>
-                Sontag Media · Storymaker &amp; Marketing
+                Sontag · Para que todos vejam e saibam
               </p>
               <h1 className="titulo-pagina anim-entrar mt-3" style={{ color: 'inherit', '--i': 1 } as React.CSSProperties}>
                 {dados.nome}

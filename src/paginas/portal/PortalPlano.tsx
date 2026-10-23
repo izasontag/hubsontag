@@ -12,7 +12,7 @@ function Item({ t }: { t: PortalTarefa }) {
       <div className="min-w-48 flex-1">
         <p className={feito ? 'text-texto-suave line-through' : 'text-texto'}>{t.titulo}</p>
         <p className="text-xs text-texto-suave">
-          {TIPO_TAREFA_ROTULO[t.tipo]} · {t.responsavel === 'cliente' ? 'Com você' : 'Com a Sontag Media'}
+          {TIPO_TAREFA_ROTULO[t.tipo]} · {t.responsavel === 'cliente' ? 'Com você' : 'Com a Sontag'}
           {t.data && ` · ${formatarData(t.data)}`}
         </p>
         {t.material && (

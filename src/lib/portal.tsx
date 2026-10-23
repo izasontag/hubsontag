@@ -56,7 +56,7 @@ export function mensagemDeErro(erro: { message?: string } | null) {
   const m = erro?.message ?? ''
   if (m.includes('post_indisponivel')) return 'Este post já foi respondido ou não está mais disponível. Atualize a página.'
   if (m.includes('mensagem_obrigatoria')) return 'Escreva o que precisa ser ajustado.'
-  if (m.includes('link_invalido')) return 'Este link não está mais ativo. Peça um novo link à Sontag Media.'
+  if (m.includes('link_invalido')) return 'Este link não está mais ativo. Peça um novo link à Sontag.'
   if (m.includes('texto_invalido')) return 'O texto precisa ter entre 1 e 2000 caracteres.'
   return 'Não foi possível enviar agora. Tente de novo em instantes.'
 }

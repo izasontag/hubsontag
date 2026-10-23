@@ -581,3 +581,39 @@ export interface Relatorio {
   destaques: string | null
   proximos_passos: string | null
 }
+
+// ---------------- Roteiros (por cliente e por evento) ----------------
+
+export const FORMATOS_ROTEIRO = ['reels', 'carrossel', 'stories', 'video', 'evento', 'outro'] as const
+export type FormatoRoteiro = (typeof FORMATOS_ROTEIRO)[number]
+export const FORMATO_ROTEIRO_ROTULO: Record<FormatoRoteiro, string> = {
+  reels: 'Reels',
+  carrossel: 'Carrossel',
+  stories: 'Stories',
+  video: 'Vídeo',
+  evento: 'Evento',
+  outro: 'Outro',
+}
+
+export const STATUS_ROTEIRO = ['rascunho', 'em_revisao', 'aprovado', 'gravado', 'publicado'] as const
+export type StatusRoteiro = (typeof STATUS_ROTEIRO)[number]
+export const STATUS_ROTEIRO_ROTULO: Record<StatusRoteiro, string> = {
+  rascunho: 'Rascunho',
+  em_revisao: 'Em revisão',
+  aprovado: 'Aprovado',
+  gravado: 'Gravado',
+  publicado: 'Publicado',
+}
+
+export interface Roteiro {
+  id: string
+  cliente_id: string | null
+  evento_id: string | null
+  titulo: string
+  formato: FormatoRoteiro
+  status: StatusRoteiro
+  data_prevista: string | null
+  texto: string | null
+  arquivo_storage: string | null
+  arquivo_nome: string | null
+}

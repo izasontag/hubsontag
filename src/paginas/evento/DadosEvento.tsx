@@ -13,7 +13,7 @@ export default function DadosEvento({ evento, onChange }: { evento: Evento; onCh
   const { perfil } = useAuth()
   const navegar = useNavigate()
   const [nome, setNome] = useState(evento.nome)
-  const [tipo, setTipo] = useState(evento.tipo)
+  const [tipo] = useState(evento.tipo)
   const [data, setData] = useState(evento.data_evento)
   const [horario, setHorario] = useState(evento.horario?.slice(0, 5) ?? '')
   const [local, setLocal] = useState(evento.local ?? '')
@@ -85,14 +85,8 @@ export default function DadosEvento({ evento, onChange }: { evento: Evento; onCh
         <form onSubmit={salvar} className="space-y-4">
           <Titulo>Dados do evento</Titulo>
           <div className="grid gap-4 sm:grid-cols-2">
-            <Campo rotulo="Nome (casal ou cliente)">
+            <Campo rotulo="Nome do evento ou do cliente">
               <input required className={inputCls} value={nome} onChange={(e) => setNome(e.target.value)} />
-            </Campo>
-            <Campo rotulo="Tipo">
-              <select className={inputCls} value={tipo} onChange={(e) => setTipo(e.target.value as 'casamento' | 'evento')}>
-                <option value="casamento">Casamento</option>
-                <option value="evento">Evento</option>
-              </select>
             </Campo>
             <Campo rotulo="Data do evento">
               <input type="date" required className={inputCls} value={data} onChange={(e) => setData(e.target.value)} />
