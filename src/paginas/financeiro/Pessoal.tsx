@@ -107,7 +107,7 @@ export default function Pessoal() {
         ].map((t) => (
           <li key={t.r} className={`rounded-md border p-5 shadow-suave ${t.alerta ? 'border-marrom bg-marrom-claro' : 'border-linha bg-superficie'}`}>
             <p className="eyebrow">{t.r}</p>
-            <p className="numeros-grandes mt-3 text-4xl font-medium leading-none">{reaisInteiro(t.v)}</p>
+            <p className="numeros-grandes mt-3 text-3xl font-medium leading-none">{reaisInteiro(t.v)}</p>
           </li>
         ))}
       </ul>

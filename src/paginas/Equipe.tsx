@@ -136,7 +136,7 @@ export default function Equipe() {
             <Cartao className="space-y-5">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
-                  <p className="font-titulo text-3xl font-semibold leading-tight">{p.nome}</p>
+                  <p className="font-titulo text-2xl font-semibold leading-tight">{p.nome}</p>
                   <p className="text-sm text-texto-suave">{p.email}</p>
                 </div>
                 <button className={btnSecundario} onClick={() => void remover(p)}>

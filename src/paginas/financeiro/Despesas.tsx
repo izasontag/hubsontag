@@ -103,7 +103,7 @@ export default function Despesas({ mes, onMes }: { mes: string; onMes: (m: strin
       <Cartao className="space-y-4">
         <div className="flex flex-wrap items-end justify-between gap-2">
           <Titulo>Total do mês</Titulo>
-          <p className="numeros-grandes text-4xl font-medium">{reais(total)}</p>
+          <p className="numeros-grandes text-3xl font-medium">{reais(total)}</p>
         </div>
         {porCategoria.length > 0 && (
           <ul className="space-y-2" aria-label="Despesas por categoria">

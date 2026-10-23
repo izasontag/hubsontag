@@ -14,7 +14,7 @@ export default function Financeiro() {
 
   return (
     <div className="space-y-8">
-      <CabecalhoPagina rotulo="Só você vê esta área" titulo={<>Finan<em>ceiro</em></>} />
+      <CabecalhoPagina rotulo="Só você vê esta área" titulo="Financeiro" />
       <nav className="flex flex-col gap-3 sm:flex-row" aria-label="Áreas do financeiro">
         <NavLink to="/app/financeiro" end className={aba}>
           <span className="font-titulo text-2xl font-semibold leading-tight">Agência</span>

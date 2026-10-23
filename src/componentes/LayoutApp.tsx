@@ -16,14 +16,14 @@ import {
 } from './Icones'
 
 const item = ({ isActive }: { isActive: boolean }) =>
-  `group relative flex min-h-11 items-center gap-3 rounded-sm px-3 text-sm tracking-wide transition-colors duration-200 before:absolute before:inset-y-2 before:left-0 before:w-0.5 before:origin-center before:rounded-full before:bg-marrom before:transition-transform before:duration-300 ${
-    isActive ? 'bg-marrom-claro font-medium text-marrom before:scale-y-100' : 'text-texto-suave before:scale-y-0 hover:bg-fundo hover:text-texto hover:before:scale-y-50'
+  `group relative flex min-h-11 items-center gap-3 rounded-full px-4 text-sm tracking-wide transition duration-200 ${
+    isActive ? 'bg-azul-claro font-medium text-azul-escuro shadow-suave' : 'text-texto-suave hover:bg-azul-pastel hover:text-texto'
   }`
 
 function Grupo({ titulo, children }: { titulo: string; children: ReactNode }) {
   return (
     <div className="space-y-1">
-      <p className="eyebrow px-3 pb-1 pt-4">{titulo}</p>
+      <p className="eyebrow px-4 pb-1 pt-5">{titulo}</p>
       {children}
     </div>
   )
@@ -80,9 +80,10 @@ function Navegacao() {
 
 function Marca() {
   return (
-    <NavLink to="/app" end className="block px-6 pb-2 pt-7 font-titulo text-4xl font-semibold leading-none text-marrom">
-      Sontag <em className="font-medium">Media</em>
-      <span className="eyebrow mt-2 block !text-[0.62rem]">Storymaker &amp; Marketing</span>
+    <NavLink to="/app" end className="block px-6 pb-3 pt-8 text-marrom-escuro">
+      <span className="block font-titulo text-3xl font-semibold leading-none">Sontag</span>
+      <span className="script -mt-1 block text-4xl text-azul">Media</span>
+      <span className="eyebrow mt-2 block !text-[0.6rem]">Storymaker &amp; Marketing</span>
     </NavLink>
   )
 }
@@ -90,9 +91,9 @@ function Marca() {
 function Rodape() {
   const { perfil, sair } = useAuth()
   return (
-    <div className="flex items-center justify-between gap-3 border-t border-linha px-6 py-4 text-sm">
+    <div className="mx-3 mb-3 flex items-center justify-between gap-3 rounded-full bg-areia px-5 py-2 text-sm">
       <span className="min-w-0 truncate text-texto-suave">{perfil?.nome}</span>
-      <button onClick={() => void sair()} className="inline-flex min-h-11 cursor-pointer items-center px-1 underline decoration-linha underline-offset-4 transition-colors hover:text-marrom">
+      <button onClick={() => void sair()} className="inline-flex min-h-11 cursor-pointer items-center px-1 underline decoration-linha underline-offset-4 transition-colors hover:text-azul">
         Sair
       </button>
     </div>
@@ -119,19 +120,19 @@ export default function LayoutApp() {
 
   return (
     <div className="min-h-screen lg:grid lg:grid-cols-[17rem_minmax(0,1fr)]">
-      {/* computador: barra lateral fixa */}
-      <aside className="nao-imprimir sticky top-0 hidden h-screen flex-col border-r border-linha bg-superficie lg:flex">
+      {/* computador: barra lateral fixa, com borda festonada */}
+      <aside className="nao-imprimir festao-direita sticky top-0 z-30 hidden h-screen flex-col bg-superficie lg:flex">
         <Marca />
         <Navegacao />
         <Rodape />
       </aside>
 
       {/* celular: barra de cima com botão de menu */}
-      <header className="nao-imprimir sticky top-0 z-40 flex items-center justify-between border-b border-linha bg-superficie/90 px-4 backdrop-blur-md lg:hidden">
-        <NavLink to="/app" end className="py-3 font-titulo text-3xl font-semibold leading-none text-marrom">
-          Sontag <em className="font-medium">Media</em>
+      <header className="nao-imprimir festao-baixo sticky top-0 z-40 flex items-center justify-between bg-superficie px-4 lg:hidden">
+        <NavLink to="/app" end className="py-3 text-marrom-escuro">
+          <span className="font-titulo text-3xl font-semibold leading-none">Sontag</span> <span className="script text-4xl text-azul">Media</span>
         </NavLink>
-        <button type="button" onClick={() => setAberto(true)} aria-label="Abrir menu" aria-expanded={aberto} className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-sm text-marrom transition-colors hover:bg-fundo">
+        <button type="button" onClick={() => setAberto(true)} aria-label="Abrir menu" aria-expanded={aberto} className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-full text-azul-escuro transition-colors hover:bg-azul-pastel">
           <IconeMenu />
         </button>
       </header>
@@ -139,8 +140,8 @@ export default function LayoutApp() {
       {aberto && (
         <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true" aria-label="Menu">
           <button type="button" aria-label="Fechar menu" onClick={() => setAberto(false)} className="modal-fundo absolute inset-0 cursor-default bg-texto/50 backdrop-blur-[2px]" />
-          <div className="anim-gaveta relative flex h-full w-72 max-w-[85%] flex-col bg-superficie shadow-elevada">
-            <button type="button" onClick={() => setAberto(false)} aria-label="Fechar menu" className="absolute right-2 top-3 flex h-11 w-11 cursor-pointer items-center justify-center rounded-sm text-texto-suave hover:text-marrom">
+          <div className="anim-gaveta festao-direita relative flex h-full w-72 max-w-[85%] flex-col bg-superficie shadow-elevada">
+            <button type="button" onClick={() => setAberto(false)} aria-label="Fechar menu" className="absolute right-2 top-3 flex h-11 w-11 cursor-pointer items-center justify-center rounded-full text-texto-suave hover:bg-azul-pastel hover:text-azul-escuro">
               <IconeFechar />
             </button>
             <Marca />
@@ -150,7 +151,7 @@ export default function LayoutApp() {
         </div>
       )}
 
-      <main className="min-w-0 px-4 py-8 sm:px-8 lg:px-12 lg:py-12">
+      <main className="min-w-0 px-4 py-10 sm:px-8 lg:px-14 lg:py-12">
         <div key={pathname} className="anim-entrar mx-auto max-w-6xl">
           <Outlet />
         </div>

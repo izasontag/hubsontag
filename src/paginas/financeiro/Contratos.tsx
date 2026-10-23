@@ -192,13 +192,13 @@ export default function Contratos() {
             <li key={c.id} className={`space-y-4 rounded-md border bg-superficie p-5 shadow-suave ${c.status === 'encerrado' ? 'border-linha opacity-70' : vencendo ? 'border-marrom' : 'border-linha'}`}>
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
-                  <p className="font-titulo text-2xl font-semibold">{c.cliente?.nome ?? 'Cliente'}</p>
+                  <p className="font-titulo text-xl font-semibold">{c.cliente?.nome ?? 'Cliente'}</p>
                   <p className="text-sm text-texto-suave">
                     {c.plano} · {c.posts_mes} posts, {c.reels_mes} reels, {c.stories_mes} stories por mês
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="numeros-grandes text-3xl font-medium">{reais(Number(c.valor_mensal))}</p>
+                  <p className="numeros-grandes text-2xl font-medium">{reais(Number(c.valor_mensal))}</p>
                   <p className="text-xs text-texto-suave">vence todo dia {c.dia_vencimento}</p>
                 </div>
               </div>

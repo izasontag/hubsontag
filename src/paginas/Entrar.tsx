@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import type { FormEvent } from 'react'
+import type { CSSProperties, FormEvent } from 'react'
 import { Navigate } from 'react-router-dom'
-import Aneis from '../componentes/Aneis'
+import { Carimbo, Ticker } from '../componentes/Decor'
 import { Aviso, btnPrimario, Campo, inputCls } from '../componentes/ui'
 import { useAuth } from '../lib/auth'
 import { supabaseConfigurado } from '../lib/supabase'
@@ -25,26 +25,33 @@ export default function Entrar() {
   }
 
   return (
-    <main className="grid min-h-screen lg:grid-cols-[1.1fr_1fr]">
-      <section className="relative flex min-h-64 flex-col justify-between overflow-hidden bg-marrom p-8 text-superficie sm:p-12">
-        <Aneis className="absolute -right-24 -top-24 h-[34rem] w-[34rem] text-superficie opacity-20" />
-        <p className="eyebrow anim-entrar relative !text-superficie/80">Storymaker · Marketing</p>
-        <div className="relative">
-          <h1 className="anim-entrar font-titulo text-6xl font-medium leading-[0.95] sm:text-7xl lg:text-8xl" style={{ '--i': 1 } as React.CSSProperties}>
-            Sontag
-            <br />
-            <em className="font-normal">Media</em>
-          </h1>
-          <p className="anim-entrar mt-5 max-w-sm text-lg text-superficie/85" style={{ '--i': 3 } as React.CSSProperties}>
-            Cada cliente, cada história, com cuidado em cada detalhe.
-          </p>
-        </div>
-      </section>
-      <section className="flex items-center justify-center px-6 py-12">
-        <form onSubmit={enviar} className="anim-entrar w-full max-w-sm space-y-5" style={{ '--i': 2 } as React.CSSProperties}>
+    <main className="grid min-h-screen lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)]">
+      <section className="festao-direita relative z-10 flex min-h-72 min-w-0 flex-col justify-between overflow-visible bg-azul p-8 text-superficie sm:p-12" style={{ '--festao': 'var(--color-azul)' } as CSSProperties}>
+        <p className="eyebrow anim-entrar !text-superficie/90">Agência de conteúdo · cobertura de stories</p>
+        <div className="relative flex items-center gap-8">
           <div>
-            <p className="eyebrow mb-2">Área interna</p>
-            <h2 className="titulo-secao">Entrar</h2>
+            <h1 className="anim-entrar font-titulo text-5xl font-medium leading-[0.95] text-superficie sm:text-6xl" style={{ '--i': 1 } as CSSProperties}>
+              Sontag
+              <span className="script -mt-2 block text-6xl text-azul-claro sm:text-7xl">Media</span>
+            </h1>
+            <p className="anim-entrar mt-5 font-titulo text-2xl font-medium italic text-superficie" style={{ '--i': 3 } as CSSProperties}>
+              Para que todos vejam e saibam.
+            </p>
+            <p className="eyebrow anim-entrar mt-3 !text-superficie/80" style={{ '--i': 4 } as CSSProperties}>
+              Storymaker &amp; Marketing
+            </p>
+          </div>
+          <Carimbo className="anim-entrar hidden h-32 w-auto shrink-0 -rotate-6 text-azul-claro sm:block" />
+        </div>
+        <Ticker itens={['Agência de conteúdo', 'Cobertura de stories', 'Storymaker & Marketing', 'Campo Grande, MS']} className="-mx-8 border-y border-superficie/30 py-2 text-xs tracking-[0.25em] text-superficie/90 sm:-mx-12" />
+      </section>
+      <section className="listras flex items-center justify-center px-6 py-14">
+        <form onSubmit={enviar} className="bilhete nota-papel anim-entrar w-full max-w-sm space-y-5 p-8" style={{ '--i': 2 } as CSSProperties}>
+          <div>
+            <p className="eyebrow mb-1">Bem-vinda de volta</p>
+            <h2 className="titulo-secao">
+              Entrar <em>aqui</em>
+            </h2>
           </div>
           {!supabaseConfigurado && <Aviso tipo="erro">A conexão com o Supabase não está configurada.</Aviso>}
           <Campo rotulo="E-mail">

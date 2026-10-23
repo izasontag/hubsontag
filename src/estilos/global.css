@@ -1,33 +1,43 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&display=swap');
 @import 'tailwindcss';
 
 @theme {
-  --color-fundo: #edebe7;
-  --color-superficie: #f7f6f3;
+  --color-fundo: #f4efe6;
+  --color-superficie: #fbf9f4;
   --color-texto: #2b2724;
   --color-texto-suave: #5e5953;
   --color-marrom: #6b4f3a;
+  --color-marrom-escuro: #4b2e1e;
   --color-musgo: #5c6b47;
-  --color-linha: #c9c3ba;
+  --color-linha: #d9cfbf;
   /* tons de apoio, derivados da paleta */
-  --color-areia: #e3dfd8;
+  --color-areia: #ebe3d4;
   --color-musgo-claro: #e5e9db;
-  --color-marrom-claro: #efe4da;
+  --color-marrom-claro: #f1e4d9;
+  /* azul-poeirento e papel (estilo colagem) */
+  --color-azul: #4f7391;
+  --color-azul-escuro: #3a5873;
+  --color-azul-claro: #cfe0f3;
+  --color-azul-pastel: #e4eef8;
+  --color-mostarda: #f1e6b0;
+  --color-oliva: #a8a06e;
 
   --font-titulo: 'Cormorant Garamond', Georgia, serif;
+  --font-script: 'Allura', 'Snell Roundhand', cursive;
   --font-sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 
-  --radius-sm: 2px;
-  --radius-md: 4px;
+  --radius-sm: 10px;
+  --radius-md: 18px;
 
-  --shadow-suave: 0 1px 2px rgb(43 39 36 / 0.05), 0 12px 28px -16px rgb(43 39 36 / 0.22);
-  --shadow-elevada: 0 2px 4px rgb(43 39 36 / 0.06), 0 22px 44px -18px rgb(43 39 36 / 0.32);
+  --shadow-suave: 0 1px 2px rgb(75 46 30 / 0.05), 0 12px 28px -16px rgb(75 46 30 / 0.22);
+  --shadow-elevada: 0 2px 4px rgb(75 46 30 / 0.06), 0 22px 44px -18px rgb(75 46 30 / 0.32);
 
   --ease-suave: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 html {
   scroll-behavior: smooth;
+  font-size: 15px;
 }
 
 body {
@@ -40,12 +50,12 @@ body {
 }
 
 ::selection {
-  background: var(--color-musgo);
+  background: var(--color-azul);
   color: #fff;
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-musgo);
+  outline: 2px solid var(--color-azul);
   outline-offset: 2px;
 }
 
@@ -54,7 +64,7 @@ body {
 .titulo-pagina {
   font-family: var(--font-titulo);
   font-weight: 500;
-  font-size: clamp(2.4rem, 6vw, 3.9rem);
+  font-size: clamp(1.9rem, 3.6vw, 2.55rem);
   line-height: 1.02;
   letter-spacing: -0.015em;
   color: var(--color-texto);
@@ -62,15 +72,26 @@ body {
 
 .titulo-pagina em,
 .titulo-secao em {
-  font-style: italic;
-  font-weight: 500;
-  color: var(--color-marrom);
+  font-family: var(--font-script);
+  font-style: normal;
+  font-weight: 400;
+  font-size: 1.28em;
+  line-height: 0.8;
+  letter-spacing: 0;
+  color: var(--color-azul);
+}
+
+.script {
+  font-family: var(--font-script);
+  font-weight: 400;
+  font-style: normal;
+  line-height: 1;
 }
 
 .titulo-secao {
   font-family: var(--font-titulo);
   font-weight: 600;
-  font-size: clamp(1.8rem, 3.6vw, 2.35rem);
+  font-size: clamp(1.45rem, 2.6vw, 1.8rem);
   line-height: 1.1;
   color: var(--color-marrom);
 }
@@ -78,7 +99,7 @@ body {
 .titulo-sub {
   font-family: var(--font-titulo);
   font-weight: 600;
-  font-size: 1.55rem;
+  font-size: 1.3rem;
   line-height: 1.15;
   color: var(--color-marrom);
 }
@@ -91,7 +112,7 @@ body {
 }
 
 .eyebrow {
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--color-texto-suave);
@@ -258,4 +279,183 @@ body {
 
 .anim-gaveta {
   animation: gaveta 0.35s var(--ease-suave) both;
+}
+
+
+/* ---------- Colagem: papel, festão, listras, carimbo, fita ---------- */
+
+/* listras azuis, de cor chapada (sem degradê) */
+.listras {
+  background-image: repeating-linear-gradient(90deg, var(--color-azul-claro) 0 14px, var(--color-azul-pastel) 14px 28px);
+}
+
+/* borda festonada: semicírculos pendurados na parte de baixo do bloco */
+.festao-baixo {
+  position: relative;
+  --festao: var(--color-superficie);
+}
+.festao-baixo::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -9px;
+  height: 10px;
+  background-image: radial-gradient(circle at 10px 0, var(--festao) 9.5px, transparent 10px);
+  background-size: 20px 10px;
+  background-repeat: repeat-x;
+  pointer-events: none;
+}
+
+/* festão vertical no lado direito (menu lateral) */
+.festao-direita {
+  position: relative;
+}
+.festao-direita::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: -9px;
+  width: 10px;
+  background-image: radial-gradient(circle at 0 10px, var(--festao, var(--color-superficie)) 9.5px, transparent 10px);
+  background-size: 10px 20px;
+  background-repeat: repeat-y;
+  pointer-events: none;
+}
+
+/* bilhete: cantos recortados. Use filter: drop-shadow (a sombra comum não segue o recorte). */
+.bilhete {
+  --n: 11px;
+  --c: var(--color-superficie);
+  background:
+    radial-gradient(circle at 0 0, transparent var(--n), var(--c) calc(var(--n) + 0.5px)) top left / 51% 51% no-repeat,
+    radial-gradient(circle at 100% 0, transparent var(--n), var(--c) calc(var(--n) + 0.5px)) top right / 51% 51% no-repeat,
+    radial-gradient(circle at 0 100%, transparent var(--n), var(--c) calc(var(--n) + 0.5px)) bottom left / 51% 51% no-repeat,
+    radial-gradient(circle at 100% 100%, transparent var(--n), var(--c) calc(var(--n) + 0.5px)) bottom right / 51% 51% no-repeat;
+  filter: drop-shadow(0 10px 14px rgb(75 46 30 / 0.14));
+}
+
+.nota-azul {
+  --c: var(--color-azul-claro);
+}
+.nota-mostarda {
+  --c: var(--color-mostarda);
+}
+.nota-pessego {
+  --c: var(--color-marrom-claro);
+}
+.nota-musgo {
+  --c: var(--color-musgo-claro);
+}
+.nota-papel {
+  --c: var(--color-superficie);
+}
+
+/* papel rasgado: bordas irregulares em cima e embaixo */
+.papel-rasgado {
+  background: var(--color-superficie);
+  clip-path: polygon(
+    0 2.2%, 3% 0.6%, 6% 2%, 9% 0.4%, 13% 1.8%, 17% 0.3%, 21% 1.6%, 26% 0.5%, 30% 2%, 35% 0.4%, 40% 1.7%, 45% 0.3%, 50% 1.9%,
+    55% 0.5%, 60% 1.8%, 65% 0.3%, 70% 2%, 75% 0.6%, 80% 1.7%, 85% 0.4%, 90% 2%, 94% 0.5%, 97% 1.8%, 100% 0.8%,
+    100% 97.8%, 96% 99.4%, 92% 98%, 88% 99.6%, 83% 98.2%, 78% 99.7%, 73% 98%, 68% 99.5%, 62% 98.1%, 57% 99.6%, 52% 98%, 47% 99.7%,
+    41% 98.2%, 36% 99.5%, 31% 98%, 26% 99.6%, 21% 98.1%, 16% 99.5%, 11% 98%, 6% 99.6%, 2% 98.2%, 0 99.4%
+  );
+}
+
+.sombra-papel {
+  filter: drop-shadow(0 12px 16px rgb(75 46 30 / 0.16));
+}
+
+/* foto/arte com moldura branca, levemente torta */
+.polaroid {
+  background: #fff;
+  padding: 7px 7px 16px;
+  border-radius: 3px;
+  box-shadow: var(--shadow-suave);
+  transform: rotate(var(--giro, -1.5deg));
+  transition: transform 0.4s var(--ease-suave), box-shadow 0.4s var(--ease-suave);
+}
+.polaroid:hover {
+  transform: rotate(0deg) translateY(-3px);
+  box-shadow: var(--shadow-elevada);
+}
+
+/* pedaço de fita adesiva */
+.fita {
+  position: relative;
+}
+.fita::before {
+  content: '';
+  position: absolute;
+  top: -9px;
+  left: 50%;
+  width: 64px;
+  height: 20px;
+  transform: translateX(-50%) rotate(var(--giro-fita, -3deg));
+  background: rgb(241 230 176 / 0.8);
+  box-shadow: 0 1px 2px rgb(75 46 30 / 0.12);
+  z-index: 2;
+}
+
+/* pasta com orelha, como as do site de referência */
+.pasta {
+  position: relative;
+  --cor: var(--color-azul);
+  background: color-mix(in srgb, var(--cor) 24%, var(--color-superficie));
+  border-radius: 6px 18px 18px 18px;
+  filter: drop-shadow(0 10px 12px rgb(75 46 30 / 0.12));
+  transition: transform 0.35s var(--ease-suave), filter 0.35s var(--ease-suave);
+}
+.pasta::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: -13px;
+  width: 42%;
+  height: 16px;
+  background: color-mix(in srgb, var(--cor) 24%, var(--color-superficie));
+  border-radius: 12px 12px 0 0;
+}
+.pasta:hover {
+  transform: translateY(-5px) rotate(-0.4deg);
+  filter: drop-shadow(0 16px 18px rgb(75 46 30 / 0.2));
+}
+
+/* faixa de texto que rola devagar */
+@keyframes rolar {
+  to {
+    transform: translateX(-50%);
+  }
+}
+.ticker {
+  overflow: hidden;
+  white-space: nowrap;
+}
+.ticker-trilho {
+  display: inline-flex;
+  animation: rolar 55s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ticker-trilho {
+    animation: none !important;
+    transform: none !important;
+  }
+}
+
+/* inclinação leve de cartões colados, que se endireitam ao passar o mouse */
+.inclina {
+  transform: rotate(var(--giro, 0deg));
+  transition: transform 0.35s var(--ease-suave);
+}
+.inclina:hover,
+.inclina:focus-visible {
+  transform: rotate(0deg) translateY(-4px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .inclina {
+    transform: none !important;
+  }
 }

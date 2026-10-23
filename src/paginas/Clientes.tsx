@@ -65,24 +65,24 @@ export default function Clientes() {
         </ul>
       )}
       {clientes?.length === 0 && <p className="text-texto-suave">Nenhum cliente cadastrado ainda.</p>}
-      <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <ul className="grid gap-x-6 gap-y-9 pt-4 sm:grid-cols-2 lg:grid-cols-3">
         {visiveis.map((c, n) => (
           <li key={c.id} className="anim-entrar" style={{ '--i': n } as CSSProperties}>
             <Link
               to={`/app/clientes/${c.id}`}
-              className="group relative flex h-full min-h-44 flex-col gap-4 overflow-hidden rounded-md border border-linha bg-superficie p-5 pt-6 shadow-suave transition duration-300 hover:-translate-y-1 hover:border-marrom hover:shadow-elevada"
+              className="pasta group flex min-h-44 flex-col gap-4 p-5 pt-6"
+              style={{ '--cor': c.cor_destaque } as CSSProperties}
             >
-              <span aria-hidden className="absolute inset-x-0 top-0 h-1 transition-all duration-300 group-hover:h-2" style={{ background: c.cor_destaque }} />
-              <span className="flex items-center gap-3">
+              <span className="flex items-center gap-4">
                 <span
                   aria-hidden
-                  className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-base font-medium transition-transform duration-300 group-hover:scale-110"
-                  style={{ background: c.cor_destaque, color: textoSobre(c.cor_destaque) }}
+                  className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-base font-medium outline-[3px] outline-offset-[3px] outline-dotted transition-transform duration-300 group-hover:scale-105"
+                  style={{ background: c.cor_destaque, color: textoSobre(c.cor_destaque), outlineColor: c.cor_destaque }}
                 >
                   {iniciais(c.nome)}
                 </span>
                 <span className="min-w-0">
-                  <span className="block truncate font-titulo text-3xl font-semibold leading-tight text-texto">{c.nome}</span>
+                  <span className="block truncate font-titulo text-2xl font-semibold leading-tight text-texto">{c.nome}</span>
                   {c.instagram && <span className="block truncate text-sm text-texto-suave">{c.instagram}</span>}
                 </span>
               </span>
@@ -92,7 +92,7 @@ export default function Clientes() {
                   <span aria-hidden className={`h-2 w-2 rounded-full ${c.status === 'ativo' ? 'bg-musgo' : c.status === 'pausado' ? 'bg-linha' : 'bg-marrom'}`} />
                   {STATUS_ROTULO[c.status]}
                 </span>
-                <span aria-hidden className="text-base transition-transform duration-300 group-hover:translate-x-1 group-hover:text-marrom">
+                <span aria-hidden className="text-base transition-transform duration-300 group-hover:translate-x-1 group-hover:text-azul">
                   &rarr;
                 </span>
               </span>

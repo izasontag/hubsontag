@@ -43,14 +43,15 @@ export default function VersiculoDoDia() {
   }
 
   return (
-    <section aria-label="Versículo do dia" className="relative overflow-hidden rounded-md border border-linha bg-superficie p-6 shadow-suave">
-      <span aria-hidden className="pointer-events-none absolute -left-1 -top-10 select-none font-titulo text-[8rem] leading-none text-areia">
-        &ldquo;
-      </span>
-      <div className="relative">
-        <p className="eyebrow mb-3">Versículo do dia</p>
+    <section aria-label="Versículo do dia" className="sombra-papel fita inclina" style={{ '--giro': '-0.8deg', '--giro-fita': '2deg' } as React.CSSProperties}>
+      <div className="papel-rasgado relative overflow-hidden px-7 pb-9 pt-10">
+        <span aria-hidden className="script pointer-events-none absolute -left-1 -top-2 select-none text-[9rem] leading-none text-azul-claro">
+          &ldquo;
+        </span>
+        <div className="relative">
+        <p className="script mb-2 text-2xl text-azul">Versículo do dia</p>
         <blockquote key={hoje.referencia} className="anim-entrar">
-          <p className="font-titulo text-2xl font-medium italic leading-snug text-texto">{hoje.texto}</p>
+          <p className="font-titulo text-xl font-medium italic leading-snug text-texto">{hoje.texto}</p>
           <footer className="mt-4 text-sm text-texto-suave">
             <cite className="not-italic">{hoje.referencia}</cite>
           </footer>
@@ -93,6 +94,7 @@ export default function VersiculoDoDia() {
             )}
           </div>
         )}
+        </div>
       </div>
     </section>
   )

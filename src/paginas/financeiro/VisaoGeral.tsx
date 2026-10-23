@@ -114,7 +114,7 @@ export default function VisaoGeral({ mes, onMes }: { mes: string; onMes: (m: str
           {tiles.map((t) => (
             <li key={t.rotulo} className={`rounded-md border p-5 shadow-suave ${t.alerta ? 'border-marrom bg-marrom-claro' : 'border-linha bg-superficie'}`}>
               <p className="eyebrow">{t.rotulo}</p>
-              <p className="numeros-grandes mt-3 text-4xl font-medium leading-none">{reaisInteiro(t.valor)}</p>
+              <p className="numeros-grandes mt-3 text-3xl font-medium leading-none">{reaisInteiro(t.valor)}</p>
               {t.nota && <p className="mt-2 text-xs text-texto-suave">{t.nota}</p>}
             </li>
           ))}

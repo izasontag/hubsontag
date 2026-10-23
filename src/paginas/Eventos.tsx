@@ -26,12 +26,12 @@ function CartaoEvento({ e, destaque, indice }: { e: EventoComChecklist; destaque
         className={`group flex h-full gap-5 rounded-md border bg-superficie p-5 shadow-suave transition duration-300 hover:-translate-y-1 hover:border-marrom hover:shadow-elevada ${destaque ? 'border-marrom bg-marrom-claro' : 'border-linha'} ${passado ? 'opacity-80' : ''}`}
       >
         <span className="flex w-16 shrink-0 flex-col items-center justify-center rounded-sm border border-linha bg-superficie py-2 text-center">
-          <span className="numeros-grandes text-3xl font-medium leading-none">{dia}</span>
+          <span className="numeros-grandes text-2xl font-medium leading-none">{dia}</span>
           <span className="eyebrow mt-1 !tracking-[0.12em]">{MESES[Number(mes) - 1]}</span>
           <span className="text-[10px] text-texto-suave">{ano}</span>
         </span>
         <span className="min-w-0 flex-1 space-y-2">
-          <span className="block font-titulo text-3xl font-semibold leading-tight">{e.nome}</span>
+          <span className="block font-titulo text-2xl font-semibold leading-tight">{e.nome}</span>
           <span className="block text-sm text-texto-suave">
             {e.tipo === 'casamento' ? 'Casamento' : 'Evento'}
             {e.local && ` · ${e.local}`} · {contagem(e.data_evento)}

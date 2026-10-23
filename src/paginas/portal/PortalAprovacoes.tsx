@@ -51,15 +51,17 @@ function BlocoRodada({ rodada, posts, aberta }: { rodada: PortalRodada; posts: P
 
   return (
     <details open={aberta} className="space-y-6">
-      <summary className="flex min-h-11 cursor-pointer list-none flex-wrap items-center justify-between gap-2 rounded-md border border-linha bg-superficie p-4 shadow-suave">
+      <summary className="listras min-h-11 cursor-pointer list-none rounded-md border border-linha p-3 shadow-suave">
+        <span className="flex flex-wrap items-center justify-between gap-2 rounded-sm bg-superficie p-4">
         <span>
-          <span className="block font-titulo text-2xl font-semibold text-texto">{rodada.titulo}</span>
+          <span className="block font-titulo text-xl font-semibold text-texto">{rodada.titulo}</span>
           <span className="block text-sm text-texto-suave">
             {periodo && `${periodo} · `}enviada em {formatarData(rodada.enviada_em.slice(0, 10))}
           </span>
         </span>
-        <span className="text-sm text-texto-suave">
+        <span className="script text-2xl text-azul">
           {pendentes.length > 0 ? `${pendentes.length} esperando você` : 'Tudo respondido'}
+        </span>
         </span>
       </summary>
       <div className="mt-4 space-y-2">

@@ -31,7 +31,7 @@ export default function PortalInicio() {
             {dados.objetivo && (
               <div>
                 <p className="eyebrow mb-1">Objetivo</p>
-                <p className="whitespace-pre-wrap font-titulo text-2xl leading-snug">{dados.objetivo}</p>
+                <p className="whitespace-pre-wrap font-titulo text-xl leading-snug">{dados.objetivo}</p>
               </div>
             )}
             {dados.suporte && (

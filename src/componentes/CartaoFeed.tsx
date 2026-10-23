@@ -56,7 +56,7 @@ export default function CartaoFeed({ cliente, post, topo, children }: Props) {
       </header>
       <CarrosselMidias midias={post.midias} titulo={titulo} />
       <div className="space-y-3 p-4">
-        {post.tema && <h3 className="font-titulo text-2xl font-semibold leading-tight text-texto">{post.tema}</h3>}
+        {post.tema && <h3 className="font-titulo text-xl font-semibold leading-tight text-texto">{post.tema}</h3>}
         {legenda && (
           <div>
             <p className={`whitespace-pre-wrap text-sm leading-relaxed ${!aberta && longa ? 'line-clamp-4' : ''}`}>{legenda}</p>

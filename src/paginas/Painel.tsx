@@ -3,6 +3,7 @@ import type { CSSProperties } from 'react'
 import { Link } from 'react-router-dom'
 import { NumeroAnimado, Revelar } from '../componentes/animacao'
 import AtalhosPainel from '../componentes/AtalhosPainel'
+import { Carimbo, giro, Ticker } from '../componentes/Decor'
 import { MiniaturaMidia } from '../componentes/Midias'
 import { SeloStatus } from '../componentes/Selos'
 import { btnPrimario, btnSecundario, CabecalhoPagina, Cartao, formatarData } from '../componentes/ui'
@@ -88,21 +89,23 @@ export default function Painel() {
   const dataLonga = agora.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' })
   const primeiroNome = perfil?.nome.split(' ')[0] ?? ''
 
-  const indicadores: { rotulo: string; valor: number | null; para: string; destaque?: boolean }[] = [
-    { rotulo: 'Clientes ativos', valor: ativos, para: '/app/clientes' },
-    { rotulo: 'Esperando aprovação do cliente', valor: aguardando, para: '/app/calendario' },
-    { rotulo: 'Ajustes pedidos', valor: ajustes, para: '/app/calendario', destaque: (ajustes ?? 0) > 0 },
-    { rotulo: 'Tarefas atrasadas', valor: atrasadas, para: '/app/tarefas', destaque: (atrasadas ?? 0) > 0 },
+  // cada indicador é um bilhete colorido, colado de leve torto
+  const indicadores: { rotulo: string; valor: number | null; para: string; nota: string }[] = [
+    { rotulo: 'Clientes ativos', valor: ativos, para: '/app/clientes', nota: 'nota-azul' },
+    { rotulo: 'Esperando aprovação do cliente', valor: aguardando, para: '/app/calendario', nota: 'nota-papel' },
+    { rotulo: 'Ajustes pedidos', valor: ajustes, para: '/app/calendario', nota: 'nota-pessego' },
+    { rotulo: 'Tarefas atrasadas', valor: atrasadas, para: '/app/tarefas', nota: 'nota-mostarda' },
     ...(dona
       ? [
-          { rotulo: 'Cobranças atrasadas', valor: cobrancasAtrasadas, para: '/app/financeiro?aba=cobrancas', destaque: (cobrancasAtrasadas ?? 0) > 0 },
-          { rotulo: 'Contratos vencendo em 30 dias', valor: contratosVencendo, para: '/app/financeiro?aba=contratos', destaque: (contratosVencendo ?? 0) > 0 },
+          { rotulo: 'Cobranças atrasadas', valor: cobrancasAtrasadas, para: '/app/financeiro?aba=cobrancas', nota: 'nota-musgo' },
+          { rotulo: 'Contratos vencendo em 30 dias', valor: contratosVencendo, para: '/app/financeiro?aba=contratos', nota: 'nota-azul' },
         ]
       : []),
   ]
 
   return (
     <div className="space-y-10">
+      <Ticker itens={['Storymaker & Marketing', 'Sontag Media', 'Cada história, com cuidado']} className="rounded-full bg-azul-claro py-2 text-[0.7rem] tracking-[0.25em] text-azul-escuro" />
       <CabecalhoPagina
         rotulo={`Storymaker & Marketing · ${dataLonga}`}
         titulo={
@@ -130,21 +133,18 @@ export default function Painel() {
           {proximoEvento && (
             <Link
               to={`/app/eventos/${proximoEvento.id}`}
-              className="anim-entrar group block space-y-2 rounded-md border border-marrom bg-marrom-claro p-5 shadow-suave transition duration-300 hover:-translate-y-0.5 hover:shadow-elevada"
+              className="bilhete nota-pessego anim-entrar inclina group relative block space-y-2 p-6"
+              style={giro(1)}
             >
+              <Carimbo iniciais="&" className="absolute right-4 top-4 h-16 w-auto -rotate-6 text-marrom/40" />
               <span className="eyebrow block">Próximo evento</span>
-              <span className="block font-titulo text-3xl font-semibold leading-tight">{proximoEvento.nome}</span>
+              <span className="block max-w-[80%] font-titulo text-2xl font-semibold leading-tight">{proximoEvento.nome}</span>
               <span className="flex items-center justify-between gap-3 text-sm text-texto-suave">
                 <span>
                   {formatarData(proximoEvento.data_evento)}
                   {proximoEvento.local && ` · ${proximoEvento.local}`}
                 </span>
-                <span className="flex items-center gap-2 text-base text-marrom">
-                  {contagem(proximoEvento.data_evento)}
-                  <span aria-hidden className="transition-transform duration-300 group-hover:translate-x-1">
-                    &rarr;
-                  </span>
-                </span>
+                <span className="script text-2xl text-azul-escuro">{contagem(proximoEvento.data_evento)}</span>
               </span>
             </Link>
           )}
@@ -178,18 +178,13 @@ export default function Painel() {
           <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {indicadores.map((i, n) => (
               <li key={i.rotulo} className="anim-entrar" style={{ '--i': n + 1 } as CSSProperties}>
-                <Link
-                  to={i.para}
-                  className={`group flex h-full flex-col justify-between gap-6 rounded-md border bg-superficie p-5 shadow-suave transition duration-300 hover:-translate-y-1 hover:shadow-elevada ${
-                    i.destaque ? 'border-marrom bg-marrom-claro' : 'border-linha'
-                  }`}
-                >
-                  <span className="eyebrow">{i.rotulo}</span>
+                <Link to={i.para} className={`bilhete ${i.nota} inclina group flex h-full min-h-32 flex-col justify-between gap-4 p-5`} style={giro(n)}>
+                  <span className="eyebrow !text-texto">{i.rotulo}</span>
                   <span className="flex items-end justify-between">
-                    <span className="numeros-grandes text-6xl font-medium leading-none text-texto">
+                    <span className="numeros-grandes text-4xl font-medium leading-none text-texto">
                       <NumeroAnimado valor={i.valor} />
                     </span>
-                    <span aria-hidden className="pb-1 text-xl text-texto-suave transition-transform duration-300 group-hover:translate-x-1 group-hover:text-marrom">
+                    <span aria-hidden className="pb-1 text-xl text-texto-suave transition-transform duration-300 group-hover:translate-x-1">
                       &rarr;
                     </span>
                   </span>
@@ -214,15 +209,16 @@ export default function Painel() {
                   <Revelar ordem={n}>
                     <Link
                       to={`/app/clientes/${p.cliente_id}?aba=calendario`}
-                      className="flex items-center gap-4 rounded-md border border-linha bg-superficie p-3 shadow-suave transition duration-300 hover:-translate-y-0.5 hover:border-marrom hover:shadow-elevada"
-                      style={{ borderLeft: `4px solid ${p.cliente?.cor_destaque ?? '#5C6B47'}` }}
+                      className="flex items-center gap-4 rounded-md border border-linha bg-superficie p-3 shadow-suave transition duration-300 hover:-translate-y-0.5 hover:border-azul hover:shadow-elevada"
                     >
-                      <MiniaturaMidia midias={p.post_midias.map(paraVista)} alt="" className="h-16 w-16 shrink-0 rounded-sm" />
+                      <span className="polaroid fita shrink-0" style={giro(n + 2)}>
+                        <MiniaturaMidia midias={p.post_midias.map(paraVista)} alt="" className="h-16 w-16 rounded-[2px]" />
+                      </span>
                       <span className="min-w-0 flex-1">
                         <span className="block truncate text-xs text-texto-suave">
                           {p.cliente?.nome} · {formatarData(p.data_publicacao).slice(0, 5)}
                         </span>
-                        <span className="block truncate font-titulo text-xl font-semibold">{p.tema || 'Post sem título'}</span>
+                        <span className="block truncate font-titulo text-lg font-semibold">{p.tema || 'Post sem título'}</span>
                         <SeloStatus status={p.status} />
                       </span>
                     </Link>

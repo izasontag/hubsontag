@@ -1,13 +1,13 @@
 import type { ReactNode } from 'react'
 
 export const inputCls =
-  'min-h-11 w-full rounded-sm border border-linha bg-superficie px-3 py-2 text-texto transition-[border-color,box-shadow] duration-200 placeholder:text-texto-suave hover:border-texto-suave focus:border-marrom focus:outline-none focus:ring-2 focus:ring-marrom/25'
+  'min-h-11 w-full rounded-sm border border-linha bg-superficie px-3 py-2 text-texto transition-[border-color,box-shadow] duration-200 placeholder:text-texto-suave hover:border-texto-suave focus:border-azul focus:outline-none focus:ring-2 focus:ring-azul/25'
 
 export const btnPrimario =
-  'inline-flex min-h-11 cursor-pointer items-center justify-center rounded-sm bg-marrom px-5 text-sm font-medium tracking-wide text-superficie shadow-suave transition duration-200 hover:-translate-y-px hover:shadow-elevada active:translate-y-0 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0'
+  'inline-flex min-h-11 cursor-pointer items-center justify-center rounded-full bg-azul px-6 text-sm font-medium tracking-wide text-superficie shadow-suave transition duration-200 hover:-translate-y-px hover:shadow-elevada active:translate-y-0 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0'
 
 export const btnSecundario =
-  'inline-flex min-h-11 cursor-pointer items-center justify-center rounded-sm border border-linha bg-superficie px-5 text-sm text-texto transition duration-200 hover:-translate-y-px hover:border-marrom hover:shadow-suave active:translate-y-0 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0'
+  'inline-flex min-h-11 cursor-pointer items-center justify-center rounded-full border border-linha bg-superficie px-6 text-sm text-texto transition duration-200 hover:-translate-y-px hover:border-azul hover:shadow-suave active:translate-y-0 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0'
 
 export function Campo({ rotulo, children }: { rotulo: string; children: ReactNode }) {
   return (
