@@ -58,7 +58,7 @@ export default function EventoPagina() {
         <>
           <header className="anim-entrar space-y-2">
             <p className="eyebrow">
-              Evento · {STATUS_EVENTO_ROTULO[evento.status]}
+              {evento.categoria ?? 'Evento'} · {STATUS_EVENTO_ROTULO[evento.status]}
             </p>
             <h1 className="titulo-pagina">{evento.nome}</h1>
             <p className="text-texto-suave">

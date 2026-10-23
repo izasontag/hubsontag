@@ -50,7 +50,11 @@ export default function Painel() {
 
   useEffect(() => {
     const hoje = dataDeHoje()
-    supabase.from('clientes').select('id', { count: 'exact', head: true }).eq('status', 'ativo').then(({ count }) => setAtivos(count ?? 0))
+    // clientes de eventos em andamento contam como clientes ativos
+    Promise.all([
+      supabase.from('clientes').select('id', { count: 'exact', head: true }).eq('status', 'ativo'),
+      supabase.from('eventos').select('id', { count: 'exact', head: true }).in('status', ['em_negociacao', 'contrato_assinado', 'em_andamento']),
+    ]).then(([c, e]) => setAtivos((c.count ?? 0) + (e.count ?? 0)))
     supabase.from('posts').select('id', { count: 'exact', head: true }).eq('status', 'em_aprovacao').then(({ count }) => setAguardando(count ?? 0))
     supabase.from('posts').select('id', { count: 'exact', head: true }).eq('status', 'ajuste_pedido').then(({ count }) => setAjustes(count ?? 0))
     supabase.from('tarefas').select('id', { count: 'exact', head: true }).neq('status', 'feito').lt('data', hoje).then(({ count }) => setAtrasadas(count ?? 0))

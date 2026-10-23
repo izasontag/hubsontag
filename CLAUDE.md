@@ -131,9 +131,9 @@ Nomes de tabelas e colunas em português, sem acento, em `snake_case`. Toda tabe
 
 ### Eventos (trabalho de storymaker, separado dos clientes de social media)
 
-Eventos têm clientes próprios (casais, aniversariantes, empresas), que **não** são linhas da tabela `clientes`.
+Eventos têm clientes próprios (casais, aniversariantes, empresas), que **não** são linhas da tabela `clientes`, mas **contam como clientes**: aparecem na tela Clientes (seção "Clientes de eventos", somados na contagem) e entram em "Clientes ativos" do painel (negociação, contrato assinado ou em andamento).
 
-- **eventos**: `nome` (casal ou cliente), `tipo` (`casamento`, `evento`), `data_evento`, `horario`, `local`, `contato`, `status` (`em_negociacao`, `contrato_assinado`, `em_andamento`, `realizado`, `entregue`, `cancelado`), `contrato_storage` (arquivo do contrato), `observacoes`
+- **eventos**: `nome` (casal ou cliente), `tipo` (`casamento`, `evento`, legado), `categoria` (texto livre escolhido pela dona: Casamento, Aniversário, Formatura, Corporativo... com sugestões; migração `011_categoria_evento.sql`), `data_evento`, `horario`, `local`, `contato`, `status` (`em_negociacao`, `contrato_assinado`, `em_andamento`, `realizado`, `entregue`, `cancelado`), `contrato_storage` (arquivo do contrato), `observacoes`
 - **evento_checklist**: `evento_id`, `titulo`, `concluido`, `concluido_em`, `prazo`, `ordem`. Todo evento novo nasce com um checklist padrão editável: assinatura do contrato, pagamento da entrada, reunião de alinhamento, questionário ou lista de momentos importantes, visita ao local e cronograma do dia, confirmação final uma semana antes, cobertura do evento, entrega prévia, entrega final, pagamento do saldo
 - **evento_parcelas** (só dona): `evento_id`, `descricao` (entrada, parcela 2, saldo), `vencimento`, `valor`, `status` (`a_vencer`, `pago`, `atrasado`), `pago_em`. O valor total do evento é a soma das parcelas
 - **equipe_eventos**: `perfil_id`, `evento_id` (quais eventos cada pessoa da equipe acompanha)

@@ -5,7 +5,7 @@ import { Aviso, btnPrimario, btnSecundario, CabecalhoPagina, Campo, Cartao, Esqu
 import { useAuth } from '../lib/auth'
 import { contagem, dataDeHoje, diasAte } from '../lib/datas'
 import { supabase } from '../lib/supabase'
-import { STATUS_EVENTO_ROTULO } from '../lib/tipos'
+import { CATEGORIAS_EVENTO, STATUS_EVENTO_ROTULO } from '../lib/tipos'
 import type { Evento } from '../lib/tipos'
 
 type EventoComChecklist = Evento & { evento_checklist: { concluido: boolean }[] }
@@ -33,7 +33,7 @@ function CartaoEvento({ e, destaque, indice }: { e: EventoComChecklist; destaque
         <span className="min-w-0 flex-1 space-y-2">
           <span className="block font-titulo text-2xl font-semibold leading-tight">{e.nome}</span>
           <span className="block text-sm text-texto-suave">
-            {e.local ? `${e.local} · ` : ''}{contagem(e.data_evento)}
+            {[e.categoria, e.local].filter(Boolean).join(' · ')}{e.categoria || e.local ? ' · ' : ''}{contagem(e.data_evento)}
           </span>
           <span className="flex items-center gap-3 text-xs text-texto-suave">
             <span className="h-1.5 flex-1 rounded-sm bg-areia" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100} aria-label={`Checklist de ${e.nome}: ${feitos} de ${total}`}>
@@ -56,7 +56,7 @@ export default function Eventos() {
   const dona = perfil?.papel === 'dona'
   const [eventos, setEventos] = useState<EventoComChecklist[] | null>(null)
   const [erro, setErro] = useState('')
-  const [form, setForm] = useState<{ nome: string; tipo: 'casamento' | 'evento'; data: string; horario: string; local: string; contato: string } | null>(null)
+  const [form, setForm] = useState<{ nome: string; categoria: string; data: string; horario: string; local: string; contato: string } | null>(null)
 
   useEffect(() => {
     supabase
@@ -77,7 +77,8 @@ export default function Eventos() {
       .from('eventos')
       .insert({
         nome: form.nome.trim(),
-        tipo: form.tipo,
+        tipo: form.categoria.trim().toLowerCase() === 'casamento' ? 'casamento' : 'evento',
+        categoria: form.categoria.trim(),
         data_evento: form.data,
         horario: form.horario || null,
         local: form.local.trim() || null,
@@ -100,7 +101,7 @@ export default function Eventos() {
         titulo="Eventos"
         acoes={
           dona ? (
-            <button className={btnPrimario} onClick={() => setForm({ nome: '', tipo: 'evento', data: hoje, horario: '', local: '', contato: '' })}>
+            <button className={btnPrimario} onClick={() => setForm({ nome: '', categoria: 'Casamento', data: hoje, horario: '', local: '', contato: '' })}>
               Novo evento
             </button>
           ) : undefined
@@ -113,6 +114,14 @@ export default function Eventos() {
             <div className="grid gap-4 sm:grid-cols-2">
               <Campo rotulo="Nome do evento ou do cliente">
                 <input required className={inputCls} value={form.nome} onChange={(e) => setForm({ ...form, nome: e.target.value })} />
+              </Campo>
+<Campo rotulo="Que tipo de evento é?">
+                <input required list="tipos-evento" maxLength={60} className={inputCls} value={form.categoria} onChange={(e) => setForm({ ...form, categoria: e.target.value })} placeholder="Casamento, aniversário, formatura..." />
+                <datalist id="tipos-evento">
+                  {CATEGORIAS_EVENTO.map((c) => (
+                    <option key={c} value={c} />
+                  ))}
+                </datalist>
               </Campo>
               <Campo rotulo="Data do evento">
                 <input type="date" required className={inputCls} value={form.data} onChange={(e) => setForm({ ...form, data: e.target.value })} />

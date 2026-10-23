@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { Aviso, btnPrimario, btnSecundario, Campo, Cartao, inputCls, Titulo } from '../../componentes/ui'
 import { useAuth } from '../../lib/auth'
 import { supabase } from '../../lib/supabase'
-import { STATUS_EVENTO, STATUS_EVENTO_ROTULO } from '../../lib/tipos'
+import { CATEGORIAS_EVENTO, STATUS_EVENTO, STATUS_EVENTO_ROTULO } from '../../lib/tipos'
 import type { Evento, StatusEvento } from '../../lib/tipos'
 
 const LIMITE = 50 * 1024 * 1024
@@ -13,7 +13,7 @@ export default function DadosEvento({ evento, onChange }: { evento: Evento; onCh
   const { perfil } = useAuth()
   const navegar = useNavigate()
   const [nome, setNome] = useState(evento.nome)
-  const [tipo] = useState(evento.tipo)
+  const [categoria, setCategoria] = useState(evento.categoria ?? (evento.tipo === 'casamento' ? 'Casamento' : 'Evento'))
   const [data, setData] = useState(evento.data_evento)
   const [horario, setHorario] = useState(evento.horario?.slice(0, 5) ?? '')
   const [local, setLocal] = useState(evento.local ?? '')
@@ -31,7 +31,8 @@ export default function DadosEvento({ evento, onChange }: { evento: Evento; onCh
       .from('eventos')
       .update({
         nome: nome.trim(),
-        tipo,
+        tipo: categoria.trim().toLowerCase() === 'casamento' ? 'casamento' : 'evento',
+        categoria: categoria.trim(),
         data_evento: data,
         horario: horario || null,
         local: local.trim() || null,
@@ -88,6 +89,14 @@ export default function DadosEvento({ evento, onChange }: { evento: Evento; onCh
             <Campo rotulo="Nome do evento ou do cliente">
               <input required className={inputCls} value={nome} onChange={(e) => setNome(e.target.value)} />
             </Campo>
+<Campo rotulo="Que tipo de evento é?">
+            <input required list="tipos-evento" maxLength={60} className={inputCls} value={categoria} onChange={(e) => setCategoria(e.target.value)} placeholder="Casamento, aniversário, formatura..." />
+              <datalist id="tipos-evento">
+                {CATEGORIAS_EVENTO.map((c) => (
+                  <option key={c} value={c} />
+                ))}
+              </datalist>
+              </Campo>
             <Campo rotulo="Data do evento">
               <input type="date" required className={inputCls} value={data} onChange={(e) => setData(e.target.value)} />
             </Campo>

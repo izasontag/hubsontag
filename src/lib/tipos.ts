@@ -528,6 +528,7 @@ export interface Evento {
   id: string
   nome: string
   tipo: 'casamento' | 'evento'
+  categoria: string | null
   data_evento: string
   horario: string | null
   local: string | null
@@ -617,3 +618,6 @@ export interface Roteiro {
   arquivo_storage: string | null
   arquivo_nome: string | null
 }
+
+// Sugestões para "Que tipo de evento é?" (a dona também pode escrever outro).
+export const CATEGORIAS_EVENTO = ['Casamento', 'Aniversário', 'Debutante', 'Formatura', 'Corporativo', 'Batizado', 'Chá de bebê', 'Noivado', 'Show', 'Outro']
