@@ -64,6 +64,7 @@ Princípios:
 | --- | --- |
 | `dona` (eu) | Tudo, incluindo o financeiro da agência e o financeiro pessoal |
 | `equipe` | Clientes em que trabalha, calendários, manuais e banco de ideias desses clientes. **Nunca** vê financeiro |
+| `equipe` (eventos) | Nos eventos em que está atribuída: dados, contrato e checklist. **Nunca** vê valores nem parcelas do evento |
 | Cliente (sem conta) | Não tem login. Abre o link secreto do próprio portal e vê só: posts a partir do status "Em aprovação", calendário, manual da marca, materiais e relatórios. Pode aprovar, pedir ajuste e comentar |
 
 O papel de `dona` e `equipe` fica na tabela `perfis`. Clientes não têm conta nem perfil. As regras de RLS devem refletir exatamente esta tabela.
@@ -120,6 +121,18 @@ Nomes de tabelas e colunas em português, sem acento, em `snake_case`. Toda tabe
 - **financas_pessoais**: `data`, `tipo` (`entrada`, `saida`), `categoria` (pró-labore, contas fixas, lazer etc.), `descricao`, `valor`
 - **metas_pessoais**: `nome`, `valor_meta`, `valor_atual`, `prazo`
 
+### Eventos e casamentos (trabalho de storymaker, separado dos clientes de social media)
+
+Eventos têm clientes próprios (casais, aniversariantes, empresas), que **não** são linhas da tabela `clientes`.
+
+- **eventos**: `nome` (casal ou cliente), `tipo` (`casamento`, `evento`), `data_evento`, `horario`, `local`, `contato`, `status` (`em_negociacao`, `contrato_assinado`, `em_andamento`, `realizado`, `entregue`, `cancelado`), `contrato_storage` (arquivo do contrato), `observacoes`
+- **evento_checklist**: `evento_id`, `titulo`, `concluido`, `concluido_em`, `prazo`, `ordem`. Todo evento novo nasce com um checklist padrão editável: assinatura do contrato, pagamento da entrada, reunião de alinhamento, questionário ou lista de momentos importantes, visita ao local e cronograma do dia, confirmação final uma semana antes, cobertura do evento, entrega prévia, entrega final, pagamento do saldo
+- **evento_parcelas** (só dona): `evento_id`, `descricao` (entrada, parcela 2, saldo), `vencimento`, `valor`, `status` (`a_vencer`, `pago`, `atrasado`), `pago_em`. O valor total do evento é a soma das parcelas
+- **equipe_eventos**: `perfil_id`, `evento_id` (quais eventos cada pessoa da equipe acompanha)
+- Arquivos: bucket privado `eventos`, caminho `<id do evento>/<arquivo>`, mesmas regras de acesso do evento
+
+Segurança: dona vê e faz tudo. Equipe lê e edita só os eventos atribuídos (dados, contrato, checklist), nunca `evento_parcelas`. Ninguém sem login vê nada de eventos.
+
 ### Ideias e materiais
 
 - **ideias**: `texto`, `tipo` (ideia de post, referência visual, filme, livro, trend, formato que funcionou), `cliente_id` (vazio = geral), `para_sontag` (sim/não), `tags` (lista), `fonte` (link ou anotação), `post_id` (post que nasceu desta ideia)
@@ -153,6 +166,7 @@ Nomes de tabelas e colunas em português, sem acento, em `snake_case`. Toda tabe
 - **Calendário geral** (`/app/calendario`): todos os clientes no mesmo mês, filtro por cliente e por tag, e uma visão em quadro (kanban) por status
 - **Financeiro** (`/app/financeiro`, só dona): abas Agência (contratos, cobranças, despesas, avulsos, indicadores) e Pessoal (lançamentos, metas, resumo do mês)
 - **Ideias** (`/app/ideias`): captura rápida (um campo no topo, ótimo no celular), filtros por tipo, cliente e tag, botão "Virar post" que cria o post com status `ideia`
+- **Eventos** (`/app/eventos`): lista dos eventos por data, com a próxima data em destaque e o progresso do checklist (ex.: 4 de 10). Ficha do evento (`/app/eventos/:id`) com abas **Dados e contrato** (upload do contrato, data, local, contato, status), **Checklist** (marcar, editar, adicionar itens, prazo, o que está atrasado) e **Pagamentos** (parcelas e vencimentos, só dona)
 - **Equipe** (`/app/equipe`, só dona): convidar pessoas e definir quais clientes cada uma atende
 
 ### Calendário mensal do cliente (a tela mais importante)
@@ -211,9 +225,14 @@ Construa uma fase por vez. Cada fase precisa estar funcionando e publicada antes
 - Páginas do portal, aprovação com registro de data e hora, comentários e prévia do feed.
 - **Pronto quando:** um cliente de teste abre o link, vê só os posts dele, aprova um e pede ajuste em outro, e eu vejo isso na área interna.
 
+### Fase 3B: eventos e casamentos
+
+- Eventos, ficha, upload do contrato, checklist padrão editável, parcelas (só dona) e atribuição da equipe, com RLS.
+- **Pronto quando:** eu cadastro um casamento com data, subo o contrato, marco o checklist e registro as parcelas, e uma conta de equipe de teste vê o evento atribuído mas não os valores.
+
 ### Fase 4: financeiro
 
-- Financeiro da agência (contratos, cobranças, despesas, avulsos, indicadores do mês).
+- Financeiro da agência (contratos, cobranças, despesas, avulsos, indicadores do mês). A receita prevista e recebida inclui as parcelas dos eventos (`evento_parcelas`).
 - Financeiro pessoal (lançamentos, metas, resumo).
 - **Pronto quando:** eu vejo receita prevista e recebida do mês, cobranças atrasadas e meu resumo pessoal, e uma conta de equipe de teste não consegue ver nada disso.
 
