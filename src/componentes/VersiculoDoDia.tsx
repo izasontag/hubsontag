@@ -45,7 +45,7 @@ export default function VersiculoDoDia() {
   return (
     <section aria-label="Versículo do dia" className="sombra-papel fita inclina" style={{ '--giro': '-0.8deg', '--giro-fita': '2deg' } as React.CSSProperties}>
       <div className="papel-rasgado relative overflow-hidden px-7 pb-9 pt-10">
-        <span aria-hidden className="script pointer-events-none absolute -left-1 -top-2 select-none text-[9rem] leading-none text-azul-claro">
+        <span aria-hidden className="pointer-events-none absolute -left-1 -top-3 select-none font-titulo text-[8rem] leading-none text-azul-claro">
           &ldquo;
         </span>
         <div className="relative">

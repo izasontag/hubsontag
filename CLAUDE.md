@@ -47,7 +47,7 @@ Princípios:
 
 - **Visual vintage / colagem em tons terrosos** (atualizado): papel creme, caramelo e bege, com textura de papel antigo (`body::after` em `global.css`).
 - Cores (tokens em `src/estilos/global.css`; os nomes `azul-*` ficaram por histórico e hoje são caramelo/bege): fundo `#F4EFE6`, superfície `#FBF9F4`, texto `#2B2724`, marrom-escuro `#4B2E1E`, caramelo (`azul`) `#8B5E3F`, caramelo-escuro `#5C3A24`, bege `#E9D6BF`, bege-claro `#F3E9DB`, mostarda `#F1E6B0`, musgo/oliva para detalhes.
-- Fontes: Cormorant Garamond (títulos), Allura (acentos manuscritos em uma palavra), Helvetica (texto). Base de 15px: letras delicadas, nada gigante.
+- Fontes: Cormorant Garamond (títulos), Outfit 600 (acentos de uma palavra, como "Izadora" e "Versículo do dia", na linha da logo sm; o token continua chamado `--font-script`), Helvetica (texto). Base de 15px: letras delicadas, nada gigante.
 - Elementos: botões em pílula, cantos grandes (10 a 18px), listras, bordas recortadas, bilhetes, papel rasgado, polaroid com fita, carimbo, faixa de texto rolando, movimento suave.
 - **Logo:** monograma "sm" de traço único com o "m" em laço (`src/componentes/Logo.tsx`, `public/logo-sontag.svg`) + "AG." na vertical, como nas referências. Não escrever "Sontag" por extenso na logo.
 - Login: "Agência de conteúdo · cobertura de stories" no topo e a frase "Para que todos vejam e saibam." abaixo da logo.
