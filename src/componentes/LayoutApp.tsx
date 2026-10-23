@@ -1,4 +1,4 @@
-import { LogoSelo } from './Logo'
+import { LogoCompleta } from './Logo'
 import { useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
@@ -81,13 +81,9 @@ function Navegacao() {
 
 function Marca() {
   return (
-    <NavLink to="/app" end className="flex items-center gap-3 px-6 pb-3 pt-8 text-marrom-escuro">
-      <LogoSelo className="h-14 w-14 shrink-0" />
-      <span>
-        <span className="block font-titulo text-2xl font-semibold leading-none">Sontag</span>
-        <span className="script -mt-1 block text-3xl text-azul">Media</span>
-        <span className="eyebrow mt-1 block !text-[0.55rem]">Agência de conteúdo</span>
-      </span>
+    <NavLink to="/app" end className="block px-6 pb-3 pt-8" aria-label="Sontag Media, início">
+      <LogoCompleta />
+      <span className="eyebrow mt-3 block !text-[0.55rem]">Agência de conteúdo</span>
     </NavLink>
   )
 }
@@ -133,9 +129,8 @@ export default function LayoutApp() {
 
       {/* celular: barra de cima com botão de menu */}
       <header className="nao-imprimir festao-baixo sticky top-0 z-40 flex items-center justify-between bg-superficie px-4 lg:hidden">
-        <NavLink to="/app" end className="flex items-center gap-2 py-2 text-marrom-escuro">
-          <LogoSelo className="h-9 w-9" />
-          <span className="font-titulo text-3xl font-semibold leading-none">Sontag</span> <span className="script text-4xl text-azul">Media</span>
+        <NavLink to="/app" end className="py-3" aria-label="Sontag Media, início">
+          <LogoCompleta />
         </NavLink>
         <button type="button" onClick={() => setAberto(true)} aria-label="Abrir menu" aria-expanded={aberto} className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-full text-azul-escuro transition-colors hover:bg-azul-pastel">
           <IconeMenu />
