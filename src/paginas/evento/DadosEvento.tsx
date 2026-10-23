@@ -43,7 +43,10 @@ export default function DadosEvento({ evento, onChange }: { evento: Evento; onCh
       .eq('id', evento.id)
       .select()
       .single()
-    if (error || !salvo) return setErro('Não foi possível salvar.')
+    if (error || !salvo) {
+      if (`${error?.message ?? ''}`.includes('categoria')) return setErro('Falta rodar o arquivo 011_categoria_evento.sql no Supabase (SQL Editor > New query > Run).')
+      return setErro(`Não foi possível salvar.${error?.message ? ` Detalhe: ${error.message}` : ''}`)
+    }
     onChange(salvo as Evento)
     setOk(true)
   }

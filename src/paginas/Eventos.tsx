@@ -86,7 +86,12 @@ export default function Eventos() {
       })
       .select('id')
       .single()
-    if (error || !data) return setErro('Não foi possível criar o evento.')
+    if (error || !data) {
+      const m = `${error?.message ?? ''} ${error?.details ?? ''}`
+      if (m.includes('categoria')) return setErro('Falta rodar o arquivo 011_categoria_evento.sql no Supabase (SQL Editor > New query > Run). Depois tente de novo.')
+      if (m.includes('row-level security')) return setErro('Só a dona pode criar eventos. Entre com a conta da dona.')
+      return setErro(`Não foi possível criar o evento.${error?.message ? ` Detalhe: ${error.message}` : ''}`)
+    }
     navegar(`/app/eventos/${data.id as string}`)
   }
 
