@@ -5,4 +5,5 @@ const chave = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined
 
 export const supabaseConfigurado = Boolean(url && chave)
 
-export const supabase = supabaseConfigurado ? createClient(url!, chave!) : null
+// Sem as variáveis, usa valores de mentira só para o site abrir e mostrar o aviso.
+export const supabase = createClient(url || 'http://localhost', chave || 'sem-chave')

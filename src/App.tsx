@@ -1,12 +1,35 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import Inicio from './paginas/Inicio'
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import LayoutApp from './componentes/LayoutApp'
+import RotaProtegida from './componentes/RotaProtegida'
+import { ProvedorAuth } from './lib/auth'
+import ClienteNovo from './paginas/ClienteNovo'
+import ClientePagina from './paginas/ClientePagina'
+import Clientes from './paginas/Clientes'
+import Entrar from './paginas/Entrar'
+import Painel from './paginas/Painel'
 
 export default function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="*" element={<Inicio />} />
-      </Routes>
+      <ProvedorAuth>
+        <Routes>
+          <Route path="/entrar" element={<Entrar />} />
+          <Route
+            path="/app"
+            element={
+              <RotaProtegida>
+                <LayoutApp />
+              </RotaProtegida>
+            }
+          >
+            <Route index element={<Painel />} />
+            <Route path="clientes" element={<Clientes />} />
+            <Route path="clientes/novo" element={<ClienteNovo />} />
+            <Route path="clientes/:id" element={<ClientePagina />} />
+          </Route>
+          <Route path="*" element={<Navigate to="/app" replace />} />
+        </Routes>
+      </ProvedorAuth>
     </BrowserRouter>
   )
 }
