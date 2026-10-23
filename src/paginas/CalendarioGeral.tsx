@@ -21,7 +21,7 @@ export default function CalendarioGeral() {
   const [filtroCliente, setFiltroCliente] = useState('')
   const [filtroTag, setFiltroTag] = useState('')
   const [editor, setEditor] = useState<Editor | null>(null)
-  const { posts, tags, clientes, miniaturas, carregando, erro, recarregar } = useCalendario(mes)
+  const { posts, tags, clientes, carregando, erro, recarregar } = useCalendario(mes)
 
   const tagsFiltro = tags.filter((t) => !filtroCliente || t.cliente_id === null || t.cliente_id === filtroCliente)
   const filtrados = posts.filter(
@@ -29,7 +29,6 @@ export default function CalendarioGeral() {
       (!filtroCliente || p.cliente_id === filtroCliente) &&
       (!filtroTag || p.post_tags.some((t) => t.tag_id === filtroTag)),
   )
-  const miniatura = (p: PostCompleto) => miniaturas[p.post_midias[0]?.caminho_storage ?? '']
   const abrir = (post: PostCompleto) => setEditor({ post })
 
   const botaoVisao = (chave: 'mes' | 'quadro', rotulo: string) => (
@@ -99,7 +98,6 @@ export default function CalendarioGeral() {
           mes={mes}
           posts={filtrados}
           tags={tags}
-          miniaturas={miniaturas}
           mostrarCliente
           onNovo={(data) => setEditor({ post: null, data })}
           onAbrir={abrir}
@@ -116,7 +114,7 @@ export default function CalendarioGeral() {
                   </h3>
                   {coluna.length === 0 && <p className="px-1 text-xs text-texto-suave">Vazio</p>}
                   {coluna.map((p) => (
-                    <CartaoPost key={p.id} post={p} tags={tags} mostrarCliente mostrarData miniatura={miniatura(p)} onAbrir={abrir} />
+                    <CartaoPost key={p.id} post={p} tags={tags} mostrarCliente mostrarData onAbrir={abrir} />
                   ))}
                 </section>
               )

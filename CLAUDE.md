@@ -102,7 +102,8 @@ Nomes de tabelas e colunas em português, sem acento, em `snake_case`. Toda tabe
   - `status`: `ideia`, `roteiro`, `design`, `em_aprovacao`, `ajuste_pedido`, `aprovado`, `agendado`, `publicado`
   - `prazo_interno` (só área interna)
   - Desempenho, preenchido depois de publicado: `desempenho` (`bom`, `media`, `abaixo` ou vazio), `alcance`, `salvamentos`, `compartilhamentos`, `comentarios_qtd`, `nota_desempenho` (minha explicação do resultado)
-- **post_midias**: `post_id`, `caminho_storage`, `ordem` (artes do carrossel ou capa do vídeo)
+- **post_midias**: `post_id`, `tipo` (`imagem`, `video`), `caminho_storage` (arquivo) ou `link_externo` (vídeo em link, http/https), `ordem`. Imagens até 10 MB e vídeos até 50 MB (limite do plano gratuito do Supabase); vídeo maior entra por link
+- **rodadas**: `cliente_id`, `titulo`, `inicio`, `fim`, `status` (`rascunho`, `enviada`), `enviada_em`. Uma rodada é o lote de posts enviado de uma vez ao cliente, normalmente a quinzena. Em `posts`, `rodada_id` liga o post à rodada (do mesmo cliente). A função `enviar_rodada` passa todos os rascunhos da rodada para `em_aprovacao` de uma vez
 - **tags**: `nome`, `cor`, `cliente_id` (vazio = tag geral)
 - **post_tags**: `post_id`, `tag_id`
 - **comentarios**: `post_id`, `autor_id` (vazio quando vem do portal do cliente), `origem` (`interno`, `portal`), `texto`, `referencia` (opcional: qual arte ou trecho da legenda)
@@ -141,7 +142,8 @@ Segurança: dona vê e faz tudo. Equipe lê e edita só os eventos atribuídos (
 
 ### Arquivos (Supabase Storage)
 
-- Bucket `posts` (artes), `materiais`, `feed`, `contratos`. Acesso por RLS seguindo os mesmos papéis.
+- Bucket `posts` (artes, vídeos e prints do feed, em `<cliente>/<post>/<arquivo>` e `<cliente>/feed/<arquivo>`). Envio e remoção só por quem enxerga o cliente (RLS). **O bucket é público por endereço**: quem tem o endereço exato abre o arquivo, mas os endereços têm códigos aleatórios longos, só aparecem para quem tem o link do portal e ninguém consegue listar os arquivos. Por isso, **nada sensível** (contratos, documentos) vai nesse bucket. Materiais do portal são só links.
+- Outros buckets, privados: `eventos` (Fase 3B) e `contratos` (financeiro).
 
 ### Regras de segurança importantes
 
@@ -162,6 +164,8 @@ Segurança: dona vê e faz tudo. Equipe lê e edita só os eventos atribuídos (
   - **Ficha**: dados básicos, acessos, histórico
   - **Calendário**: calendário do mês inteiro do cliente (ver abaixo)
   - **Manual da marca**: os 8 capítulos e as metas
+  - **Aprovações**: rodadas quinzenais. Cria a rodada, adiciona posts (arrasta as imagens do carrossel ou o vídeo, escreve a legenda), vê o feed como o cliente verá, envia a rodada de uma vez e acompanha esperando, ajustes pedidos e aprovados
+  - **Portal**: link secreto, recado, prints do feed atual e links de materiais
   - **Materiais** e **Relatórios**
 - **Calendário geral** (`/app/calendario`): todos os clientes no mesmo mês, filtro por cliente e por tag, e uma visão em quadro (kanban) por status
 - **Financeiro** (`/app/financeiro`, só dona): abas Agência (contratos, cobranças, despesas, avulsos, indicadores) e Pessoal (lançamentos, metas, resumo do mês)
@@ -181,7 +185,7 @@ Segurança: dona vê e faz tudo. Equipe lê e edita só os eventos atribuídos (
 ### Portal do cliente (`/portal/:token`, sem login)
 
 - **Início**: posts esperando aprovação, próximos posts da semana, recado da Izadora
-- **Aprovações**: galeria dos posts em aprovação, com botões **Aprovar** e **Pedir ajuste** e campo de comentário
+- **Aprovações**: feed por rodada, com cada post como um cartão de Instagram (cabeçalho do perfil, carrossel deslizável com pontinhos, vídeo com player ou link, legenda completa), barra de progresso da rodada e botões **Aprovar**, **Pedir ajuste** (comentário obrigatório) e **Só comentar**
 - **Prévia do feed**: grade de 3 colunas no estilo do Instagram, com os posts aprovados e agendados por cima dos prints do feed atual
 - **Calendário**: o mesmo calendário mensal, com tags, selos de desempenho e números, sem status internos de produção
 - **Manual da marca**: leitura do manual, em layout editorial, com botão de exportar em PDF (pode ser via impressão do navegador com CSS de impressão)

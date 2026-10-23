@@ -8,9 +8,9 @@ import { supabase } from '../../lib/supabase'
 import { FORMATO_ROTULO } from '../../lib/tipos'
 import type { PortalPost } from '../../lib/tipos'
 import { horaCurta } from '../../lib/datas'
-import ImagensPost from './ImagensPost'
+import { CarrosselMidias } from '../Midias'
 
-function Conversa({ post }: { post: PortalPost }) {
+export function Conversa({ post }: { post: PortalPost }) {
   const itens = [
     ...post.comentarios.map((c) => ({
       quando: c.criado_em,
@@ -89,7 +89,7 @@ export default function ConteudoPost({ post, children }: { post: PortalPost; chi
   ]
   return (
     <article className="space-y-4">
-      <ImagensPost midias={post.midias} titulo={titulo} />
+      <CarrosselMidias midias={post.midias} titulo={titulo} />
       <header className="space-y-1">
         <p className="text-sm text-texto-suave">
           {formatarData(post.data_publicacao)}

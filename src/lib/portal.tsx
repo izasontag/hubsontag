@@ -1,12 +1,13 @@
 import { createContext, useCallback, useContext, useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
 import { supabase } from './supabase'
-import type { PortalDados, PortalPost } from './tipos'
+import type { PortalDados, PortalPost, PortalRodada } from './tipos'
 
 interface ContextoPortal {
   token: string
   dados: PortalDados | null
   posts: PortalPost[]
+  rodadas: PortalRodada[]
   carregando: boolean
   invalido: boolean
   recarregar: () => Promise<void>
@@ -17,13 +18,15 @@ const Contexto = createContext<ContextoPortal | null>(null)
 export function PortalProvider({ token, children }: { token: string; children: ReactNode }) {
   const [dados, setDados] = useState<PortalDados | null>(null)
   const [posts, setPosts] = useState<PortalPost[]>([])
+  const [rodadas, setRodadas] = useState<PortalRodada[]>([])
   const [carregando, setCarregando] = useState(true)
   const [invalido, setInvalido] = useState(false)
 
   const recarregar = useCallback(async () => {
-    const [d, p] = await Promise.all([
+    const [d, p, r] = await Promise.all([
       supabase.rpc('portal_dados', { p_token: token }),
       supabase.rpc('portal_posts', { p_token: token }),
+      supabase.rpc('portal_rodadas', { p_token: token }),
     ])
     if (d.error || !d.data) {
       setInvalido(true)
@@ -31,6 +34,7 @@ export function PortalProvider({ token, children }: { token: string; children: R
       setInvalido(false)
       setDados(d.data as PortalDados)
       setPosts((p.data as PortalPost[]) ?? [])
+      setRodadas((r.data as PortalRodada[]) ?? [])
     }
     setCarregando(false)
   }, [token])
@@ -39,7 +43,7 @@ export function PortalProvider({ token, children }: { token: string; children: R
     void recarregar()
   }, [recarregar])
 
-  return <Contexto.Provider value={{ token, dados, posts, carregando, invalido, recarregar }}>{children}</Contexto.Provider>
+  return <Contexto.Provider value={{ token, dados, posts, rodadas, carregando, invalido, recarregar }}>{children}</Contexto.Provider>
 }
 
 export function usePortal() {
@@ -47,9 +51,6 @@ export function usePortal() {
   if (!ctx) throw new Error('usePortal precisa estar dentro de PortalProvider')
   return ctx
 }
-
-// As imagens ficam em um endereço longo e secreto, que só chega a quem tem o link do portal.
-export const urlImagem = (caminho: string) => supabase.storage.from('posts').getPublicUrl(caminho).data.publicUrl
 
 export function mensagemDeErro(erro: { message?: string } | null) {
   const m = erro?.message ?? ''

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import { dataDeHoje } from '../lib/datas'
+import { enviarMidia, linkValido, paraVista, validarArquivo } from '../lib/midias'
 import { supabase } from '../lib/supabase'
 import {
   DESEMPENHO_ROTULO,
@@ -11,6 +12,7 @@ import {
 } from '../lib/tipos'
 import type { ClienteResumo, Desempenho, FormatoPost, Midia, PostCompleto, StatusPost, Tag } from '../lib/tipos'
 import ConversaPost from './ConversaPost'
+import { MidiaItem } from './Midias'
 import { Aviso, btnPrimario, btnSecundario, Campo, inputCls } from './ui'
 
 interface Props {
@@ -24,17 +26,11 @@ interface Props {
   onSalvo: () => void
 }
 
-const TAMANHO_MAXIMO = 10 * 1024 * 1024
-
 const nuloSeVazio = (v: string) => (v.trim() === '' ? null : v.trim())
 const numeroOuNulo = (v: string) => {
   if (v.trim() === '') return null
   const n = Math.round(Number(v))
   return Number.isNaN(n) ? null : Math.max(0, n)
-}
-
-interface MidiaComLink extends Midia {
-  url?: string
 }
 
 export default function PostEditor({ post, dataInicial, clienteIdInicial, clientes, tags, podeApagar, onFechar, onSalvo }: Props) {
@@ -59,7 +55,8 @@ export default function PostEditor({ post, dataInicial, clienteIdInicial, client
   const [nota, setNota] = useState(post?.nota_desempenho ?? '')
   const [tagsEscolhidas, setTagsEscolhidas] = useState<string[]>(post?.post_tags.map((t) => t.tag_id) ?? [])
 
-  const [midias, setMidias] = useState<MidiaComLink[]>([])
+  const [midias, setMidias] = useState<Midia[]>([])
+  const [linkVideo, setLinkVideo] = useState('')
   const [erro, setErro] = useState('')
   const [ok, setOk] = useState('')
   const [salvando, setSalvando] = useState(false)
@@ -81,11 +78,7 @@ export default function PostEditor({ post, dataInicial, clienteIdInicial, client
 
   const carregarMidias = useCallback(async (id: string) => {
     const { data: linhas } = await supabase.from('post_midias').select('*').eq('post_id', id).order('ordem')
-    const lista = (linhas as Midia[]) ?? []
-    if (lista.length === 0) return setMidias([])
-    const { data: links } = await supabase.storage.from('posts').createSignedUrls(lista.map((m) => m.caminho_storage), 3600)
-    const mapa = new Map((links ?? []).map((l) => [l.path, l.signedUrl]))
-    setMidias(lista.map((m) => ({ ...m, url: mapa.get(m.caminho_storage) ?? undefined })))
+    setMidias((linhas as Midia[]) ?? [])
   }, [])
 
   useEffect(() => {
@@ -150,31 +143,26 @@ export default function PostEditor({ post, dataInicial, clienteIdInicial, client
     setEnviando(true)
     let proxima = midias.reduce((max, m) => Math.max(max, m.ordem), -1) + 1
     for (const arquivo of Array.from(arquivos)) {
-      if (!arquivo.type.startsWith('image/')) {
-        setErro(`"${arquivo.name}" não é uma imagem.`)
-        continue
-      }
-      if (arquivo.size > TAMANHO_MAXIMO) {
-        setErro(`"${arquivo.name}" passa de 10 MB. Reduza o tamanho e envie de novo.`)
-        continue
-      }
-      const extensao = (arquivo.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '')
-      const caminho = `${clienteId}/${postId}/${crypto.randomUUID()}.${extensao}`
-      const envio = await supabase.storage.from('posts').upload(caminho, arquivo, { contentType: arquivo.type })
-      if (envio.error) {
-        setErro('Não foi possível enviar uma das artes.')
-        continue
-      }
-      const linha = await supabase.from('post_midias').insert({ post_id: postId, caminho_storage: caminho, ordem: proxima })
-      if (linha.error) {
-        await supabase.storage.from('posts').remove([caminho])
-        setErro('Não foi possível registrar uma das artes.')
-        continue
-      }
-      proxima += 1
+      const problema = validarArquivo(arquivo) ?? (await enviarMidia(clienteId, postId, arquivo, proxima))
+      if (problema) setErro(problema)
+      else proxima += 1
     }
     await carregarMidias(postId)
     setEnviando(false)
+    onSalvo()
+  }
+
+  async function adicionarLink() {
+    if (!postId) return
+    setErro('')
+    if (!linkValido(linkVideo)) return setErro('O link do vídeo precisa começar com http:// ou https://')
+    const ordem = midias.reduce((max, m) => Math.max(max, m.ordem), -1) + 1
+    const { error } = await supabase
+      .from('post_midias')
+      .insert({ post_id: postId, tipo: 'video', link_externo: linkVideo.trim(), ordem })
+    if (error) return setErro('Não foi possível salvar o link.')
+    setLinkVideo('')
+    await carregarMidias(postId)
     onSalvo()
   }
 
@@ -190,9 +178,9 @@ export default function PostEditor({ post, dataInicial, clienteIdInicial, client
     onSalvo()
   }
 
-  async function removerArte(m: MidiaComLink) {
-    if (!postId || !window.confirm('Remover esta arte?')) return
-    await supabase.storage.from('posts').remove([m.caminho_storage])
+  async function removerArte(m: Midia) {
+    if (!postId || !window.confirm('Remover este item?')) return
+    if (m.caminho_storage) await supabase.storage.from('posts').remove([m.caminho_storage])
     await supabase.from('post_midias').delete().eq('id', m.id)
     await carregarMidias(postId)
     onSalvo()
@@ -200,7 +188,7 @@ export default function PostEditor({ post, dataInicial, clienteIdInicial, client
 
   async function apagarPost() {
     if (!postId || !window.confirm('Apagar este post e as artes dele? Não dá para desfazer.')) return
-    const caminhos = midias.map((m) => m.caminho_storage)
+    const caminhos = midias.map((m) => m.caminho_storage).filter((c): c is string => Boolean(c))
     if (caminhos.length) await supabase.storage.from('posts').remove(caminhos)
     const { error } = await supabase.from('posts').delete().eq('id', postId)
     if (error) return setErro('Não foi possível apagar o post.')
@@ -355,29 +343,28 @@ export default function PostEditor({ post, dataInicial, clienteIdInicial, client
         </form>
 
         <section className="mt-8 space-y-3 border-t border-linha pt-6">
-          <h3 className="font-titulo text-2xl font-semibold text-marrom">Artes</h3>
+          <h3 className="font-titulo text-2xl font-semibold text-marrom">Artes e vídeos</h3>
           {!postId ? (
             <p className="text-sm text-texto-suave">Salve o post primeiro para poder adicionar as artes.</p>
           ) : (
             <>
               <p className="text-sm text-texto-suave">
-                Imagens de até 10 MB. A primeira é a miniatura no calendário. Para Reels, envie a capa.
+                Imagens de até 10 MB e vídeos de até 50 MB. O primeiro item é a miniatura no calendário. Para vídeos
+                maiores, cole um link abaixo.
               </p>
               <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
                 {midias.map((m, i) => (
                   <li key={m.id} className="space-y-2 rounded-sm border border-linha bg-superficie p-2">
-                    {m.url ? (
-                      <img src={m.url} alt={`Arte ${i + 1}`} className="aspect-square w-full rounded-sm object-cover" />
-                    ) : (
-                      <div className="aspect-square w-full rounded-sm bg-linha" />
-                    )}
+                    <MidiaItem midia={paraVista(m)} alt={`Item ${i + 1}`} className="aspect-square w-full rounded-sm object-cover" />
                     <div className="flex items-center justify-between gap-1">
-                      <span className="text-xs text-texto-suave">Arte {i + 1}</span>
+                      <span className="text-xs text-texto-suave">
+                        {m.tipo === 'video' ? 'Vídeo' : 'Arte'} {i + 1}
+                      </span>
                       <span className="flex gap-1">
-                        <button type="button" aria-label={`Mover arte ${i + 1} para trás`} disabled={i === 0} onClick={() => void moverArte(i, -1)} className="h-11 w-11 cursor-pointer rounded-sm border border-linha disabled:opacity-40">
+                        <button type="button" aria-label={`Mover item ${i + 1} para trás`} disabled={i === 0} onClick={() => void moverArte(i, -1)} className="h-11 w-11 cursor-pointer rounded-sm border border-linha disabled:opacity-40">
                           &larr;
                         </button>
-                        <button type="button" aria-label={`Mover arte ${i + 1} para frente`} disabled={i === midias.length - 1} onClick={() => void moverArte(i, 1)} className="h-11 w-11 cursor-pointer rounded-sm border border-linha disabled:opacity-40">
+                        <button type="button" aria-label={`Mover item ${i + 1} para frente`} disabled={i === midias.length - 1} onClick={() => void moverArte(i, 1)} className="h-11 w-11 cursor-pointer rounded-sm border border-linha disabled:opacity-40">
                           &rarr;
                         </button>
                       </span>
@@ -389,9 +376,19 @@ export default function PostEditor({ post, dataInicial, clienteIdInicial, client
                 ))}
               </ul>
               <label className={`${btnSecundario} focus-within:ring-2 focus-within:ring-marrom ${enviando ? 'opacity-50' : ''}`}>
-                {enviando ? 'Enviando...' : 'Adicionar artes'}
-                <input type="file" accept="image/*" multiple className="sr-only" disabled={enviando} onChange={(e) => { void enviarArtes(e.target.files); e.target.value = '' }} />
+                {enviando ? 'Enviando...' : 'Adicionar imagens ou vídeo'}
+                <input type="file" accept="image/*,video/*" multiple className="sr-only" disabled={enviando} onChange={(e) => { void enviarArtes(e.target.files); e.target.value = '' }} />
               </label>
+              <div className="flex flex-wrap items-end gap-3">
+                <div className="min-w-60 flex-1">
+                  <Campo rotulo="Ou vídeo por link (Drive, YouTube não listado...)">
+                    <input className={inputCls} placeholder="https://..." value={linkVideo} onChange={(e) => setLinkVideo(e.target.value)} />
+                  </Campo>
+                </div>
+                <button type="button" className={btnSecundario} onClick={() => void adicionarLink()}>
+                  Adicionar link
+                </button>
+              </div>
             </>
           )}
         </section>

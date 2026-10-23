@@ -20,7 +20,7 @@ export default function CalendarioCliente({ cliente }: { cliente: Cliente }) {
   const [filtroTag, setFiltroTag] = useState('')
   const [filtroStatus, setFiltroStatus] = useState('')
   const [editor, setEditor] = useState<Editor | null>(null)
-  const { posts, tags, miniaturas, carregando, erro, recarregar } = useCalendario(mes, cliente.id)
+  const { posts, tags, carregando, erro, recarregar } = useCalendario(mes, cliente.id)
 
   const dona = perfil?.papel === 'dona'
   const tagsDoCliente = tags.filter((t) => t.cliente_id === null || t.cliente_id === cliente.id)
@@ -69,7 +69,6 @@ export default function CalendarioCliente({ cliente }: { cliente: Cliente }) {
         mes={mes}
         posts={filtrados}
         tags={tags}
-        miniaturas={miniaturas}
         onNovo={(data) => setEditor({ post: null, data })}
         onAbrir={(post) => setEditor({ post })}
       />

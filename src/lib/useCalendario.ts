@@ -8,7 +8,6 @@ export function useCalendario(mes: string, clienteId?: string) {
   const [posts, setPosts] = useState<PostCompleto[]>([])
   const [tags, setTags] = useState<Tag[]>([])
   const [clientes, setClientes] = useState<ClienteResumo[]>([])
-  const [miniaturas, setMiniaturas] = useState<Record<string, string>>({})
   const [carregando, setCarregando] = useState(true)
   const [erro, setErro] = useState('')
   const [versao, setVersao] = useState(0)
@@ -21,7 +20,7 @@ export function useCalendario(mes: string, clienteId?: string) {
       const { inicio, fim } = limitesDoMes(mes)
       let consulta = supabase
         .from('posts')
-        .select('*, cliente:clientes(nome, cor_destaque), post_tags(tag_id), post_midias(id, post_id, caminho_storage, ordem)')
+        .select('*, cliente:clientes(nome, cor_destaque), post_tags(tag_id), post_midias(id, post_id, caminho_storage, ordem, tipo, link_externo)')
         .gte('data_publicacao', inicio)
         .lte('data_publicacao', fim)
         .order('data_publicacao')
@@ -48,15 +47,6 @@ export function useCalendario(mes: string, clienteId?: string) {
       setTags(resTags.data as Tag[])
       setClientes((resClientes.data as ClienteResumo[]) ?? [])
       setCarregando(false)
-
-      // miniatura = primeira arte de cada post (link temporário do armazenamento)
-      const caminhos = lista.map((p) => p.post_midias[0]?.caminho_storage).filter((c): c is string => Boolean(c))
-      if (caminhos.length === 0) return setMiniaturas({})
-      const { data } = await supabase.storage.from('posts').createSignedUrls(caminhos, 3600)
-      if (!ativo) return
-      const mapa: Record<string, string> = {}
-      for (const item of data ?? []) if (item.path && item.signedUrl) mapa[item.path] = item.signedUrl
-      setMiniaturas(mapa)
     }
     setCarregando(true)
     void carregar()
@@ -65,5 +55,5 @@ export function useCalendario(mes: string, clienteId?: string) {
     }
   }, [mes, clienteId, versao])
 
-  return { posts, tags, clientes, miniaturas, carregando, erro, recarregar }
+  return { posts, tags, clientes, carregando, erro, recarregar }
 }

@@ -5,7 +5,8 @@ import PainelDecisao from '../../componentes/portal/PainelDecisao'
 import { ChipTag, SeloDesempenho, SeloStatus } from '../../componentes/Selos'
 import { btnSecundario } from '../../componentes/ui'
 import { DIAS_SEMANA_CURTO, dataDeHoje, diaSemanaLongo, diasDoMes, mesDeHoje } from '../../lib/datas'
-import { urlImagem, usePortal } from '../../lib/portal'
+import { MiniaturaMidia } from '../../componentes/Midias'
+import { usePortal } from '../../lib/portal'
 import { FORMATO_ROTULO } from '../../lib/tipos'
 import type { PortalPost } from '../../lib/tipos'
 
@@ -16,11 +17,7 @@ function Cartao({ post, vertical, onAbrir }: { post: PortalPost; vertical?: bool
       onClick={() => onAbrir(post.id)}
       className={`flex w-full cursor-pointer gap-2 rounded-sm border border-linha bg-superficie p-2 text-left hover:border-marrom ${vertical ? 'flex-col' : ''}`}
     >
-      {post.midias[0] ? (
-        <img src={urlImagem(post.midias[0])} alt="" loading="lazy" className={`shrink-0 rounded-sm object-cover ${vertical ? 'h-20 w-full' : 'h-12 w-12'}`} />
-      ) : (
-        <span aria-hidden className={`shrink-0 rounded-sm border border-dashed border-linha ${vertical ? 'h-8 w-full' : 'h-12 w-12'}`} />
-      )}
+      <MiniaturaMidia midias={post.midias} alt="" className={`shrink-0 rounded-sm ${vertical ? 'h-20 w-full' : 'h-12 w-12'}`} />
       <span className="w-full min-w-0 flex-1 space-y-1">
         <span className="block truncate text-sm text-texto">{post.tema || 'Post'}</span>
         <span className="block text-xs text-texto-suave">{FORMATO_ROTULO[post.formato]}</span>

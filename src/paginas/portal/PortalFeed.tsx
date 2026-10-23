@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Aviso } from '../../componentes/ui'
-import { urlImagem, usePortal } from '../../lib/portal'
+import { MiniaturaMidia } from '../../componentes/Midias'
+import { urlPublica } from '../../lib/midias'
+import { usePortal } from '../../lib/portal'
 import { supabase } from '../../lib/supabase'
 
 export default function PortalFeed() {
@@ -30,11 +32,7 @@ export default function PortalFeed() {
       <ul className="mx-auto grid max-w-md grid-cols-3 gap-0.5 bg-linha" aria-label="Grade do feed">
         {novos.map((p) => (
           <li key={p.id} className="relative aspect-[4/5] overflow-hidden bg-superficie">
-            {p.midias[0] ? (
-              <img src={urlImagem(p.midias[0])} alt={p.tema || 'Post'} loading="lazy" className="h-full w-full object-cover" />
-            ) : (
-              <span className="flex h-full items-center justify-center p-1 text-center text-xs text-texto-suave">{p.tema || 'Post'}</span>
-            )}
+            <MiniaturaMidia midias={p.midias} alt={p.tema || 'Post'} className="h-full w-full" />
             <span className="absolute left-1 top-1 rounded-sm bg-musgo px-1 text-[11px] leading-tight text-superficie">
               {p.status === 'aprovado' ? 'Aprovado' : 'Agendado'}
             </span>
@@ -42,7 +40,7 @@ export default function PortalFeed() {
         ))}
         {prints?.map((c) => (
           <li key={c} className="aspect-[4/5] overflow-hidden bg-superficie">
-            <img src={urlImagem(c)} alt="Post já publicado" loading="lazy" className="h-full w-full object-cover" />
+            <img src={urlPublica(c)} alt="Post já publicado" loading="lazy" className="h-full w-full object-cover" />
           </li>
         ))}
       </ul>

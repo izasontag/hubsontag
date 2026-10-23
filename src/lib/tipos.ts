@@ -142,11 +142,32 @@ export interface Tag {
   cliente_id: string | null
 }
 
+export type TipoMidia = 'imagem' | 'video'
+
 export interface Midia {
   id: string
   post_id: string
-  caminho_storage: string
+  caminho_storage: string | null
   ordem: number
+  tipo: TipoMidia
+  link_externo: string | null
+}
+
+// Mídia como o feed mostra (vem da área interna ou do portal)
+export interface MidiaVista {
+  tipo: TipoMidia
+  caminho: string | null
+  link: string | null
+}
+
+export interface Rodada {
+  id: string
+  cliente_id: string
+  titulo: string
+  inicio: string | null
+  fim: string | null
+  status: 'rascunho' | 'enviada'
+  enviada_em: string | null
 }
 
 export interface Post {
@@ -169,6 +190,7 @@ export interface Post {
   compartilhamentos: number | null
   comentarios_qtd: number | null
   nota_desempenho: string | null
+  rodada_id: string | null
 }
 
 // Post como vem da consulta do calendário (com cliente, tags e artes)
@@ -222,8 +244,17 @@ export interface PortalPost {
   compartilhamentos: number | null
   comentarios_qtd: number | null
   nota_desempenho: string | null
+  rodada_id: string | null
   tags: { nome: string; cor: string }[]
-  midias: string[]
+  midias: MidiaVista[]
   comentarios: PortalComentario[]
   aprovacoes: PortalAprovacao[]
+}
+
+export interface PortalRodada {
+  id: string
+  titulo: string
+  inicio: string | null
+  fim: string | null
+  enviada_em: string
 }

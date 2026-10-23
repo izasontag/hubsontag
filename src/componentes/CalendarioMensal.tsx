@@ -7,7 +7,6 @@ interface Props {
   mes: string
   posts: PostCompleto[]
   tags: Tag[]
-  miniaturas: Record<string, string>
   mostrarCliente?: boolean
   onNovo: (data: string) => void
   onAbrir: (post: PostCompleto) => void
@@ -27,7 +26,7 @@ export function NavegacaoMes({ mes, onMes }: { mes: string; onMes: (m: string) =
   )
 }
 
-export default function CalendarioMensal({ mes, posts, tags, miniaturas, mostrarCliente, onNovo, onAbrir }: Props) {
+export default function CalendarioMensal({ mes, posts, tags, mostrarCliente, onNovo, onAbrir }: Props) {
   const dias = diasDoMes(mes)
   const hoje = dataDeHoje()
   const porDia = (data: string) => posts.filter((p) => p.data_publicacao === data)
@@ -38,7 +37,6 @@ export default function CalendarioMensal({ mes, posts, tags, miniaturas, mostrar
       post={p}
       tags={tags}
       mostrarCliente={mostrarCliente}
-      miniatura={miniaturas[p.post_midias[0]?.caminho_storage ?? '']}
       onAbrir={onAbrir}
     />
   )
