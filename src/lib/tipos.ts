@@ -22,6 +22,8 @@ export interface Cliente {
   cor_destaque: string
   observacoes: string | null
   recado_portal: string | null
+  objetivo: string | null
+  suporte: string | null
 }
 
 export const CAPITULOS = [
@@ -59,6 +61,16 @@ export const CAPITULOS = [
     chave: 'regras',
     titulo: 'Regras',
     dica: 'O que nunca pode aparecer e regras do conselho profissional (OAB, CFO, CFM).',
+  },
+  {
+    chave: 'diagnostico',
+    titulo: 'Diagnóstico',
+    dica: 'Análise do perfil hoje: o que funciona, o que falta e as oportunidades.',
+  },
+  {
+    chave: 'como_trabalhamos',
+    titulo: 'Como vamos trabalhar',
+    dica: 'Rotina de entregas, prazos de aprovação, canais de contato e responsabilidades de cada lado.',
   },
 ] as const
 
@@ -212,6 +224,8 @@ export interface PortalDados {
   nicho: string | null
   cor_destaque: string
   recado: string | null
+  objetivo: string | null
+  suporte: string | null
 }
 
 export interface PortalComentario {
@@ -259,4 +273,117 @@ export interface PortalRodada {
   inicio: string | null
   fim: string | null
   enviada_em: string
+}
+
+// ---------------- Prompts e skills ----------------
+
+export const CATEGORIAS_PROMPT = ['design', 'video', 'legenda', 'outro'] as const
+export type CategoriaPrompt = (typeof CATEGORIAS_PROMPT)[number]
+
+export const CATEGORIA_PROMPT_ROTULO: Record<CategoriaPrompt, string> = {
+  design: 'Design',
+  video: 'Edição de vídeo',
+  legenda: 'Legendas',
+  outro: 'Outros',
+}
+
+export interface Prompt {
+  id: string
+  cliente_id: string | null
+  categoria: CategoriaPrompt
+  titulo: string
+  ferramenta: string | null
+  texto: string
+  notas: string | null
+}
+
+// ---------------- Banco de ideias ----------------
+
+export const TIPOS_IDEIA = ['ideia_post', 'referencia_visual', 'filme', 'livro', 'trend', 'formato_funcionou'] as const
+export type TipoIdeia = (typeof TIPOS_IDEIA)[number]
+
+export const TIPO_IDEIA_ROTULO: Record<TipoIdeia, string> = {
+  ideia_post: 'Ideia de post',
+  referencia_visual: 'Referência visual',
+  filme: 'Filme',
+  livro: 'Livro',
+  trend: 'Trend',
+  formato_funcionou: 'Formato que funcionou',
+}
+
+export interface ArquivoIdeia {
+  id: string
+  ideia_id: string
+  caminho_storage: string
+  nome: string
+  tipo: 'imagem' | 'video' | 'arquivo'
+  ordem: number
+}
+
+export interface Ideia {
+  id: string
+  texto: string
+  tipo: TipoIdeia
+  cliente_id: string | null
+  para_sontag: boolean
+  tags: string[]
+  fonte: string | null
+  post_id: string | null
+  criado_em: string
+  ideia_arquivos: ArquivoIdeia[]
+}
+
+// ---------------- Tarefas e modelos de checklist ----------------
+
+export const STATUS_TAREFA = ['fazer', 'fazendo', 'feito'] as const
+export type StatusTarefa = (typeof STATUS_TAREFA)[number]
+export const STATUS_TAREFA_ROTULO: Record<StatusTarefa, string> = { fazer: 'Fazer', fazendo: 'Fazendo', feito: 'Feito' }
+
+export const TIPOS_TAREFA = ['tarefa', 'reuniao', 'captacao', 'entrega'] as const
+export type TipoTarefa = (typeof TIPOS_TAREFA)[number]
+export const TIPO_TAREFA_ROTULO: Record<TipoTarefa, string> = {
+  tarefa: 'Tarefa',
+  reuniao: 'Reunião',
+  captacao: 'Captação',
+  entrega: 'Entrega',
+}
+
+export type Responsavel = 'agencia' | 'cliente'
+
+export interface Tarefa {
+  id: string
+  cliente_id: string | null
+  titulo: string
+  data: string | null
+  tipo: TipoTarefa
+  status: StatusTarefa
+  responsavel: Responsavel
+  visivel_cliente: boolean
+  material: string | null
+  cliente: { nome: string } | null
+}
+
+export interface ItemModelo {
+  titulo: string
+  dias?: number
+  tipo?: TipoTarefa
+  responsavel?: Responsavel
+  visivel_cliente?: boolean
+}
+
+export interface Modelo {
+  id: string
+  nome: string
+  descricao: string | null
+  itens: ItemModelo[]
+}
+
+export interface PortalTarefa {
+  id: string
+  titulo: string
+  data: string | null
+  tipo: TipoTarefa
+  status: StatusTarefa
+  responsavel: Responsavel
+  material: string | null
 }

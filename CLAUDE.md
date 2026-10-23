@@ -80,7 +80,7 @@ Nomes de tabelas e colunas em português, sem acento, em `snake_case`. Toda tabe
 
 ### Clientes
 
-- **clientes**: `nome`, `token_portal` (código longo e aleatório do link secreto), `portal_ativo` (sim/não), `instagram`, `nicho`, `contato`, `status` (`ativo`, `pausado`, `encerrado`), `data_inicio`, `cor_destaque`, `observacoes`
+- **clientes**: `nome`, `objetivo` (objetivo do cliente em uma frase) e `suporte` (horário de suporte e WhatsApp), ambos mostrados no início do portal, `token_portal` (código longo e aleatório do link secreto), `portal_ativo` (sim/não), `instagram`, `nicho`, `contato`, `status` (`ativo`, `pausado`, `encerrado`), `data_inicio`, `cor_destaque`, `observacoes`
 - **manual_marca** (um por cliente): `cliente_id` e um campo por capítulo, em texto ou JSON:
   - `essencia` (quem é, propósito, missão, história)
   - `posicionamento` (promessa, diferenciais)
@@ -89,6 +89,7 @@ Nomes de tabelas e colunas em português, sem acento, em `snake_case`. Toda tabe
   - `tom_voz` (como fala, palavras que usa, palavras que evita, exemplos de legendas)
   - `identidade_visual` (cores com código, fontes, logos, exemplos)
   - `regras` (o que nunca pode aparecer, regras do conselho profissional como OAB, CFO, CFM)
+  - `diagnostico` (análise do perfil hoje) e `como_trabalhamos` (rotina, prazos, canais e responsabilidades)
 - **metas**: `cliente_id`, `nome`, `valor_atual`, `valor_meta`, `prazo`
 - **acessos_cliente**: `cliente_id`, `servico`, `link`, `observacao` (sem senhas em texto puro; só a dona vê)
 - **historico_cliente**: `cliente_id`, `data`, `tipo` (reunião, decisão, feedback), `texto`
@@ -136,7 +137,11 @@ Segurança: dona vê e faz tudo. Equipe lê e edita só os eventos atribuídos (
 
 ### Ideias e materiais
 
-- **ideias**: `texto`, `tipo` (ideia de post, referência visual, filme, livro, trend, formato que funcionou), `cliente_id` (vazio = geral), `para_sontag` (sim/não), `tags` (lista), `fonte` (link ou anotação), `post_id` (post que nasceu desta ideia)
+- **ideias**: `texto`, `tipo` (ideia de post, referência visual, filme, livro, trend, formato que funcionou), `cliente_id` (vazio = geral), `para_sontag` (ideia da própria agência: só a dona vê), `tags` (lista), `fonte` (link ou anotação), `post_id` (post que nasceu desta ideia), `criado_por`
+- **ideia_arquivos**: `ideia_id`, `caminho_storage`, `nome`, `tipo` (`imagem`, `video`, `arquivo`), `ordem`. Bucket **privado** `ideias`, caminho `<id da ideia>/<arquivo>`, até 50 MB, sempre visto por link assinado
+- **prompts** (só área interna, o cliente nunca vê): `cliente_id` (vazio = biblioteca geral, só a dona edita), `categoria` (`design`, `video`, `legenda`, `outro`), `titulo`, `ferramenta`, `texto` (o prompt ou a skill do Claude), `notas`. Fica dentro da aba Manual da marca de cada cliente, com botão Copiar
+- **tarefas** (plano de ação e checklist): `cliente_id` (vazio = tarefa geral da agência, só a dona), `titulo`, `data`, `tipo` (`tarefa`, `reuniao`, `captacao`, `entrega`), `status` (`fazer`, `fazendo`, `feito`), `responsavel` (`agencia`, `cliente`), `visivel_cliente`, `material` (link http/https), `concluido_em`. Itens marcados como visíveis aparecem no Plano de ação do portal, **somente leitura** (o cliente não altera nada)
+- **modelos_checklist**: `nome`, `descricao`, `itens` (lista de `titulo`, `dias` depois da data base, `tipo`, `responsavel`, `visivel_cliente`). A função `aplicar_modelo` cria uma tarefa por item em um cliente. A dona cria e edita; dona e equipe aplicam. Vêm prontos "Onboarding de cliente" e "Rodada quinzenal". O mesmo recurso serve ao checklist dos eventos (Fase 3B)
 - **materiais**: `cliente_id`, `titulo`, `tipo` (briefing, contrato, identidade, documento), `caminho_storage`
 - **relatorios**: `cliente_id`, `mes`, `resumo`, `destaques`, `proximos_passos`
 
@@ -167,6 +172,7 @@ Segurança: dona vê e faz tudo. Equipe lê e edita só os eventos atribuídos (
   - **Aprovações**: rodadas quinzenais. Cria a rodada, adiciona posts (arrasta as imagens do carrossel ou o vídeo, escreve a legenda), vê o feed como o cliente verá, envia a rodada de uma vez e acompanha esperando, ajustes pedidos e aprovados
   - **Portal**: link secreto, recado, prints do feed atual e links de materiais
   - **Materiais** e **Relatórios**
+- **Ideias** (`/app/ideias`) e **Tarefas** (`/app/tarefas`, com os modelos de checklist) já existem desde a Fase 3. Na ficha do cliente há também as abas **Plano de ação** e, no Manual da marca, a seção **Prompts e skills**.
 - **Calendário geral** (`/app/calendario`): todos os clientes no mesmo mês, filtro por cliente e por tag, e uma visão em quadro (kanban) por status
 - **Financeiro** (`/app/financeiro`, só dona): abas Agência (contratos, cobranças, despesas, avulsos, indicadores) e Pessoal (lançamentos, metas, resumo do mês)
 - **Ideias** (`/app/ideias`): captura rápida (um campo no topo, ótimo no celular), filtros por tipo, cliente e tag, botão "Virar post" que cria o post com status `ideia`
@@ -188,6 +194,7 @@ Segurança: dona vê e faz tudo. Equipe lê e edita só os eventos atribuídos (
 - **Aprovações**: feed por rodada, com cada post como um cartão de Instagram (cabeçalho do perfil, carrossel deslizável com pontinhos, vídeo com player ou link, legenda completa), barra de progresso da rodada e botões **Aprovar**, **Pedir ajuste** (comentário obrigatório) e **Só comentar**
 - **Prévia do feed**: grade de 3 colunas no estilo do Instagram, com os posts aprovados e agendados por cima dos prints do feed atual
 - **Calendário**: o mesmo calendário mensal, com tags, selos de desempenho e números, sem status internos de produção
+- **Plano de ação**: tarefas, reuniões, captações e entregas marcadas como visíveis, com data, quem faz ("Com você" ou "Com a Sontag Media") e material, só para ler
 - **Manual da marca**: leitura do manual, em layout editorial, com botão de exportar em PDF (pode ser via impressão do navegador com CSS de impressão)
 - **Materiais** e **Relatórios**
 

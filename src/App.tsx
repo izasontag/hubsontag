@@ -7,12 +7,15 @@ import ClienteNovo from './paginas/ClienteNovo'
 import ClientePagina from './paginas/ClientePagina'
 import Clientes from './paginas/Clientes'
 import Entrar from './paginas/Entrar'
+import Ideias from './paginas/Ideias'
 import Painel from './paginas/Painel'
+import Tarefas from './paginas/Tarefas'
 import PortalAprovacoes from './paginas/portal/PortalAprovacoes'
 import PortalCalendario from './paginas/portal/PortalCalendario'
 import PortalFeed from './paginas/portal/PortalFeed'
 import PortalInicio from './paginas/portal/PortalInicio'
 import PortalLayout from './paginas/portal/PortalLayout'
+import PortalPlano from './paginas/portal/PortalPlano'
 import PortalManual from './paginas/portal/PortalManual'
 import PortalMateriais from './paginas/portal/PortalMateriais'
 import PortalRelatorios from './paginas/portal/PortalRelatorios'
@@ -33,6 +36,8 @@ export default function App() {
           >
             <Route index element={<Painel />} />
             <Route path="calendario" element={<CalendarioGeral />} />
+            <Route path="ideias" element={<Ideias />} />
+            <Route path="tarefas" element={<Tarefas />} />
             <Route path="clientes" element={<Clientes />} />
             <Route path="clientes/novo" element={<ClienteNovo />} />
             <Route path="clientes/:id" element={<ClientePagina />} />
@@ -41,6 +46,7 @@ export default function App() {
             <Route index element={<PortalInicio />} />
             <Route path="aprovacoes" element={<PortalAprovacoes />} />
             <Route path="feed" element={<PortalFeed />} />
+            <Route path="plano" element={<PortalPlano />} />
             <Route path="calendario" element={<PortalCalendario />} />
             <Route path="manual" element={<PortalManual />} />
             <Route path="materiais" element={<PortalMateriais />} />

@@ -41,6 +41,9 @@ function Estrutura() {
             <NavLink to={`${base}/feed`} className={link}>
               Prévia do feed
             </NavLink>
+            <NavLink to={`${base}/plano`} className={link}>
+              Plano de ação
+            </NavLink>
             <NavLink to={`${base}/calendario`} className={link}>
               Calendário
             </NavLink>

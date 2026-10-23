@@ -5,6 +5,7 @@ import { supabase } from '../../lib/supabase'
 import { CAPITULOS } from '../../lib/tipos'
 import type { ChaveCapitulo, Cliente } from '../../lib/tipos'
 import Metas from './Metas'
+import PromptsSkills from './PromptsSkills'
 
 type Textos = Record<ChaveCapitulo, string>
 
@@ -79,6 +80,7 @@ export default function ManualMarca({ cliente }: { cliente: Cliente }) {
         )}
       </form>
       <Metas clienteId={cliente.id} />
+      <PromptsSkills cliente={cliente} />
     </div>
   )
 }

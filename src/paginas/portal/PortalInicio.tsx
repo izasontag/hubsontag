@@ -18,6 +18,22 @@ export default function PortalInicio() {
 
   return (
     <div className="space-y-6">
+      {(dados?.objetivo || dados?.suporte) && (
+        <Cartao className="space-y-3">
+          {dados.objetivo && (
+            <div>
+              <p className="text-sm text-texto-suave">Objetivo</p>
+              <p className="whitespace-pre-wrap">{dados.objetivo}</p>
+            </div>
+          )}
+          {dados.suporte && (
+            <div>
+              <p className="text-sm text-texto-suave">Suporte e atendimento</p>
+              <p className="whitespace-pre-wrap">{dados.suporte}</p>
+            </div>
+          )}
+        </Cartao>
+      )}
       {dados?.recado && (
         <Cartao>
           <p className="text-sm text-texto-suave">Recado da Izadora</p>

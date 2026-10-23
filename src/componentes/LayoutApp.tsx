@@ -2,7 +2,7 @@ import { NavLink, Outlet } from 'react-router-dom'
 import { useAuth } from '../lib/auth'
 
 const link = ({ isActive }: { isActive: boolean }) =>
-  `inline-flex min-h-11 items-center border-b-2 px-1 text-sm ${
+  `inline-flex min-h-11 shrink-0 items-center border-b-2 px-1 text-sm ${
     isActive ? 'border-marrom text-marrom' : 'border-transparent text-texto-suave hover:text-texto'
   }`
 
@@ -13,7 +13,7 @@ export default function LayoutApp() {
       <header className="border-b border-linha bg-superficie">
         <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-x-6 px-4">
           <span className="py-3 font-titulo text-2xl font-semibold text-marrom">Sontag Media</span>
-          <nav className="flex gap-5" aria-label="Principal">
+          <nav className="flex gap-5 overflow-x-auto" aria-label="Principal">
             <NavLink to="/app" end className={link}>
               Painel
             </NavLink>
@@ -22,6 +22,12 @@ export default function LayoutApp() {
             </NavLink>
             <NavLink to="/app/calendario" className={link}>
               Calendário
+            </NavLink>
+            <NavLink to="/app/ideias" className={link}>
+              Ideias
+            </NavLink>
+            <NavLink to="/app/tarefas" className={link}>
+              Tarefas
             </NavLink>
           </nav>
           <div className="flex items-center gap-3 py-2 text-sm text-texto-suave">

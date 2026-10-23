@@ -4,6 +4,7 @@ import { Aviso, STATUS_ROTULO } from '../componentes/ui'
 import { supabase } from '../lib/supabase'
 import type { Cliente } from '../lib/tipos'
 import FichaCliente from './cliente/FichaCliente'
+import PainelTarefas from '../componentes/PainelTarefas'
 import AbaPortal from './cliente/AbaPortal'
 import AprovacoesCliente from './cliente/AprovacoesCliente'
 import CalendarioCliente from './cliente/CalendarioCliente'
@@ -15,7 +16,7 @@ export default function ClientePagina() {
   const [cliente, setCliente] = useState<Cliente | null>(null)
   const [erro, setErro] = useState('')
   const abaParam = params.get('aba')
-  const aba = abaParam === 'manual' || abaParam === 'calendario' || abaParam === 'portal' || abaParam === 'aprovacoes' ? abaParam : 'ficha'
+  const aba = abaParam === 'manual' || abaParam === 'calendario' || abaParam === 'portal' || abaParam === 'aprovacoes' || abaParam === 'plano' ? abaParam : 'ficha'
 
   useEffect(() => {
     if (!id) return
@@ -30,7 +31,7 @@ export default function ClientePagina() {
       })
   }, [id])
 
-  const botaoAba = (chave: 'ficha' | 'aprovacoes' | 'calendario' | 'manual' | 'portal', rotulo: string) => (
+  const botaoAba = (chave: 'ficha' | 'aprovacoes' | 'calendario' | 'plano' | 'manual' | 'portal', rotulo: string) => (
     <button
       onClick={() => setParams(chave === 'ficha' ? {} : { aba: chave })}
       aria-current={aba === chave ? 'page' : undefined}
@@ -61,12 +62,14 @@ export default function ClientePagina() {
             {botaoAba('ficha', 'Ficha')}
             {botaoAba('aprovacoes', 'Aprovações')}
             {botaoAba('calendario', 'Calendário')}
+            {botaoAba('plano', 'Plano de ação')}
             {botaoAba('manual', 'Manual da marca')}
             {botaoAba('portal', 'Portal')}
           </nav>
           {aba === 'ficha' && <FichaCliente cliente={cliente} onChange={setCliente} />}
           {aba === 'aprovacoes' && <AprovacoesCliente cliente={cliente} />}
           {aba === 'calendario' && <CalendarioCliente cliente={cliente} />}
+          {aba === 'plano' && <PainelTarefas clienteId={cliente.id} />}
           {aba === 'manual' && <ManualMarca cliente={cliente} />}
           {aba === 'portal' && <AbaPortal cliente={cliente} onChange={setCliente} />}
         </>

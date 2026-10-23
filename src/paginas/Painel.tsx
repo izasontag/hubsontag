@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Cartao } from '../componentes/ui'
 import { useAuth } from '../lib/auth'
+import { dataDeHoje } from '../lib/datas'
 import { supabase } from '../lib/supabase'
 
 export default function Painel() {
@@ -9,6 +10,7 @@ export default function Painel() {
   const [ativos, setAtivos] = useState<number | null>(null)
   const [aguardando, setAguardando] = useState<number | null>(null)
   const [ajustes, setAjustes] = useState<number | null>(null)
+  const [atrasadas, setAtrasadas] = useState<number | null>(null)
 
   useEffect(() => {
     supabase
@@ -26,6 +28,12 @@ export default function Painel() {
       .select('id', { count: 'exact', head: true })
       .eq('status', 'ajuste_pedido')
       .then(({ count }) => setAjustes(count ?? 0))
+    supabase
+      .from('tarefas')
+      .select('id', { count: 'exact', head: true })
+      .neq('status', 'feito')
+      .lt('data', dataDeHoje())
+      .then(({ count }) => setAtrasadas(count ?? 0))
   }, [])
 
   return (
@@ -51,6 +59,13 @@ export default function Painel() {
           </Link>
         </Cartao>
       </div>
+      <Cartao>
+        <p className="text-texto-suave">Tarefas atrasadas</p>
+        <p className="font-titulo text-5xl text-marrom">{atrasadas ?? '...'}</p>
+        <Link to="/app/tarefas" className="mt-3 inline-block min-h-11 py-2 text-musgo underline">
+          Abrir tarefas
+        </Link>
+      </Cartao>
       <p className="text-sm text-texto-suave">
         Posts da semana, aprovações e cobranças aparecem aqui nas próximas fases.
       </p>

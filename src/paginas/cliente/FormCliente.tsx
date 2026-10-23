@@ -21,6 +21,8 @@ export default function FormCliente({ inicial, somenteLeitura = false, onSalvo }
   const [dataInicio, setDataInicio] = useState(inicial?.data_inicio ?? '')
   const [cor, setCor] = useState(inicial?.cor_destaque ?? '#5C6B47')
   const [observacoes, setObservacoes] = useState(inicial?.observacoes ?? '')
+  const [objetivo, setObjetivo] = useState(inicial?.objetivo ?? '')
+  const [suporte, setSuporte] = useState(inicial?.suporte ?? '')
   const [erro, setErro] = useState('')
   const [ok, setOk] = useState(false)
   const [salvando, setSalvando] = useState(false)
@@ -39,6 +41,8 @@ export default function FormCliente({ inicial, somenteLeitura = false, onSalvo }
       data_inicio: dataInicio || null,
       cor_destaque: cor,
       observacoes: vazioParaNulo(observacoes),
+      objetivo: vazioParaNulo(objetivo),
+      suporte: vazioParaNulo(suporte),
     }
     const consulta = inicial
       ? supabase.from('clientes').update(dados).eq('id', inicial.id)
@@ -102,7 +106,13 @@ export default function FormCliente({ inicial, somenteLeitura = false, onSalvo }
             />
           </Campo>
         </div>
-        <Campo rotulo="Observações">
+        <Campo rotulo="Objetivo do cliente (aparece no início do portal)">
+          <textarea rows={2} className={inputCls} value={objetivo} onChange={(e) => setObjetivo(e.target.value)} />
+        </Campo>
+        <Campo rotulo="Horário de suporte e WhatsApp (aparece no início do portal)">
+          <input className={inputCls} placeholder="Segunda a sexta, 8h às 18h. WhatsApp (67) 9...." value={suporte} onChange={(e) => setSuporte(e.target.value)} />
+        </Campo>
+        <Campo rotulo="Observações (só interno)">
           <textarea
             rows={4}
             className={inputCls}
