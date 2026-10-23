@@ -90,3 +90,91 @@ export interface Historico {
   tipo: TipoHistorico
   texto: string
 }
+
+// ---------------- Calendário editorial ----------------
+
+export const STATUS_POST = [
+  'ideia',
+  'roteiro',
+  'design',
+  'em_aprovacao',
+  'ajuste_pedido',
+  'aprovado',
+  'agendado',
+  'publicado',
+] as const
+export type StatusPost = (typeof STATUS_POST)[number]
+
+export const STATUS_POST_ROTULO: Record<StatusPost, string> = {
+  ideia: 'Ideia',
+  roteiro: 'Roteiro',
+  design: 'Design',
+  em_aprovacao: 'Em aprovação',
+  ajuste_pedido: 'Ajuste pedido',
+  aprovado: 'Aprovado',
+  agendado: 'Agendado',
+  publicado: 'Publicado',
+}
+
+export const FORMATOS = ['carrossel', 'reels', 'post_unico', 'stories'] as const
+export type FormatoPost = (typeof FORMATOS)[number]
+
+export const FORMATO_ROTULO: Record<FormatoPost, string> = {
+  carrossel: 'Carrossel',
+  reels: 'Reels',
+  post_unico: 'Post único',
+  stories: 'Stories',
+}
+
+export type Desempenho = 'bom' | 'media' | 'abaixo'
+
+export const DESEMPENHO_ROTULO: Record<Desempenho, string> = {
+  bom: 'Performando bem',
+  media: 'Na média',
+  abaixo: 'Abaixo do esperado',
+}
+
+export interface Tag {
+  id: string
+  nome: string
+  cor: string
+  cliente_id: string | null
+}
+
+export interface Midia {
+  id: string
+  post_id: string
+  caminho_storage: string
+  ordem: number
+}
+
+export interface Post {
+  id: string
+  cliente_id: string
+  data_publicacao: string
+  horario: string | null
+  formato: FormatoPost
+  pilar: string | null
+  formato_cbs: string | null
+  tema: string | null
+  gancho: string | null
+  copy: string | null
+  legenda: string | null
+  status: StatusPost
+  prazo_interno: string | null
+  desempenho: Desempenho | null
+  alcance: number | null
+  salvamentos: number | null
+  compartilhamentos: number | null
+  comentarios_qtd: number | null
+  nota_desempenho: string | null
+}
+
+// Post como vem da consulta do calendário (com cliente, tags e artes)
+export interface PostCompleto extends Post {
+  cliente: { nome: string; cor_destaque: string } | null
+  post_tags: { tag_id: string }[]
+  post_midias: Midia[]
+}
+
+export type ClienteResumo = Pick<Cliente, 'id' | 'nome' | 'cor_destaque'>

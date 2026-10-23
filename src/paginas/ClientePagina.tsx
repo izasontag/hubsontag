@@ -4,6 +4,7 @@ import { Aviso, STATUS_ROTULO } from '../componentes/ui'
 import { supabase } from '../lib/supabase'
 import type { Cliente } from '../lib/tipos'
 import FichaCliente from './cliente/FichaCliente'
+import CalendarioCliente from './cliente/CalendarioCliente'
 import ManualMarca from './cliente/ManualMarca'
 
 export default function ClientePagina() {
@@ -11,7 +12,8 @@ export default function ClientePagina() {
   const [params, setParams] = useSearchParams()
   const [cliente, setCliente] = useState<Cliente | null>(null)
   const [erro, setErro] = useState('')
-  const aba = params.get('aba') === 'manual' ? 'manual' : 'ficha'
+  const abaParam = params.get('aba')
+  const aba = abaParam === 'manual' || abaParam === 'calendario' ? abaParam : 'ficha'
 
   useEffect(() => {
     if (!id) return
@@ -26,7 +28,7 @@ export default function ClientePagina() {
       })
   }, [id])
 
-  const botaoAba = (chave: 'ficha' | 'manual', rotulo: string) => (
+  const botaoAba = (chave: 'ficha' | 'calendario' | 'manual', rotulo: string) => (
     <button
       onClick={() => setParams(chave === 'ficha' ? {} : { aba: chave })}
       aria-current={aba === chave ? 'page' : undefined}
@@ -55,13 +57,12 @@ export default function ClientePagina() {
           </header>
           <nav className="flex gap-6 border-b border-linha" aria-label="Seções do cliente">
             {botaoAba('ficha', 'Ficha')}
+            {botaoAba('calendario', 'Calendário')}
             {botaoAba('manual', 'Manual da marca')}
           </nav>
-          {aba === 'ficha' ? (
-            <FichaCliente cliente={cliente} onChange={setCliente} />
-          ) : (
-            <ManualMarca cliente={cliente} />
-          )}
+          {aba === 'ficha' && <FichaCliente cliente={cliente} onChange={setCliente} />}
+          {aba === 'calendario' && <CalendarioCliente cliente={cliente} />}
+          {aba === 'manual' && <ManualMarca cliente={cliente} />}
         </>
       )}
     </div>

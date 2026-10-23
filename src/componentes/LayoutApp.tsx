@@ -20,6 +20,9 @@ export default function LayoutApp() {
             <NavLink to="/app/clientes" className={link}>
               Clientes
             </NavLink>
+            <NavLink to="/app/calendario" className={link}>
+              Calendário
+            </NavLink>
           </nav>
           <div className="flex items-center gap-3 py-2 text-sm text-texto-suave">
             <span>{perfil?.nome}</span>
