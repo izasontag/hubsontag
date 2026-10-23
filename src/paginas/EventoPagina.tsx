@@ -9,6 +9,7 @@ import type { Evento } from '../lib/tipos'
 import ChecklistEvento from './evento/ChecklistEvento'
 import DadosEvento from './evento/DadosEvento'
 import Roteiros from '../componentes/Roteiros'
+import PortalEvento from './evento/PortalEvento'
 import PagamentosEvento from './evento/PagamentosEvento'
 
 
@@ -20,7 +21,7 @@ export default function EventoPagina() {
   const [evento, setEvento] = useState<Evento | null>(null)
   const [erro, setErro] = useState('')
   const pedida = params.get('aba')
-  const aba = pedida === 'checklist' || pedida === 'roteiros' || (pedida === 'pagamentos' && dona) ? pedida : 'dados'
+  const aba = pedida === 'checklist' || pedida === 'roteiros' || pedida === 'portal' || (pedida === 'pagamentos' && dona) ? pedida : 'dados'
 
   useEffect(() => {
     if (!id) return
@@ -35,7 +36,7 @@ export default function EventoPagina() {
       })
   }, [id])
 
-  const botao = (chave: 'dados' | 'checklist' | 'roteiros' | 'pagamentos', rotulo: string) => (
+  const botao = (chave: 'dados' | 'checklist' | 'roteiros' | 'portal' | 'pagamentos', rotulo: string) => (
     <button
       onClick={() => setParams(chave === 'dados' ? {} : { aba: chave })}
       aria-current={aba === chave ? 'page' : undefined}
@@ -71,12 +72,14 @@ export default function EventoPagina() {
             {botao('dados', 'Dados e contrato')}
             {botao('checklist', 'Checklist')}
             {botao('roteiros', 'Roteiros')}
+            {botao('portal', 'Portal do cliente')}
             {dona && botao('pagamentos', 'Pagamentos')}
           </nav>
           <div key={aba} className="anim-entrar">
             {aba === 'dados' && <DadosEvento evento={evento} onChange={setEvento} />}
             {aba === 'checklist' && <ChecklistEvento evento={evento} />}
             {aba === 'roteiros' && <Roteiros eventoId={evento.id} />}
+            {aba === 'portal' && <PortalEvento evento={evento} onChange={setEvento} dona={dona} />}
             {aba === 'pagamentos' && dona && <PagamentosEvento evento={evento} />}
           </div>
         </>

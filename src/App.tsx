@@ -18,6 +18,7 @@ import Painel from './paginas/Painel'
 import Tarefas from './paginas/Tarefas'
 import PortalAprovacoes from './paginas/portal/PortalAprovacoes'
 import PortalCalendario from './paginas/portal/PortalCalendario'
+import PortalEventoPagina from './paginas/portal/PortalEventoPagina'
 import PortalFeed from './paginas/portal/PortalFeed'
 import PortalInicio from './paginas/portal/PortalInicio'
 import PortalLayout from './paginas/portal/PortalLayout'
@@ -65,6 +66,7 @@ export default function App() {
             <Route path="materiais" element={<PortalMateriais />} />
             <Route path="relatorios" element={<PortalRelatorios />} />
           </Route>
+          <Route path="/evento/:token" element={<PortalEventoPagina />} />
           <Route path="*" element={<Navigate to="/app" replace />} />
         </Routes>
       </ProvedorAuth>

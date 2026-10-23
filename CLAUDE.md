@@ -129,6 +129,13 @@ Nomes de tabelas e colunas em português, sem acento, em `snake_case`. Toda tabe
 - **roteiros**: `cliente_id` ou `evento_id` (exatamente um), `titulo`, `formato` (reels, carrossel, stories, video, evento, outro), `status` (rascunho, em_revisao, aprovado, gravado, publicado), `data_prevista`, `texto`, `arquivo_storage`, `arquivo_nome`. RLS: quem enxerga o cliente ou o evento. Migração `010_roteiros.sql`. O cliente do portal não vê roteiros.
 - Na interface a palavra "Casamento" não aparece: tudo é "Evento" (a coluna `tipo` continua no banco por compatibilidade).
 
+### Portal do evento (link secreto, sem login) e cofre do Instagram
+
+- `eventos` ganhou `token_portal`, `portal_ativo`, `recado_portal`. O cliente do evento abre `/evento/:token`, responde o **checklist do grande dia** (tabela `evento_perguntas`: `secao`, `pergunta`, `resposta`, `respondida_em`; 17 perguntas padrão para cobertura de stories criadas por gatilho, editáveis, e a dona/equipe atribuída pode acrescentar, editar e apagar) e envia o **acesso do Instagram**.
+- Funções (RPC, anônimas): `portal_evento_dados`, `portal_evento_responder`, `portal_evento_acesso`. O cliente nunca lê tabelas.
+- **Senha do Instagram nunca em texto puro:** o navegador do cliente tranca (RSA-OAEP 3072, WebCrypto) com a chave pública (`cofre_config`, linha única) e só o texto trancado vai para `evento_acessos` (`usuario`, `senha_cifrada`, `observacao`). A chave privada é gerada no navegador da dona, mostrada uma vez (copiar/baixar) e **nunca vai para o banco**; para ver a senha a dona cola a chave (fica só na aba, `sessionStorage`) e a senha se esconde em 30 s. `cofre_config` e `evento_acessos`: só dona (a equipe não vê). Perdeu a chave = o cliente envia de novo. A dona apaga o acesso depois do evento.
+- Migração `012_portal_evento.sql`. Aba "Portal do cliente" na ficha do evento (link, recado, perguntas e respostas, cofre).
+
 ### Eventos (trabalho de storymaker, separado dos clientes de social media)
 
 Eventos têm clientes próprios (casais, aniversariantes, empresas), que **não** são linhas da tabela `clientes`, mas **contam como clientes**: aparecem na tela Clientes (seção "Clientes de eventos", somados na contagem) e entram em "Clientes ativos" do painel (negociação, contrato assinado ou em andamento).

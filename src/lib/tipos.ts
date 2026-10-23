@@ -536,6 +536,9 @@ export interface Evento {
   status: StatusEvento
   contrato_storage: string | null
   observacoes: string | null
+  token_portal: string
+  portal_ativo: boolean
+  recado_portal: string | null
 }
 
 export interface ItemEvento {
@@ -621,3 +624,35 @@ export interface Roteiro {
 
 // Sugestões para "Que tipo de evento é?" (a dona também pode escrever outro).
 export const CATEGORIAS_EVENTO = ['Casamento', 'Aniversário', 'Debutante', 'Formatura', 'Corporativo', 'Batizado', 'Chá de bebê', 'Noivado', 'Show', 'Outro']
+
+// ---------------- Portal do evento ----------------
+
+export interface PerguntaEvento {
+  id: string
+  evento_id: string
+  secao: string
+  pergunta: string
+  resposta: string | null
+  respondida_em: string | null
+  ordem: number
+}
+
+export interface AcessoEvento {
+  evento_id: string
+  usuario: string
+  senha_cifrada: string
+  observacao: string | null
+  atualizado_em: string
+}
+
+export interface PortalEventoDados {
+  nome: string
+  categoria: string | null
+  data_evento: string
+  horario: string | null
+  local: string | null
+  recado: string | null
+  chave_publica: string | null
+  acesso: { usuario: string; enviado_em: string } | null
+  perguntas: { id: string; secao: string; pergunta: string; resposta: string | null }[]
+}
