@@ -248,3 +248,14 @@ body {
     transform: none !important;
   }
 }
+
+/* menu lateral no celular */
+@keyframes gaveta {
+  from {
+    transform: translateX(-100%);
+  }
+}
+
+.anim-gaveta {
+  animation: gaveta 0.35s var(--ease-suave) both;
+}

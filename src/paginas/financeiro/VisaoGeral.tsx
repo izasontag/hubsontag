@@ -20,6 +20,7 @@ interface Atrasada {
   valor: number
   vencimento: string
   cliente: { nome: string } | null
+  eventoId?: string
 }
 interface ContratoMin {
   id: string
@@ -46,21 +47,25 @@ export default function VisaoGeral({ mes, onMes }: { mes: string; onMes: (m: str
     let ativo = true
     const ini = `${somarMeses(mes, -5)}-01`
     const fim = limitesDoMes(mes).fim
+    const janela = `and(vencimento.gte.${ini},vencimento.lte.${fim}),and(pago_em.gte.${ini},pago_em.lte.${fim})`
     Promise.all([
-      supabase
-        .from('cobrancas')
-        .select('valor, vencimento, status, pago_em')
-        .or(`and(vencimento.gte.${ini},vencimento.lte.${fim}),and(pago_em.gte.${ini},pago_em.lte.${fim})`),
+      supabase.from('cobrancas').select('valor, vencimento, status, pago_em').or(janela),
       supabase.from('despesas').select('data, valor').gte('data', ini).lte('data', fim),
       supabase.from('cobrancas').select('id, descricao, valor, vencimento, cliente:clientes(nome)').eq('status', 'atrasado').order('vencimento'),
       supabase.from('contratos').select('id, plano, valor_mensal, renovacao, cliente:clientes(nome)').eq('status', 'ativo'),
-    ]).then(([c, d, a, k]) => {
+      supabase.from('evento_parcelas').select('valor, vencimento, status, pago_em').or(janela),
+      supabase.from('evento_parcelas').select('id, evento_id, descricao, valor, vencimento, evento:eventos(nome)').eq('status', 'atrasado').order('vencimento'),
+    ]).then(([c, d, a, k, ep, ea]) => {
       if (!ativo) return
-      if (c.error || d.error || a.error || k.error) return setErro('Não foi possível carregar o financeiro.')
+      if (c.error || d.error || a.error || k.error || ep.error || ea.error) return setErro('Não foi possível carregar o financeiro.')
       setErro('')
-      setCobrancas(c.data as CobrancaMin[])
+      // as parcelas dos eventos contam junto com as cobranças da agência
+      setCobrancas([...(c.data as CobrancaMin[]), ...(ep.data as CobrancaMin[])])
       setDespesas(d.data as { data: string; valor: number }[])
-      setAtrasadas(a.data as unknown as Atrasada[])
+      const dosEventos = (ea.data as unknown as { id: string; evento_id: string; descricao: string; valor: number; vencimento: string; evento: { nome: string } | null }[]).map(
+        (x): Atrasada => ({ id: x.id, descricao: x.descricao, valor: x.valor, vencimento: x.vencimento, cliente: x.evento ? { nome: x.evento.nome } : null, eventoId: x.evento_id }),
+      )
+      setAtrasadas([...(a.data as unknown as Atrasada[]), ...dosEventos].sort((x, y) => x.vencimento.localeCompare(y.vencimento)))
       setContratos(k.data as unknown as ContratoMin[])
     })
     return () => {
@@ -86,7 +91,7 @@ export default function VisaoGeral({ mes, onMes }: { mes: string; onMes: (m: str
     .sort((a, b) => (a.renovacao ?? '').localeCompare(b.renovacao ?? ''))
 
   const tiles: { rotulo: string; valor: number; nota?: string; alerta?: boolean }[] = [
-    { rotulo: 'Previsto no mês', valor: prevista, nota: 'cobranças com vencimento no mês' },
+    { rotulo: 'Previsto no mês', valor: prevista, nota: 'cobranças e parcelas de eventos com vencimento no mês' },
     { rotulo: 'Recebido no mês', valor: atual.receita },
     { rotulo: 'A receber no mês', valor: aReceber },
     { rotulo: 'Atrasado (total)', valor: totalAtrasado, alerta: totalAtrasado > 0 },
@@ -133,6 +138,7 @@ export default function VisaoGeral({ mes, onMes }: { mes: string; onMes: (m: str
                   <span>
                     {a.cliente?.nome ?? 'Sem cliente'}
                     <span className="block text-xs text-texto-suave">
+                      {a.eventoId ? 'Evento · ' : ''}
                       {a.descricao} · venceu em {formatarData(a.vencimento)}
                     </span>
                   </span>

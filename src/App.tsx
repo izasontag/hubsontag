@@ -10,6 +10,9 @@ import Entrar from './paginas/Entrar'
 import Agencia from './paginas/financeiro/Agencia'
 import Financeiro from './paginas/financeiro/Financeiro'
 import Pessoal from './paginas/financeiro/Pessoal'
+import Equipe from './paginas/Equipe'
+import EventoPagina from './paginas/EventoPagina'
+import Eventos from './paginas/Eventos'
 import Ideias from './paginas/Ideias'
 import Painel from './paginas/Painel'
 import Tarefas from './paginas/Tarefas'
@@ -41,6 +44,9 @@ export default function App() {
             <Route path="calendario" element={<CalendarioGeral />} />
             <Route path="ideias" element={<Ideias />} />
             <Route path="tarefas" element={<Tarefas />} />
+            <Route path="eventos" element={<Eventos />} />
+            <Route path="eventos/:id" element={<EventoPagina />} />
+            <Route path="equipe" element={<Equipe />} />
             <Route path="financeiro" element={<Financeiro />}>
               <Route index element={<Agencia />} />
               <Route path="pessoal" element={<Pessoal />} />

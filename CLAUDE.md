@@ -60,6 +60,7 @@ Princípios:
 - **Estilo editorial, vivo e elegante:** títulos grandes em Cormorant Garamond com uma palavra em itálico para destacar, legendas pequenas em caixa alta com espaçamento, sombras suaves nos cartões, números grandes em Helvetica leve (a serifada faz o zero parecer a letra O), avatares com iniciais na cor do cliente. O portal abre com uma faixa na cor de destaque do cliente, com anéis finos decorativos.
 - **Movimento suave:** entrada com fade e leve deslize, escalonada em listas; cartões que sobem ao passar o mouse; sublinhado animado nos menus; números que contam; barras de progresso que preenchem; janelas que surgem com fade; imagens com fade ao carregar; blocos que aparecem ao rolar a página. Tudo em CSS e um pouco de JavaScript, sem biblioteca de animação. **Sempre respeitar `prefers-reduced-motion`** e nunca animar o que atrapalhe a leitura.
 - **Gráficos:** colunas finas (até 24 px, topo arredondado), linhas e grade finas, legenda sempre que houver duas ou mais séries, dica ao passar o mouse e ao focar pelo teclado, e uma **visão em tabela** com os mesmos valores. Cores validadas contra daltonismo: **recebido `#5B7A38` (musgo vivo) e despesas `#C98B4F` (âmbar)**. O musgo e o marrom da identidade são parecidos demais para um gráfico e reprovam no teste. Nunca usar duas escalas no mesmo gráfico.
+- **Navegação em barra lateral à esquerda** (no celular vira um menu que desliza, aberto pelo botão no topo), com ícones de linha fina e grupos: Painel, Trabalho (Clientes, Calendário, Tarefas, Ideias), Casamentos (Eventos) e Agência (Financeiro e Equipe, só para a dona).
 - Cada cliente tem uma **cor de destaque** própria, usada nos detalhes do portal e do manual da marca dele.
 - Contraste de texto de pelo menos 4.5:1. Botões com no mínimo 44 px de altura.
 
@@ -140,6 +141,14 @@ Eventos têm clientes próprios (casais, aniversariantes, empresas), que **não*
 
 Segurança: dona vê e faz tudo. Equipe lê e edita só os eventos atribuídos (dados, contrato, checklist), nunca `evento_parcelas`. Ninguém sem login vê nada de eventos.
 
+### Painel: atalhos e versículos (só dona)
+
+- **atalhos**: `tipo` (`agenda`, `pinterest_quadro`, `pinterest_pin`), `titulo`, `url`, `ordem`. O banco só aceita endereços de `calendar.google.com/calendar/` para a agenda e de `pinterest.*` para os outros (pin precisa de número). O painel monta o iframe da agenda e o do pin a partir desses endereços, com `sandbox` e referrer só com a origem.
+- **versiculos**: `referencia`, `texto` (versículos próprios da dona, somados aos que já vêm no código).
+- Limites conhecidos: o Google Agenda privado só aparece para quem está logada no Google no mesmo navegador (não existe forma de "puxar" os eventos sem um servidor próprio), e o Pinterest não permite incorporar o site inteiro.
+- **Equipe**: a dona cria o login no Supabase (Authentication > Users > Add user) e usa a tela Equipe para "liberar acesso" (função `liberar_equipe`, que só vincula o login existente ao papel `equipe` e nunca rebaixa a dona) e atribuir clientes e eventos.
+- **relatorios**: um por cliente e por mês (índice único). A tela do cliente tem "Puxar os números do mês", que soma alcance, salvamentos, compartilhamentos e comentários dos posts publicados.
+
 ### Ideias e materiais
 
 - **ideias**: `texto`, `tipo` (ideia de post, referência visual, filme, livro, trend, formato que funcionou), `cliente_id` (vazio = geral), `para_sontag` (ideia da própria agência: só a dona vê), `tags` (lista), `fonte` (link ou anotação), `post_id` (post que nasceu desta ideia), `criado_por`
@@ -168,7 +177,7 @@ Segurança: dona vê e faz tudo. Equipe lê e edita só os eventos atribuídos (
 
 ### Área interna (`/app`)
 
-- **Painel** (`/app`): posts da semana, posts esperando aprovação, ajustes pedidos, cobranças atrasadas (só dona), contratos vencendo em 30 dias (só dona)
+- **Painel** (`/app`): a página inicial é um resumo bonito. Saudação com a data e "Storymaker & Marketing"; **versículo do dia** em destaque (lista de ~60 versículos da tradução Almeida dentro do código, um por dia, e a dona pode acrescentar os dela, que entram na mesma rotação); próximo evento com contagem regressiva; tarefas da semana; indicadores (clientes ativos, esperando aprovação, ajustes pedidos, tarefas atrasadas e, só para a dona, cobranças atrasadas e contratos vencendo em 30 dias); próximos 7 dias de posts; e, só para a dona, **Minha agenda** (Google Agenda incorporado) e **Pinterest** (atalhos para quadros e pins incorporados).
 - **Clientes** (`/app/clientes`): lista de clientes com status e cor de destaque
 - **Cliente** (`/app/clientes/:id`) com abas:
   - **Ficha**: dados básicos, acessos, histórico
@@ -248,7 +257,7 @@ Construa uma fase por vez. Cada fase precisa estar funcionando e publicada antes
 
 ### Fase 4: financeiro
 
-- Financeiro da agência (contratos, cobranças, despesas, avulsos, indicadores do mês). A receita prevista e recebida inclui as parcelas dos eventos (`evento_parcelas`).
+- Financeiro da agência (contratos, cobranças, despesas, avulsos, indicadores do mês). A receita prevista e recebida inclui as parcelas dos eventos (`evento_parcelas`), e `marcar_atrasadas` cobre cobranças e parcelas.
 - Financeiro pessoal (lançamentos, metas, resumo).
 - **Pronto quando:** eu vejo receita prevista e recebida do mês, cobranças atrasadas e meu resumo pessoal, e uma conta de equipe de teste não consegue ver nada disso.
 

@@ -48,3 +48,19 @@ export function diaSemanaLongo(data: string) {
 }
 
 export const horaCurta = (h: string | null) => (h ? h.slice(0, 5) : '')
+
+// Dias de hoje até a data (negativo = já passou), sem depender de fuso horário.
+export function diasAte(data: string) {
+  const [a, m, d] = data.split('-').map(Number)
+  const [ha, hm, hd] = dataDeHoje().split('-').map(Number)
+  return Math.round((Date.UTC(a, m - 1, d) - Date.UTC(ha, hm - 1, hd)) / 86_400_000)
+}
+
+export function contagem(data: string) {
+  const n = diasAte(data)
+  if (n === 0) return 'hoje'
+  if (n === 1) return 'amanhã'
+  if (n > 1) return `em ${n} dias`
+  if (n === -1) return 'ontem'
+  return `há ${-n} dias`
+}

@@ -1,0 +1,80 @@
+export interface Versiculo {
+  referencia: string
+  texto: string
+}
+
+// Tradução de João Ferreira de Almeida (domínio público). Confira com a sua Bíblia e, se preferir
+// outra redação, acrescente os seus versículos no painel: eles entram na mesma rotação.
+export const VERSICULOS: Versiculo[] = [
+  { referencia: 'Salmos 23:1', texto: 'O Senhor é o meu pastor, nada me faltará.' },
+  { referencia: 'Salmos 46:1', texto: 'Deus é o nosso refúgio e fortaleza, socorro bem presente na angústia.' },
+  { referencia: 'Salmos 37:5', texto: 'Entrega o teu caminho ao Senhor; confia nele, e ele o fará.' },
+  { referencia: 'Salmos 121:1-2', texto: 'Levantarei os meus olhos para os montes, de onde vem o meu socorro. O meu socorro vem do Senhor, que fez os céus e a terra.' },
+  { referencia: 'Salmos 119:105', texto: 'Lâmpada para os meus pés é tua palavra, e luz para o meu caminho.' },
+  { referencia: 'Salmos 34:8', texto: 'Provai e vede que o Senhor é bom; bem-aventurado o homem que nele confia.' },
+  { referencia: 'Salmos 118:24', texto: 'Este é o dia que fez o Senhor; regozijemo-nos e alegremo-nos nele.' },
+  { referencia: 'Salmos 27:1', texto: 'O Senhor é a minha luz e a minha salvação; a quem temerei? O Senhor é a força da minha vida; de quem me recearei?' },
+  { referencia: 'Salmos 55:22', texto: 'Lança o teu cuidado sobre o Senhor, e ele te susterá; nunca permitirá que o justo seja abalado.' },
+  { referencia: 'Salmos 90:12', texto: 'Ensina-nos a contar os nossos dias, de tal maneira que alcancemos corações sábios.' },
+  { referencia: 'Salmos 139:14', texto: 'Louvar-te-ei, porque de um modo assombroso, e tão maravilhoso fui feito; maravilhosas são as tuas obras, e a minha alma o sabe muito bem.' },
+  { referencia: 'Salmos 19:14', texto: 'Sejam agradáveis as palavras da minha boca e a meditação do meu coração perante a tua face, Senhor, Rocha minha e Redentor meu!' },
+  { referencia: 'Salmos 30:5', texto: 'Porque a sua ira dura só um momento; no seu favor está a vida; o choro pode durar uma noite, mas a alegria vem pela manhã.' },
+  { referencia: 'Salmos 73:26', texto: 'A minha carne e o meu coração desfalecem; mas Deus é a fortaleza do meu coração, e a minha porção para sempre.' },
+  { referencia: 'Provérbios 3:5-6', texto: 'Confia no Senhor de todo o teu coração e não te estribes no teu próprio entendimento. Reconhece-o em todos os teus caminhos, e ele endireitará as tuas veredas.' },
+  { referencia: 'Provérbios 16:3', texto: 'Confia ao Senhor as tuas obras, e os teus pensamentos serão estabelecidos.' },
+  { referencia: 'Provérbios 16:9', texto: 'O coração do homem traça o seu caminho, mas o Senhor lhe dirige os passos.' },
+  { referencia: 'Provérbios 4:23', texto: 'Sobre tudo o que se deve guardar, guarda o teu coração, porque dele procedem as saídas da vida.' },
+  { referencia: 'Provérbios 18:10', texto: 'Torre forte é o nome do Senhor; os justos correm para ela, e estão em alto refúgio.' },
+  { referencia: 'Provérbios 27:17', texto: 'Como o ferro com o ferro se afia, assim o homem afia o rosto do seu amigo.' },
+  { referencia: 'Provérbios 31:25', texto: 'A força e a honra são o seu vestido, e se rirá do tempo futuro.' },
+  { referencia: 'Isaías 41:10', texto: 'Não temas, porque eu sou contigo; não te assombres, porque eu sou o teu Deus; eu te fortaleço, e te ajudo, e te sustento com a destra da minha justiça.' },
+  { referencia: 'Isaías 40:31', texto: 'Mas os que esperam no Senhor renovarão as forças, subirão com asas como águias; correrão, e não se cansarão; caminharão, e não se fatigarão.' },
+  { referencia: 'Isaías 26:3', texto: 'Tu conservarás em paz aquele cujo propósito está firme em ti; porque ele confia em ti.' },
+  { referencia: 'Jeremias 29:11', texto: 'Porque eu bem sei os pensamentos que tenho a vosso respeito, diz o Senhor; pensamentos de paz, e não de mal, para vos dar o fim que esperais.' },
+  { referencia: 'Lamentações 3:22-23', texto: 'As misericórdias do Senhor são a causa de não sermos consumidos, porque as suas misericórdias não têm fim; novas são cada manhã; grande é a tua fidelidade.' },
+  { referencia: 'Josué 1:9', texto: 'Não to mandei eu? Esforça-te, e tem bom ânimo; não pasmes, nem te espantes, porque o Senhor teu Deus é contigo, por onde quer que andares.' },
+  { referencia: 'Deuteronômio 31:6', texto: 'Esforçai-vos e tende bom ânimo; não temais, nem tenhais pavor deles, porque o Senhor teu Deus é quem vai contigo; não te deixará nem te desamparará.' },
+  { referencia: 'Eclesiastes 3:1', texto: 'Tudo tem o seu tempo determinado, e há tempo para todo o propósito debaixo do céu.' },
+  { referencia: 'Miqueias 6:8', texto: 'Ele te declarou, ó homem, o que é bom; e que é o que o Senhor pede de ti, senão que pratiques a justiça, e ames a benignidade, e andes humildemente com o teu Deus?' },
+  { referencia: 'Naum 1:7', texto: 'O Senhor é bom, uma fortaleza no dia da angústia, e conhece os que confiam nele.' },
+  { referencia: 'Mateus 6:33', texto: 'Mas buscai primeiro o reino de Deus, e a sua justiça, e todas estas coisas vos serão acrescentadas.' },
+  { referencia: 'Mateus 11:28', texto: 'Vinde a mim, todos os que estais cansados e oprimidos, e eu vos aliviarei.' },
+  { referencia: 'Mateus 5:16', texto: 'Assim resplandeça a vossa luz diante dos homens, para que vejam as vossas boas obras e glorifiquem a vosso Pai, que está nos céus.' },
+  { referencia: 'Mateus 7:7', texto: 'Pedi, e dar-se-vos-á; buscai, e encontrareis; batei, e abrir-se-vos-á.' },
+  { referencia: 'Mateus 19:26', texto: 'E, olhando Jesus, disse-lhes: Aos homens é isso impossível, mas a Deus tudo é possível.' },
+  { referencia: 'Mateus 28:20', texto: 'Ensinando-os a guardar todas as coisas que eu vos tenho mandado; e eis que eu estou convosco todos os dias, até à consumação dos séculos.' },
+  { referencia: 'Marcos 11:24', texto: 'Por isso vos digo que tudo o que pedirdes, orando, crede que o recebereis, e tê-lo-eis.' },
+  { referencia: 'Lucas 1:37', texto: 'Porque para Deus nada é impossível.' },
+  { referencia: 'João 3:16', texto: 'Porque Deus amou o mundo de tal maneira que deu o seu Filho unigênito, para que todo aquele que nele crê não pereça, mas tenha a vida eterna.' },
+  { referencia: 'João 8:12', texto: 'Falou-lhes, pois, Jesus outra vez, dizendo: Eu sou a luz do mundo; quem me segue não andará em trevas, mas terá a luz da vida.' },
+  { referencia: 'João 14:6', texto: 'Disse-lhe Jesus: Eu sou o caminho, e a verdade, e a vida; ninguém vem ao Pai, senão por mim.' },
+  { referencia: 'João 14:27', texto: 'Deixo-vos a paz, a minha paz vos dou; não vo-la dou como o mundo a dá. Não se turbe o vosso coração, nem se atemorize.' },
+  { referencia: 'João 15:5', texto: 'Eu sou a videira, vós as varas; quem está em mim, e eu nele, esse dá muito fruto; porque sem mim nada podeis fazer.' },
+  { referencia: 'João 16:33', texto: 'Estas coisas vos tenho dito, para que em mim tenhais paz; no mundo tereis aflições, mas tende bom ânimo, eu venci o mundo.' },
+  { referencia: 'Romanos 5:8', texto: 'Mas Deus prova o seu amor para conosco, em que Cristo morreu por nós, sendo nós ainda pecadores.' },
+  { referencia: 'Romanos 8:28', texto: 'E sabemos que todas as coisas contribuem juntamente para o bem daqueles que amam a Deus, daqueles que são chamados segundo o seu propósito.' },
+  { referencia: 'Romanos 8:31', texto: 'Que diremos, pois, a estas coisas? Se Deus é por nós, quem será contra nós?' },
+  { referencia: 'Romanos 12:2', texto: 'E não vos conformeis com este mundo, mas transformai-vos pela renovação do vosso entendimento, para que experimenteis qual seja a boa, agradável e perfeita vontade de Deus.' },
+  { referencia: 'Romanos 15:13', texto: 'Ora, o Deus de esperança vos encha de todo o gozo e paz em crença, para que abundeis em esperança pela virtude do Espírito Santo.' },
+  { referencia: '1 Coríntios 13:13', texto: 'Agora, pois, permanecem a fé, a esperança e o amor, estes três, mas o maior destes é o amor.' },
+  { referencia: '1 Coríntios 16:14', texto: 'Todas as vossas coisas sejam feitas com amor.' },
+  { referencia: '2 Coríntios 12:9', texto: 'E disse-me: A minha graça te basta, porque o meu poder se aperfeiçoa na fraqueza.' },
+  { referencia: 'Gálatas 6:9', texto: 'E não nos cansemos de fazer bem, porque a seu tempo ceifaremos, se não houvermos desfalecido.' },
+  { referencia: 'Efésios 2:8', texto: 'Porque pela graça sois salvos, por meio da fé; e isto não vem de vós, é dom de Deus.' },
+  { referencia: 'Filipenses 4:6-7', texto: 'Não estejais inquietos por coisa alguma; antes as vossas petições sejam em tudo conhecidas diante de Deus pela oração e súplica, com ação de graças. E a paz de Deus, que excede todo o entendimento, guardará os vossos corações e os vossos sentimentos em Cristo Jesus.' },
+  { referencia: 'Filipenses 4:13', texto: 'Posso todas as coisas em Cristo que me fortalece.' },
+  { referencia: 'Colossenses 3:23', texto: 'E tudo quanto fizerdes, fazei-o de todo o coração, como ao Senhor, e não aos homens.' },
+  { referencia: '1 Tessalonicenses 5:16-18', texto: 'Estai sempre alegres. Orai sem cessar. Em tudo dai graças, porque esta é a vontade de Deus em Cristo Jesus para convosco.' },
+  { referencia: '2 Timóteo 1:7', texto: 'Porque Deus não nos deu o espírito de temor, mas de fortaleza, e de amor, e de moderação.' },
+  { referencia: 'Hebreus 11:1', texto: 'Ora, a fé é o firme fundamento das coisas que se esperam, e a prova das coisas que se não veem.' },
+  { referencia: 'Hebreus 13:8', texto: 'Jesus Cristo é o mesmo ontem, e hoje, e eternamente.' },
+  { referencia: 'Tiago 1:5', texto: 'E, se algum de vós tem falta de sabedoria, peça-a a Deus, que a todos dá liberalmente, e o não lança em rosto, e ser-lhe-á dada.' },
+  { referencia: '1 Pedro 5:7', texto: 'Lançando sobre ele toda a vossa ansiedade, porque ele tem cuidado de vós.' },
+  { referencia: '1 João 4:19', texto: 'Nós o amamos a ele porque ele nos amou primeiro.' },
+]
+
+// O mesmo versículo o dia inteiro, e outro no dia seguinte (usa a data local, sem fuso).
+export function versiculoDoDia(lista: Versiculo[], data: Date = new Date()): Versiculo {
+  const dias = Math.floor(Date.UTC(data.getFullYear(), data.getMonth(), data.getDate()) / 86_400_000)
+  return lista[((dias % lista.length) + lista.length) % lista.length]
+}

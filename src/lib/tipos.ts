@@ -510,3 +510,74 @@ export interface MetaPessoal {
   valor_atual: number
   prazo: string | null
 }
+
+// ---------------- Eventos e casamentos ----------------
+
+export const STATUS_EVENTO = ['em_negociacao', 'contrato_assinado', 'em_andamento', 'realizado', 'entregue', 'cancelado'] as const
+export type StatusEvento = (typeof STATUS_EVENTO)[number]
+export const STATUS_EVENTO_ROTULO: Record<StatusEvento, string> = {
+  em_negociacao: 'Em negociação',
+  contrato_assinado: 'Contrato assinado',
+  em_andamento: 'Em andamento',
+  realizado: 'Realizado',
+  entregue: 'Entregue',
+  cancelado: 'Cancelado',
+}
+
+export interface Evento {
+  id: string
+  nome: string
+  tipo: 'casamento' | 'evento'
+  data_evento: string
+  horario: string | null
+  local: string | null
+  contato: string | null
+  status: StatusEvento
+  contrato_storage: string | null
+  observacoes: string | null
+}
+
+export interface ItemEvento {
+  id: string
+  evento_id: string
+  titulo: string
+  concluido: boolean
+  prazo: string | null
+  ordem: number
+}
+
+export interface Parcela {
+  id: string
+  evento_id: string
+  descricao: string
+  vencimento: string
+  valor: number
+  forma_pagamento: FormaPagamento | null
+  status: StatusCobranca
+  pago_em: string | null
+}
+
+// ---------------- Painel: atalhos, versículos, equipe, relatórios ----------------
+
+export interface Atalho {
+  id: string
+  tipo: 'agenda' | 'pinterest_quadro' | 'pinterest_pin'
+  titulo: string
+  url: string
+  ordem: number
+}
+
+export interface VersiculoProprio {
+  id: string
+  referencia: string
+  texto: string
+}
+
+export interface Relatorio {
+  id: string
+  cliente_id: string
+  mes: string
+  resumo: string | null
+  destaques: string | null
+  proximos_passos: string | null
+}
