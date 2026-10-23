@@ -45,7 +45,7 @@ export default function PortalPlano() {
 
   return (
     <div className="space-y-6">
-      <h2 className="font-titulo text-3xl font-semibold text-marrom">Plano de ação</h2>
+      <h2 className="titulo-secao">Plano de ação</h2>
       {erro && <Aviso tipo="erro">Não foi possível carregar o plano de ação.</Aviso>}
       {itens?.length === 0 && <p className="text-texto-suave">Ainda não há itens no plano de ação.</p>}
       {abertas.length > 0 && (

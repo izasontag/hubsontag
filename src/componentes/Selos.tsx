@@ -15,7 +15,11 @@ const ESTILO_STATUS: Record<StatusPost, string> = {
 }
 
 export function SeloStatus({ status }: { status: StatusPost }) {
-  return <span className={`${base} ${ESTILO_STATUS[status]}`}>{STATUS_POST_ROTULO[status]}</span>
+  return (
+    <span key={status} className={`${base} ${ESTILO_STATUS[status]} anim-surgir`}>
+      {STATUS_POST_ROTULO[status]}
+    </span>
+  )
 }
 
 const ESTILO_DESEMPENHO: Record<Desempenho, string> = {

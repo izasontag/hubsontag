@@ -152,11 +152,11 @@ export default function NovoPostRapido({ cliente, rodada, onFechar, onCriado }: 
   }
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-texto/50" role="dialog" aria-modal="true" aria-label="Novo post na rodada">
-      <div className="mx-auto min-h-full max-w-2xl bg-fundo p-4 sm:my-6 sm:min-h-0 sm:rounded-md sm:border sm:border-linha sm:p-6">
+    <div className="modal-fundo fixed inset-0 z-50 overflow-y-auto bg-texto/50 backdrop-blur-[2px]" role="dialog" aria-modal="true" aria-label="Novo post na rodada">
+      <div className="modal-painel mx-auto min-h-full max-w-2xl bg-fundo p-4 sm:my-6 sm:min-h-0 sm:rounded-md sm:border sm:border-linha sm:p-6">
         <div className="mb-4 flex items-start justify-between gap-3">
           <div>
-            <h2 className="font-titulo text-3xl font-semibold text-marrom">Novo post</h2>
+            <h2 className="titulo-secao">Novo post</h2>
             <p className="text-sm text-texto-suave">
               {cliente.nome} · {rodada.titulo}
             </p>

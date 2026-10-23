@@ -253,7 +253,7 @@ export default function PainelTarefas({ clienteId }: { clienteId?: string }) {
       )}
 
       {form && (
-        <form onSubmit={salvar} className="space-y-3 rounded-md border border-linha bg-superficie p-4">
+        <form onSubmit={salvar} className="space-y-3 rounded-md border border-linha bg-superficie p-4 shadow-suave">
           <h3 className="font-titulo text-xl font-semibold text-marrom">{form.id ? 'Editar tarefa' : 'Nova tarefa'}</h3>
           <Campo rotulo="O que precisa ser feito">
             <input required className={inputCls} value={form.titulo} onChange={(e) => setForm({ ...form, titulo: e.target.value })} />

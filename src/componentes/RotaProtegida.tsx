@@ -6,7 +6,15 @@ import { btnSecundario } from './ui'
 export default function RotaProtegida({ children }: { children: ReactNode }) {
   const { carregando, sessao, perfil, sair } = useAuth()
 
-  if (carregando) return <p className="p-8 text-texto-suave">Carregando...</p>
+  if (carregando) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <p className="anim-respirar font-titulo text-3xl text-marrom" role="status">
+          Sontag <em>Media</em>
+        </p>
+      </div>
+    )
+  }
   if (!sessao) return <Navigate to="/entrar" replace />
   if (!perfil) {
     return (

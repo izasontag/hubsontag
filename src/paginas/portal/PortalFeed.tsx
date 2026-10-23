@@ -24,7 +24,7 @@ export default function PortalFeed() {
 
   return (
     <div className="space-y-4">
-      <h2 className="font-titulo text-3xl font-semibold text-marrom">Prévia do feed</h2>
+      <h2 className="titulo-secao">Prévia do feed</h2>
       <p className="text-sm text-texto-suave">
         Os posts aprovados e agendados aparecem no topo, com o selo. Abaixo ficam os posts que já estão publicados no perfil.
       </p>

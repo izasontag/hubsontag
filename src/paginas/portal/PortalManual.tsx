@@ -35,7 +35,7 @@ export default function PortalManual() {
   return (
     <div className="space-y-8">
       <div className="nao-imprimir flex flex-wrap items-center justify-between gap-3">
-        <h2 className="font-titulo text-3xl font-semibold text-marrom">Manual da marca</h2>
+        <h2 className="titulo-secao">Manual da marca</h2>
         <button type="button" className={btnSecundario} onClick={() => window.print()}>
           Exportar em PDF
         </button>
@@ -70,7 +70,7 @@ export default function PortalManual() {
                       {m.prazo && <span className="text-sm text-texto-suave"> · até {formatarData(m.prazo)}</span>}
                     </p>
                     <div className="h-2 rounded-sm bg-linha" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100} aria-label={`${m.nome}: ${pct}%`}>
-                      <div className="h-2 rounded-sm" style={{ width: `${pct}%`, background: cor }} />
+                      <div className="anim-crescer h-2 rounded-sm" style={{ width: `${pct}%`, background: cor }} />
                     </div>
                     <p className="text-sm text-texto-suave">
                       {m.valor_atual.toLocaleString('pt-BR')} de {m.valor_meta.toLocaleString('pt-BR')} ({pct}%)

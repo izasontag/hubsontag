@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import { analisarLink } from '../lib/linkVideo'
+import { ImagemSuave } from './animacao'
 import { urlPublica } from '../lib/midias'
 import type { MidiaVista } from '../lib/tipos'
 
@@ -37,7 +38,7 @@ function VideoPorLink({ link, capa, alt, className }: { link: string; capa: stri
   if (capaUrl) {
     const conteudo = (
       <>
-        <img src={capaUrl} alt={alt} className="h-full w-full object-contain" />
+        <ImagemSuave src={capaUrl} alt={alt} className="h-full w-full object-contain" />
         <span className="absolute inset-0 flex items-center justify-center">
           <BotaoPlay />
         </span>
@@ -83,7 +84,7 @@ export function MidiaItem({ midia, alt, className = '' }: { midia: MidiaVista; a
     return <VideoPorLink link={midia.link} capa={midia.capa} alt={alt} className={className} />
   }
   if (midia.caminho) {
-    return <img src={urlPublica(midia.caminho)} alt={alt} loading="lazy" className={className} />
+    return <ImagemSuave src={urlPublica(midia.caminho)} alt={alt} loading="lazy" className={className} />
   }
   return null
 }
@@ -92,10 +93,10 @@ export function MidiaItem({ midia, alt, className = '' }: { midia: MidiaVista; a
 export function MiniaturaMidia({ midias, alt, className = '' }: { midias: MidiaVista[]; alt: string; className?: string }) {
   const imagem = midias.find((m) => m.tipo === 'imagem' && m.caminho)
   const video = midias.find((m) => m.tipo === 'video')
-  if (imagem?.caminho) return <img src={urlPublica(imagem.caminho)} alt={alt} loading="lazy" className={`object-cover ${className}`} />
-  if (video?.capa) return <img src={urlPublica(video.capa)} alt={alt} loading="lazy" className={`object-cover ${className}`} />
+  if (imagem?.caminho) return <ImagemSuave src={urlPublica(imagem.caminho)} alt={alt} loading="lazy" className={`object-cover ${className}`} />
+  if (video?.capa) return <ImagemSuave src={urlPublica(video.capa)} alt={alt} loading="lazy" className={`object-cover ${className}`} />
   const miniaturaLink = video?.link ? analisarLink(video.link)?.miniatura : null
-  if (miniaturaLink) return <img src={miniaturaLink} alt={alt} loading="lazy" referrerPolicy="no-referrer" className={`object-cover ${className}`} />
+  if (miniaturaLink) return <ImagemSuave src={miniaturaLink} alt={alt} loading="lazy" referrerPolicy="no-referrer" className={`object-cover ${className}`} />
   if (video?.caminho) {
     return <video src={`${urlPublica(video.caminho)}#t=0.1`} preload="metadata" muted playsInline aria-label={alt} className={`bg-texto object-cover ${className}`} />
   }
@@ -144,7 +145,25 @@ export function CarrosselMidias({ midias, titulo }: { midias: MidiaVista[]; titu
       </div>
       {midias.length > 1 && (
         <>
-          <span className="absolute right-2 top-2 rounded-sm bg-texto/70 px-2 py-0.5 text-xs text-superficie" aria-hidden>
+          <button
+            type="button"
+            onClick={() => ir(Math.max(0, atual - 1))}
+            disabled={atual === 0}
+            aria-label="Item anterior"
+            className="absolute left-2 top-[40%] hidden h-11 w-11 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-superficie/90 text-lg text-texto shadow-suave transition duration-200 hover:scale-105 disabled:opacity-0 md:flex"
+          >
+            &larr;
+          </button>
+          <button
+            type="button"
+            onClick={() => ir(Math.min(midias.length - 1, atual + 1))}
+            disabled={atual === midias.length - 1}
+            aria-label="Próximo item"
+            className="absolute right-2 top-[40%] hidden h-11 w-11 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-superficie/90 text-lg text-texto shadow-suave transition duration-200 hover:scale-105 disabled:opacity-0 md:flex"
+          >
+            &rarr;
+          </button>
+          <span className="pointer-events-none absolute right-2 top-2 rounded-sm bg-texto/70 px-2 py-0.5 text-xs text-superficie" aria-hidden>
             {atual + 1}/{midias.length}
           </span>
           <div className="flex justify-center gap-1 py-2">

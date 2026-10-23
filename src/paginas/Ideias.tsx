@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import { EditarIdeia, VirarPost } from '../componentes/ModaisIdeia'
-import { Aviso, btnPrimario, btnSecundario, Campo, Cartao, formatarData, inputCls } from '../componentes/ui'
+import { Revelar } from '../componentes/animacao'
+import { Aviso, btnPrimario, btnSecundario, CabecalhoPagina, Campo, Cartao, Esqueleto, formatarData, inputCls } from '../componentes/ui'
 import { useAuth } from '../lib/auth'
 import { enviarArquivoIdeia, lerTags } from '../lib/ideias'
 import { supabase } from '../lib/supabase'
@@ -120,7 +121,7 @@ export default function Ideias() {
 
   return (
     <div className="space-y-6">
-      <h1 className="font-titulo text-4xl font-semibold text-marrom">Ideias</h1>
+      <CabecalhoPagina rotulo="Banco de ideias" titulo="Ideias" />
 
       <Cartao>
         <form onSubmit={capturar} className="space-y-3">
@@ -235,12 +236,19 @@ export default function Ideias() {
         </label>
       </div>
 
-      {ideias === null && !erro && <p className="text-texto-suave">Carregando...</p>}
+      {ideias === null && !erro && (
+        <div className="grid gap-4 md:grid-cols-2" aria-label="Carregando ideias">
+          <Esqueleto className="h-40" />
+          <Esqueleto className="h-40" />
+        </div>
+      )}
       {ideias && visiveis.length === 0 && <p className="text-texto-suave">Nenhuma ideia encontrada.</p>}
 
       <ul className="grid gap-4 md:grid-cols-2">
-        {visiveis.map((i) => (
-          <li key={i.id} className="flex flex-col gap-3 rounded-md border border-linha bg-superficie p-4">
+        {visiveis.map((i, n) => (
+          <li key={i.id}>
+            <Revelar ordem={n % 4} className="h-full">
+          <div className="flex h-full flex-col gap-3 rounded-md border border-linha bg-superficie p-4 shadow-suave transition duration-300 hover:-translate-y-0.5 hover:shadow-elevada">
             <div className="flex flex-wrap items-center gap-2 text-xs text-texto-suave">
               <span className="rounded-sm border border-linha px-1.5 py-0.5">{TIPO_IDEIA_ROTULO[i.tipo]}</span>
               <span>{i.para_sontag ? 'Para a Sontag' : i.cliente_id ? nomeCliente(i.cliente_id) : 'Geral'}</span>
@@ -301,6 +309,8 @@ export default function Ideias() {
                 Apagar
               </button>
             </div>
+          </div>
+            </Revelar>
           </li>
         ))}
       </ul>

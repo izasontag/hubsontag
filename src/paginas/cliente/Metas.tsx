@@ -69,7 +69,7 @@ export default function Metas({ clienteId }: { clienteId: string }) {
                 </button>
               </div>
               <div className="h-2 rounded-sm bg-linha" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100} aria-label={`${m.nome}: ${pct}%`}>
-                <div className="h-2 rounded-sm bg-musgo" style={{ width: `${pct}%` }} />
+                <div className="anim-crescer h-2 rounded-sm bg-musgo" style={{ width: `${pct}%` }} />
               </div>
               <div className="flex flex-wrap items-center gap-2 text-sm text-texto-suave">
                 <label className="flex items-center gap-2">

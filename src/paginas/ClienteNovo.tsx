@@ -1,5 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom'
-import { Cartao } from '../componentes/ui'
+import { CabecalhoPagina, Cartao } from '../componentes/ui'
 import FormCliente from './cliente/FormCliente'
 
 export default function ClienteNovo() {
@@ -9,7 +9,7 @@ export default function ClienteNovo() {
       <Link to="/app/clientes" className="inline-flex min-h-11 items-center text-sm text-texto-suave underline">
         Voltar para clientes
       </Link>
-      <h1 className="font-titulo text-4xl font-semibold text-marrom">Novo cliente</h1>
+      <CabecalhoPagina rotulo="Cadastro" titulo={<>Novo <em>cliente</em></>} />
       <Cartao>
         <FormCliente onSalvo={(c) => navegar(`/app/clientes/${c.id}`)} />
       </Cartao>

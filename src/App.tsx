@@ -7,6 +7,9 @@ import ClienteNovo from './paginas/ClienteNovo'
 import ClientePagina from './paginas/ClientePagina'
 import Clientes from './paginas/Clientes'
 import Entrar from './paginas/Entrar'
+import Agencia from './paginas/financeiro/Agencia'
+import Financeiro from './paginas/financeiro/Financeiro'
+import Pessoal from './paginas/financeiro/Pessoal'
 import Ideias from './paginas/Ideias'
 import Painel from './paginas/Painel'
 import Tarefas from './paginas/Tarefas'
@@ -38,6 +41,10 @@ export default function App() {
             <Route path="calendario" element={<CalendarioGeral />} />
             <Route path="ideias" element={<Ideias />} />
             <Route path="tarefas" element={<Tarefas />} />
+            <Route path="financeiro" element={<Financeiro />}>
+              <Route index element={<Agencia />} />
+              <Route path="pessoal" element={<Pessoal />} />
+            </Route>
             <Route path="clientes" element={<Clientes />} />
             <Route path="clientes/novo" element={<ClienteNovo />} />
             <Route path="clientes/:id" element={<ClientePagina />} />

@@ -387,3 +387,126 @@ export interface PortalTarefa {
   responsavel: Responsavel
   material: string | null
 }
+
+// ---------------- Financeiro ----------------
+
+export type StatusCobranca = 'a_vencer' | 'pago' | 'atrasado'
+export const STATUS_COBRANCA_ROTULO: Record<StatusCobranca, string> = { a_vencer: 'A vencer', pago: 'Pago', atrasado: 'Atrasado' }
+
+export const FORMAS_PAGAMENTO = ['pix', 'boleto', 'cartao', 'transferencia', 'dinheiro', 'outro'] as const
+export type FormaPagamento = (typeof FORMAS_PAGAMENTO)[number]
+export const FORMA_ROTULO: Record<FormaPagamento, string> = {
+  pix: 'Pix',
+  boleto: 'Boleto',
+  cartao: 'Cartão',
+  transferencia: 'Transferência',
+  dinheiro: 'Dinheiro',
+  outro: 'Outro',
+}
+
+export interface Contrato {
+  id: string
+  cliente_id: string
+  plano: string
+  posts_mes: number
+  reels_mes: number
+  stories_mes: number
+  valor_mensal: number
+  dia_vencimento: number
+  inicio: string
+  renovacao: string | null
+  status: 'ativo' | 'encerrado'
+  arquivo_storage: string | null
+  cliente: { nome: string } | null
+}
+
+export interface Cobranca {
+  id: string
+  contrato_id: string | null
+  projeto_id: string | null
+  cliente_id: string | null
+  descricao: string
+  vencimento: string
+  valor: number
+  forma_pagamento: FormaPagamento | null
+  status: StatusCobranca
+  pago_em: string | null
+  cliente: { nome: string } | null
+}
+
+export const CATEGORIAS_DESPESA = ['ferramentas', 'freelancers', 'impostos', 'cursos', 'outros'] as const
+export type CategoriaDespesa = (typeof CATEGORIAS_DESPESA)[number]
+export const CATEGORIA_DESPESA_ROTULO: Record<CategoriaDespesa, string> = {
+  ferramentas: 'Ferramentas',
+  freelancers: 'Freelancers',
+  impostos: 'Impostos',
+  cursos: 'Cursos',
+  outros: 'Outros',
+}
+
+export interface Despesa {
+  id: string
+  data: string
+  categoria: CategoriaDespesa
+  descricao: string
+  valor: number
+}
+
+export const STATUS_AVULSO = ['proposta', 'em_andamento', 'concluido', 'cancelado'] as const
+export type StatusAvulso = (typeof STATUS_AVULSO)[number]
+export const STATUS_AVULSO_ROTULO: Record<StatusAvulso, string> = {
+  proposta: 'Proposta',
+  em_andamento: 'Em andamento',
+  concluido: 'Concluído',
+  cancelado: 'Cancelado',
+}
+
+export interface Avulso {
+  id: string
+  cliente_id: string | null
+  nome: string
+  valor: number
+  status: StatusAvulso
+  data: string
+  cliente: { nome: string } | null
+}
+
+export const CATEGORIAS_PESSOAL = [
+  'pro_labore',
+  'contas_fixas',
+  'alimentacao',
+  'saude',
+  'transporte',
+  'lazer',
+  'educacao',
+  'investimentos',
+  'outros',
+] as const
+export const CATEGORIA_PESSOAL_ROTULO: Record<string, string> = {
+  pro_labore: 'Pró-labore',
+  contas_fixas: 'Contas fixas',
+  alimentacao: 'Alimentação',
+  saude: 'Saúde',
+  transporte: 'Transporte',
+  lazer: 'Lazer',
+  educacao: 'Educação',
+  investimentos: 'Investimentos',
+  outros: 'Outros',
+}
+
+export interface Lancamento {
+  id: string
+  data: string
+  tipo: 'entrada' | 'saida'
+  categoria: string
+  descricao: string
+  valor: number
+}
+
+export interface MetaPessoal {
+  id: string
+  nome: string
+  valor_meta: number
+  valor_atual: number
+  prazo: string | null
+}

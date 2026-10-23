@@ -21,10 +21,10 @@ function Moldura({ titulo, onFechar, children }: { titulo: string; onFechar: () 
     }
   }, [onFechar])
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-texto/50" role="dialog" aria-modal="true" aria-label={titulo}>
-      <div className="mx-auto min-h-full max-w-2xl bg-fundo p-4 sm:my-6 sm:min-h-0 sm:rounded-md sm:border sm:border-linha sm:p-6">
+    <div className="modal-fundo fixed inset-0 z-50 overflow-y-auto bg-texto/50 backdrop-blur-[2px]" role="dialog" aria-modal="true" aria-label={titulo}>
+      <div className="modal-painel mx-auto min-h-full max-w-2xl bg-fundo p-4 sm:my-6 sm:min-h-0 sm:rounded-md sm:border sm:border-linha sm:p-6">
         <div className="mb-4 flex items-center justify-between gap-3">
-          <h2 className="font-titulo text-3xl font-semibold text-marrom">{titulo}</h2>
+          <h2 className="titulo-secao">{titulo}</h2>
           <button type="button" className={btnSecundario} onClick={onFechar}>
             Fechar
           </button>

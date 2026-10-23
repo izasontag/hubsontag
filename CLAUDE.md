@@ -35,8 +35,9 @@ Princípios:
 | Rotas | React Router |
 | Banco de dados, login e arquivos | Supabase (Postgres, Auth, Storage) |
 | Código | GitHub |
-| Hospedagem | Netlify (publica sozinho a cada envio para o GitHub) |
+| Hospedagem | Netlify, que publica a branch `main` a cada envio |
 
+- **Publicação:** no plano gratuito do Netlify cada publicação gasta 15 dos 300 créditos mensais. Por isso o trabalho acontece na branch `desenvolvimento` e só vai para a `main` (o que publica) quando a Izadora mandar, juntando várias mudanças em uma única publicação.
 - Segurança dos dados com **Row Level Security (RLS)** do Supabase em todas as tabelas. Nenhuma tabela fica sem RLS.
 - Migrações do banco em arquivos SQL dentro de `supabase/migrations/`, para eu poder rodar no painel do Supabase.
 - Para o Netlify funcionar com as rotas do React, incluir `public/_redirects` com `/* /index.html 200`.
@@ -55,6 +56,10 @@ Princípios:
   - Linhas e bordas: `#C9C3BA`
 - Títulos em fonte serifada (Cormorant Garamond, do Google Fonts). Textos em Helvetica (`'Helvetica Neue', Helvetica, Arial, sans-serif`).
 - Cantos pouco arredondados (2 a 4 px), muito respiro, sem gradientes, sem emojis na interface.
+- **A marca se apresenta como "Storymaker & Marketing"** (login, painel, faixa do portal e título da aba do navegador).
+- **Estilo editorial, vivo e elegante:** títulos grandes em Cormorant Garamond com uma palavra em itálico para destacar, legendas pequenas em caixa alta com espaçamento, sombras suaves nos cartões, números grandes em Helvetica leve (a serifada faz o zero parecer a letra O), avatares com iniciais na cor do cliente. O portal abre com uma faixa na cor de destaque do cliente, com anéis finos decorativos.
+- **Movimento suave:** entrada com fade e leve deslize, escalonada em listas; cartões que sobem ao passar o mouse; sublinhado animado nos menus; números que contam; barras de progresso que preenchem; janelas que surgem com fade; imagens com fade ao carregar; blocos que aparecem ao rolar a página. Tudo em CSS e um pouco de JavaScript, sem biblioteca de animação. **Sempre respeitar `prefers-reduced-motion`** e nunca animar o que atrapalhe a leitura.
+- **Gráficos:** colunas finas (até 24 px, topo arredondado), linhas e grade finas, legenda sempre que houver duas ou mais séries, dica ao passar o mouse e ao focar pelo teclado, e uma **visão em tabela** com os mesmos valores. Cores validadas contra daltonismo: **recebido `#5B7A38` (musgo vivo) e despesas `#C98B4F` (âmbar)**. O musgo e o marrom da identidade são parecidos demais para um gráfico e reprovam no teste. Nunca usar duas escalas no mesmo gráfico.
 - Cada cliente tem uma **cor de destaque** própria, usada nos detalhes do portal e do manual da marca dele.
 - Contraste de texto de pelo menos 4.5:1. Botões com no mínimo 44 px de altura.
 
@@ -174,7 +179,7 @@ Segurança: dona vê e faz tudo. Equipe lê e edita só os eventos atribuídos (
   - **Materiais** e **Relatórios**
 - **Ideias** (`/app/ideias`) e **Tarefas** (`/app/tarefas`, com os modelos de checklist) já existem desde a Fase 3. Na ficha do cliente há também as abas **Plano de ação** e, no Manual da marca, a seção **Prompts e skills**.
 - **Calendário geral** (`/app/calendario`): todos os clientes no mesmo mês, filtro por cliente e por tag, e uma visão em quadro (kanban) por status
-- **Financeiro** (`/app/financeiro`, só dona): abas Agência (contratos, cobranças, despesas, avulsos, indicadores) e Pessoal (lançamentos, metas, resumo do mês)
+- **Financeiro** (`/app/financeiro`, só dona, link do menu escondido para a equipe e rota bloqueada). Duas áreas separadas: **Agência** (`/app/financeiro`, com Visão geral, Cobranças, Contratos, Despesas e Avulsos) e **Pessoal** (`/app/financeiro/pessoal`: lançamentos, metas e resumo do mês). A Visão geral mostra previsto, recebido, a receber, atrasado, despesas e resultado do mês, receita recorrente dos contratos, gráfico de recebido contra despesas dos últimos 6 meses, cobranças atrasadas e contratos vencendo em 30 dias. Ao abrir, a função `marcar_atrasadas` converte o que venceu e não foi pago em "atrasado". A função `gerar_cobrancas` cria as mensalidades de um contrato (sem duplicar, no dia de vencimento, ajustando meses curtos). Contrato assinado vai para o bucket privado `contratos`
 - **Ideias** (`/app/ideias`): captura rápida (um campo no topo, ótimo no celular), filtros por tipo, cliente e tag, botão "Virar post" que cria o post com status `ideia`
 - **Eventos** (`/app/eventos`): lista dos eventos por data, com a próxima data em destaque e o progresso do checklist (ex.: 4 de 10). Ficha do evento (`/app/eventos/:id`) com abas **Dados e contrato** (upload do contrato, data, local, contato, status), **Checklist** (marcar, editar, adicionar itens, prazo, o que está atrasado) e **Pagamentos** (parcelas e vencimentos, só dona)
 - **Equipe** (`/app/equipe`, só dona): convidar pessoas e definir quais clientes cada uma atende

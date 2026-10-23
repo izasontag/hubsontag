@@ -2,7 +2,7 @@ import { useState } from 'react'
 import CalendarioMensal, { NavegacaoMes } from '../componentes/CalendarioMensal'
 import CartaoPost from '../componentes/CartaoPost'
 import PostEditor from '../componentes/PostEditor'
-import { Aviso, btnPrimario, inputCls } from '../componentes/ui'
+import { Aviso, btnPrimario, CabecalhoPagina, inputCls } from '../componentes/ui'
 import { useAuth } from '../lib/auth'
 import { mesDeHoje } from '../lib/datas'
 import { STATUS_POST, STATUS_POST_ROTULO } from '../lib/tipos'
@@ -46,12 +46,15 @@ export default function CalendarioGeral() {
 
   return (
     <div className="space-y-5">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="font-titulo text-4xl font-semibold text-marrom">Calendário geral</h1>
-        <button className={btnPrimario} onClick={() => setEditor({ post: null })} disabled={clientes.length === 0}>
-          Novo post
-        </button>
-      </div>
+      <CabecalhoPagina
+        rotulo="Todos os clientes"
+        titulo={<>Calendário <em>geral</em></>}
+        acoes={
+          <button className={btnPrimario} onClick={() => setEditor({ post: null })} disabled={clientes.length === 0}>
+            Novo post
+          </button>
+        }
+      />
       <div className="flex flex-wrap items-center justify-between gap-3">
         <NavegacaoMes mes={mes} onMes={setMes} />
         <div className="flex gap-2">

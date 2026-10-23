@@ -221,10 +221,10 @@ export default function PostEditor({ post, dataInicial, clienteIdInicial, client
   }
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-texto/50" role="dialog" aria-modal="true" aria-label={postId ? 'Editar post' : 'Novo post'}>
-      <div className="mx-auto min-h-full max-w-3xl bg-fundo p-4 sm:my-6 sm:min-h-0 sm:rounded-md sm:border sm:border-linha sm:p-6">
+    <div className="modal-fundo fixed inset-0 z-50 overflow-y-auto bg-texto/50 backdrop-blur-[2px]" role="dialog" aria-modal="true" aria-label={postId ? 'Editar post' : 'Novo post'}>
+      <div className="modal-painel mx-auto min-h-full max-w-3xl bg-fundo p-4 sm:my-6 sm:min-h-0 sm:rounded-md sm:border sm:border-linha sm:p-6">
         <div className="mb-4 flex items-center justify-between gap-3">
-          <h2 className="font-titulo text-3xl font-semibold text-marrom">{postId ? 'Editar post' : 'Novo post'}</h2>
+          <h2 className="titulo-secao">{postId ? 'Editar post' : 'Novo post'}</h2>
           <button type="button" className={btnSecundario} onClick={onFechar}>
             Fechar
           </button>
@@ -320,7 +320,7 @@ export default function PostEditor({ post, dataInicial, clienteIdInicial, client
           </fieldset>
 
           {mostrarDesempenho && (
-            <fieldset className="space-y-4 rounded-md border border-linha bg-superficie p-4">
+            <fieldset className="space-y-4 rounded-md border border-linha bg-superficie p-4 shadow-suave">
               <legend className="px-1 font-titulo text-xl font-semibold text-marrom">Desempenho</legend>
               <Campo rotulo="Resultado">
                 <select className={inputCls} value={desempenho} onChange={(e) => setDesempenho(e.target.value as Desempenho | '')}>

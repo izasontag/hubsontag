@@ -1,3 +1,4 @@
+import { Revelar } from '../../componentes/animacao'
 import { Conversa, FormComentario } from '../../componentes/portal/ConteudoPost'
 import PainelDecisao from '../../componentes/portal/PainelDecisao'
 import CartaoFeed from '../../componentes/CartaoFeed'
@@ -50,7 +51,7 @@ function BlocoRodada({ rodada, posts, aberta }: { rodada: PortalRodada; posts: P
 
   return (
     <details open={aberta} className="space-y-6">
-      <summary className="flex min-h-11 cursor-pointer list-none flex-wrap items-center justify-between gap-2 rounded-md border border-linha bg-superficie p-4">
+      <summary className="flex min-h-11 cursor-pointer list-none flex-wrap items-center justify-between gap-2 rounded-md border border-linha bg-superficie p-4 shadow-suave">
         <span>
           <span className="block font-titulo text-2xl font-semibold text-texto">{rodada.titulo}</span>
           <span className="block text-sm text-texto-suave">
@@ -63,15 +64,17 @@ function BlocoRodada({ rodada, posts, aberta }: { rodada: PortalRodada; posts: P
       </summary>
       <div className="mt-4 space-y-2">
         <div className="h-2 rounded-sm bg-linha" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100} aria-label={`${respondidos} de ${posts.length} posts respondidos`}>
-          <div className="h-2 rounded-sm bg-musgo" style={{ width: `${pct}%` }} />
+          <div className="anim-crescer h-2 rounded-sm bg-musgo" style={{ width: `${pct}%` }} />
         </div>
         <p className="text-sm text-texto-suave">
           {respondidos} de {posts.length} respondidos
         </p>
       </div>
       <div className="mt-6 space-y-8">
-        {ordenados.map((p) => (
-          <PostAprovacao key={p.id} post={p} />
+        {ordenados.map((p, n) => (
+          <Revelar key={p.id} ordem={n === 0 ? 0 : 1}>
+            <PostAprovacao post={p} />
+          </Revelar>
         ))}
       </div>
     </details>
@@ -85,7 +88,7 @@ export default function PortalAprovacoes() {
 
   return (
     <div className="space-y-8">
-      <h2 className="font-titulo text-3xl font-semibold text-marrom">Aprovações</h2>
+      <h2 className="titulo-secao">Aprovações</h2>
       {vazio && <p className="text-texto-suave">Nada esperando a sua aprovação agora.</p>}
       {rodadas.map((r, i) => (
         <BlocoRodada key={r.id} rodada={r} posts={posts.filter((p) => p.rodada_id === r.id)} aberta={i === 0} />
@@ -94,7 +97,9 @@ export default function PortalAprovacoes() {
         <section className="space-y-6">
           <h3 className="font-titulo text-2xl font-semibold text-texto">Outros posts</h3>
           {avulsos.map((p) => (
-            <PostAprovacao key={p.id} post={p} />
+            <Revelar key={p.id}>
+              <PostAprovacao post={p} />
+            </Revelar>
           ))}
         </section>
       )}

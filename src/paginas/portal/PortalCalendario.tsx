@@ -52,7 +52,7 @@ export default function PortalCalendario() {
 
   return (
     <div className="space-y-5">
-      <h2 className="font-titulo text-3xl font-semibold text-marrom">Calendário</h2>
+      <h2 className="titulo-secao">Calendário</h2>
       <NavegacaoMes mes={mes} onMes={setMes} />
 
       <div className="hidden lg:block">
@@ -93,8 +93,8 @@ export default function PortalCalendario() {
       </div>
 
       {atual && (
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-texto/50" role="dialog" aria-modal="true" aria-label={atual.tema || 'Post'}>
-          <div className="mx-auto min-h-full max-w-2xl bg-fundo p-4 sm:my-6 sm:min-h-0 sm:rounded-md sm:border sm:border-linha sm:p-6">
+        <div className="modal-fundo fixed inset-0 z-50 overflow-y-auto bg-texto/50 backdrop-blur-[2px]" role="dialog" aria-modal="true" aria-label={atual.tema || 'Post'}>
+          <div className="modal-painel mx-auto min-h-full max-w-2xl bg-fundo p-4 sm:my-6 sm:min-h-0 sm:rounded-md sm:border sm:border-linha sm:p-6">
             <div className="mb-4 flex justify-end">
               <button type="button" className={btnSecundario} onClick={() => setAberto(null)}>
                 Fechar

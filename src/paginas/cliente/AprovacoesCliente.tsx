@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { FormEvent } from 'react'
+import { NumeroAnimado } from '../../componentes/animacao'
 import CartaoFeed from '../../componentes/CartaoFeed'
 import NovoPostRapido from '../../componentes/NovoPostRapido'
 import PostEditor from '../../componentes/PostEditor'
@@ -214,15 +215,15 @@ export default function AprovacoesCliente({ cliente }: { cliente: Cliente }) {
               <dl className="grid grid-cols-3 gap-3 text-center">
                 <div className="rounded-sm border border-linha p-3">
                   <dt className="text-xs text-texto-suave">Esperando o cliente</dt>
-                  <dd className="font-titulo text-3xl text-marrom">{pendentes}</dd>
+                  <dd className="numeros-grandes text-3xl text-marrom"><NumeroAnimado valor={pendentes} /></dd>
                 </div>
                 <div className="rounded-sm border border-linha p-3">
                   <dt className="text-xs text-texto-suave">Ajustes pedidos</dt>
-                  <dd className="font-titulo text-3xl text-marrom">{ajustes}</dd>
+                  <dd className="numeros-grandes text-3xl text-marrom"><NumeroAnimado valor={ajustes} /></dd>
                 </div>
                 <div className="rounded-sm border border-linha p-3">
                   <dt className="text-xs text-texto-suave">Aprovados</dt>
-                  <dd className="font-titulo text-3xl text-musgo">{respondidos}</dd>
+                  <dd className="numeros-grandes text-3xl text-musgo"><NumeroAnimado valor={respondidos} /></dd>
                 </div>
               </dl>
             )}

@@ -1,14 +1,25 @@
 import { useEffect, useState } from 'react'
+import type { CSSProperties } from 'react'
 import { Link } from 'react-router-dom'
-import { Aviso, btnPrimario, STATUS_ROTULO } from '../componentes/ui'
+import { textoSobre } from '../componentes/animacao'
+import { Aviso, btnPrimario, CabecalhoPagina, Esqueleto, inputCls, STATUS_ROTULO } from '../componentes/ui'
 import { useAuth } from '../lib/auth'
 import { supabase } from '../lib/supabase'
 import type { Cliente } from '../lib/tipos'
+
+export const iniciais = (nome: string) =>
+  nome
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((p) => p[0].toUpperCase())
+    .join('')
 
 export default function Clientes() {
   const { perfil } = useAuth()
   const [clientes, setClientes] = useState<Cliente[] | null>(null)
   const [erro, setErro] = useState('')
+  const [busca, setBusca] = useState('')
 
   useEffect(() => {
     supabase
@@ -21,35 +32,70 @@ export default function Clientes() {
       })
   }, [])
 
+  const termo = busca.trim().toLowerCase()
+  const visiveis = (clientes ?? []).filter((c) => !termo || `${c.nome} ${c.instagram ?? ''} ${c.nicho ?? ''}`.toLowerCase().includes(termo))
+
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="font-titulo text-4xl font-semibold text-marrom">Clientes</h1>
-        {perfil?.papel === 'dona' && (
-          <Link to="/app/clientes/novo" className={btnPrimario}>
-            Novo cliente
-          </Link>
-        )}
-      </div>
+    <div className="space-y-8">
+      <CabecalhoPagina
+        rotulo={clientes ? `${clientes.length} ${clientes.length === 1 ? 'cliente' : 'clientes'}` : 'Carteira'}
+        titulo="Clientes"
+        acoes={
+          perfil?.papel === 'dona' ? (
+            <Link to="/app/clientes/novo" className={btnPrimario}>
+              Novo cliente
+            </Link>
+          ) : undefined
+        }
+      />
       {erro && <Aviso tipo="erro">{erro}</Aviso>}
-      {clientes === null && !erro && <p className="text-texto-suave">Carregando...</p>}
-      {clientes?.length === 0 && (
-        <p className="text-texto-suave">Nenhum cliente cadastrado ainda.</p>
+      {clientes && clientes.length > 4 && (
+        <label className="block max-w-sm text-sm text-texto-suave">
+          Buscar cliente
+          <input className={`${inputCls} mt-1`} value={busca} onChange={(e) => setBusca(e.target.value)} />
+        </label>
       )}
-      <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {clientes?.map((c) => (
-          <li key={c.id}>
+      {clientes === null && !erro && (
+        <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3" aria-label="Carregando clientes">
+          {[0, 1, 2].map((n) => (
+            <li key={n}>
+              <Esqueleto className="h-44" />
+            </li>
+          ))}
+        </ul>
+      )}
+      {clientes?.length === 0 && <p className="text-texto-suave">Nenhum cliente cadastrado ainda.</p>}
+      <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {visiveis.map((c, n) => (
+          <li key={c.id} className="anim-entrar" style={{ '--i': n } as CSSProperties}>
             <Link
               to={`/app/clientes/${c.id}`}
-              className="block h-full rounded-md border border-linha bg-superficie p-5 hover:border-marrom"
-              style={{ borderTop: `4px solid ${c.cor_destaque}` }}
+              className="group relative flex h-full min-h-44 flex-col gap-4 overflow-hidden rounded-md border border-linha bg-superficie p-5 pt-6 shadow-suave transition duration-300 hover:-translate-y-1 hover:border-marrom hover:shadow-elevada"
             >
-              <p className="font-titulo text-2xl font-semibold text-texto">{c.nome}</p>
-              {c.instagram && <p className="text-sm text-texto-suave">{c.instagram}</p>}
-              {c.nicho && <p className="text-sm text-texto-suave">{c.nicho}</p>}
-              <p className="mt-3 text-xs uppercase tracking-wide text-texto-suave">
-                {STATUS_ROTULO[c.status]}
-              </p>
+              <span aria-hidden className="absolute inset-x-0 top-0 h-1 transition-all duration-300 group-hover:h-2" style={{ background: c.cor_destaque }} />
+              <span className="flex items-center gap-3">
+                <span
+                  aria-hidden
+                  className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-base font-medium transition-transform duration-300 group-hover:scale-110"
+                  style={{ background: c.cor_destaque, color: textoSobre(c.cor_destaque) }}
+                >
+                  {iniciais(c.nome)}
+                </span>
+                <span className="min-w-0">
+                  <span className="block truncate font-titulo text-3xl font-semibold leading-tight text-texto">{c.nome}</span>
+                  {c.instagram && <span className="block truncate text-sm text-texto-suave">{c.instagram}</span>}
+                </span>
+              </span>
+              {c.nicho && <span className="text-sm text-texto-suave">{c.nicho}</span>}
+              <span className="mt-auto flex items-center justify-between text-xs uppercase tracking-[0.16em] text-texto-suave">
+                <span className="flex items-center gap-2">
+                  <span aria-hidden className={`h-2 w-2 rounded-full ${c.status === 'ativo' ? 'bg-musgo' : c.status === 'pausado' ? 'bg-linha' : 'bg-marrom'}`} />
+                  {STATUS_ROTULO[c.status]}
+                </span>
+                <span aria-hidden className="text-base transition-transform duration-300 group-hover:translate-x-1 group-hover:text-marrom">
+                  &rarr;
+                </span>
+              </span>
             </Link>
           </li>
         ))}

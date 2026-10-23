@@ -36,7 +36,7 @@ export default function CartaoFeed({ cliente, post, topo, children }: Props) {
   const titulo = post.tema || 'Post'
 
   return (
-    <article className="mx-auto w-full max-w-md overflow-hidden rounded-md border border-linha bg-superficie">
+    <article className="mx-auto w-full max-w-md overflow-hidden rounded-md border border-linha bg-superficie shadow-elevada">
       <header className="flex items-center gap-3 p-3">
         <span
           aria-hidden

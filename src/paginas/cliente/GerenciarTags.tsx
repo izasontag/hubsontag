@@ -39,7 +39,7 @@ export default function GerenciarTags({ clienteId, tags, dona, onMudou }: Props)
   }
 
   return (
-    <details className="rounded-md border border-linha bg-superficie p-4">
+    <details className="rounded-md border border-linha bg-superficie p-4 shadow-suave">
       <summary className="min-h-11 cursor-pointer py-2 font-titulo text-xl font-semibold text-marrom">Tags</summary>
       <div className="mt-2 space-y-4">
         {visiveis.length === 0 && <p className="text-sm text-texto-suave">Nenhuma tag ainda.</p>}

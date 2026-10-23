@@ -25,7 +25,7 @@ export default function PortalMateriais() {
 
   return (
     <div className="space-y-4">
-      <h2 className="font-titulo text-3xl font-semibold text-marrom">Materiais</h2>
+      <h2 className="titulo-secao">Materiais</h2>
       {erro && <Aviso tipo="erro">Não foi possível carregar os materiais.</Aviso>}
       {itens?.length === 0 && <p className="text-texto-suave">Nenhum material compartilhado ainda.</p>}
       <ul className="divide-y divide-linha rounded-md border border-linha bg-superficie">

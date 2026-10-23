@@ -31,7 +31,7 @@ export default function PortalRelatorios() {
 
   return (
     <div className="space-y-4">
-      <h2 className="font-titulo text-3xl font-semibold text-marrom">Relatórios</h2>
+      <h2 className="titulo-secao">Relatórios</h2>
       {erro && <Aviso tipo="erro">Não foi possível carregar os relatórios.</Aviso>}
       {itens?.length === 0 && <p className="text-texto-suave">Os relatórios mensais aparecem aqui.</p>}
       {itens?.map((r) => (

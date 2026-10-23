@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&display=swap');
 @import 'tailwindcss';
 
 @theme {
@@ -9,18 +9,231 @@
   --color-marrom: #6b4f3a;
   --color-musgo: #5c6b47;
   --color-linha: #c9c3ba;
+  /* tons de apoio, derivados da paleta */
+  --color-areia: #e3dfd8;
+  --color-musgo-claro: #e5e9db;
+  --color-marrom-claro: #efe4da;
 
   --font-titulo: 'Cormorant Garamond', Georgia, serif;
   --font-sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 
   --radius-sm: 2px;
   --radius-md: 4px;
+
+  --shadow-suave: 0 1px 2px rgb(43 39 36 / 0.05), 0 12px 28px -16px rgb(43 39 36 / 0.22);
+  --shadow-elevada: 0 2px 4px rgb(43 39 36 / 0.06), 0 22px 44px -18px rgb(43 39 36 / 0.32);
+
+  --ease-suave: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background-color: var(--color-fundo);
   color: var(--color-texto);
   font-family: var(--font-sans);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--color-musgo);
+  color: #fff;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-musgo);
+  outline-offset: 2px;
+}
+
+/* ---------- Tipografia editorial ---------- */
+
+.titulo-pagina {
+  font-family: var(--font-titulo);
+  font-weight: 500;
+  font-size: clamp(2.4rem, 6vw, 3.9rem);
+  line-height: 1.02;
+  letter-spacing: -0.015em;
+  color: var(--color-texto);
+}
+
+.titulo-pagina em,
+.titulo-secao em {
+  font-style: italic;
+  font-weight: 500;
+  color: var(--color-marrom);
+}
+
+.titulo-secao {
+  font-family: var(--font-titulo);
+  font-weight: 600;
+  font-size: clamp(1.8rem, 3.6vw, 2.35rem);
+  line-height: 1.1;
+  color: var(--color-marrom);
+}
+
+.titulo-sub {
+  font-family: var(--font-titulo);
+  font-weight: 600;
+  font-size: 1.55rem;
+  line-height: 1.15;
+  color: var(--color-marrom);
+}
+
+.numeros-grandes {
+  font-family: var(--font-sans);
+  font-weight: 300;
+  letter-spacing: -0.03em;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+.eyebrow {
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-texto-suave);
+}
+
+/* ---------- Movimento (suave e elegante) ---------- */
+
+@keyframes entrar {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes aparecer {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes surgir {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes crescer {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+@keyframes respirar {
+  50% {
+    opacity: 0.45;
+  }
+}
+
+@keyframes girar {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes flutuar {
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes desenhar {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.anim-entrar {
+  animation: entrar 0.65s var(--ease-suave) both;
+  animation-delay: calc(var(--i, 0) * 70ms);
+}
+
+.anim-aparecer {
+  animation: aparecer 0.4s ease both;
+}
+
+.anim-surgir {
+  animation: surgir 0.35s var(--ease-suave) both;
+}
+
+.anim-crescer {
+  transform-origin: left;
+  animation: crescer 1s var(--ease-suave) 0.15s both;
+}
+
+.anim-respirar {
+  animation: respirar 1.6s ease-in-out infinite;
+}
+
+.anim-girar-lento {
+  transform-origin: center;
+  animation: girar 90s linear infinite;
+}
+
+.anim-flutuar {
+  animation: flutuar 9s ease-in-out infinite;
+}
+
+.anim-desenhar {
+  stroke-dasharray: 30;
+  stroke-dashoffset: 30;
+  animation: desenhar 0.5s var(--ease-suave) 0.1s forwards;
+}
+
+/* janelas */
+.modal-fundo {
+  animation: aparecer 0.25s ease both;
+}
+
+.modal-painel {
+  animation: surgir 0.4s var(--ease-suave) both;
+}
+
+/* aparece ao rolar a página (ver componentes/animacao.tsx) */
+[data-revelar] {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 0.7s var(--ease-suave),
+    transform 0.7s var(--ease-suave);
+  transition-delay: calc(var(--i, 0) * 70ms);
+}
+
+[data-revelar].visivel {
+  opacity: 1;
+  transform: none;
+}
+
+/* quem prefere menos movimento não vê animações */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+    scroll-behavior: auto !important;
+  }
+  [data-revelar] {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 @media print {
@@ -29,5 +242,9 @@ body {
   }
   .nao-imprimir {
     display: none !important;
+  }
+  [data-revelar] {
+    opacity: 1 !important;
+    transform: none !important;
   }
 }
