@@ -1,13 +1,76 @@
 import { useRef, useState } from 'react'
+import { analisarLink } from '../lib/linkVideo'
 import { urlPublica } from '../lib/midias'
 import type { MidiaVista } from '../lib/tipos'
 
-// Uma mídia: imagem, vídeo em arquivo (com player) ou vídeo por link.
+function BotaoPlay() {
+  return (
+    <span aria-hidden className="flex h-14 w-14 items-center justify-center rounded-full bg-texto/70 text-superficie">
+      <svg viewBox="0 0 24 24" className="ml-1 h-6 w-6 fill-current">
+        <path d="M8 5v14l11-7z" />
+      </svg>
+    </span>
+  )
+}
+
+// Vídeo por link: player dentro do cartão (YouTube, Drive), capa com play, ou botão para abrir o link.
+function VideoPorLink({ link, capa, alt, className }: { link: string; capa: string | null | undefined; alt: string; className: string }) {
+  const [tocando, setTocando] = useState(false)
+  const info = analisarLink(link)
+  const capaUrl = capa ? urlPublica(capa) : null
+
+  if (info && (tocando || !capaUrl)) {
+    const src = tocando && info.servico === 'youtube' ? `${info.embed}?autoplay=1` : info.embed
+    return (
+      <iframe
+        src={src}
+        title={alt}
+        allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
+        allowFullScreen
+        referrerPolicy="strict-origin-when-cross-origin"
+        loading="lazy"
+        className={`border-0 bg-texto ${className}`}
+      />
+    )
+  }
+
+  if (capaUrl) {
+    const conteudo = (
+      <>
+        <img src={capaUrl} alt={alt} className="h-full w-full object-contain" />
+        <span className="absolute inset-0 flex items-center justify-center">
+          <BotaoPlay />
+        </span>
+      </>
+    )
+    return info ? (
+      <button type="button" onClick={() => setTocando(true)} aria-label={`Assistir ao vídeo: ${alt}`} className={`relative cursor-pointer bg-fundo ${className}`}>
+        {conteudo}
+      </button>
+    ) : (
+      <a href={link} target="_blank" rel="noreferrer noopener" aria-label={`Assistir ao vídeo (abre em outra aba): ${alt}`} className={`relative block bg-fundo ${className}`}>
+        {conteudo}
+      </a>
+    )
+  }
+
+  return (
+    <div className={`flex flex-col items-center justify-center gap-3 bg-fundo p-6 text-center ${className}`}>
+      <p className="text-sm text-texto-suave">Este vídeo está em outro endereço.</p>
+      <a href={link} target="_blank" rel="noreferrer noopener" className="inline-flex min-h-11 items-center rounded-sm bg-marrom px-5 text-sm font-medium text-superficie">
+        Assistir ao vídeo
+      </a>
+    </div>
+  )
+}
+
+// Uma mídia: imagem, vídeo em arquivo (com player e capa) ou vídeo por link.
 export function MidiaItem({ midia, alt, className = '' }: { midia: MidiaVista; alt: string; className?: string }) {
   if (midia.tipo === 'video' && midia.caminho) {
     return (
       <video
-        src={`${urlPublica(midia.caminho)}#t=0.1`}
+        src={`${urlPublica(midia.caminho)}${midia.capa ? '' : '#t=0.1'}`}
+        poster={midia.capa ? urlPublica(midia.capa) : undefined}
         controls
         playsInline
         preload="metadata"
@@ -17,19 +80,7 @@ export function MidiaItem({ midia, alt, className = '' }: { midia: MidiaVista; a
     )
   }
   if (midia.tipo === 'video' && midia.link) {
-    return (
-      <div className={`flex flex-col items-center justify-center gap-3 bg-fundo p-6 text-center ${className}`}>
-        <p className="text-sm text-texto-suave">Este vídeo está em outro endereço.</p>
-        <a
-          href={midia.link}
-          target="_blank"
-          rel="noreferrer noopener"
-          className="inline-flex min-h-11 items-center rounded-sm bg-marrom px-5 text-sm font-medium text-superficie"
-        >
-          Assistir ao vídeo
-        </a>
-      </div>
-    )
+    return <VideoPorLink link={midia.link} capa={midia.capa} alt={alt} className={className} />
   }
   if (midia.caminho) {
     return <img src={urlPublica(midia.caminho)} alt={alt} loading="lazy" className={className} />
@@ -37,11 +88,14 @@ export function MidiaItem({ midia, alt, className = '' }: { midia: MidiaVista; a
   return null
 }
 
-// Miniatura pequena (calendário, grade do feed): imagem, ou o primeiro quadro do vídeo.
+// Miniatura pequena (calendário, grade do feed): imagem, capa do vídeo ou o primeiro quadro.
 export function MiniaturaMidia({ midias, alt, className = '' }: { midias: MidiaVista[]; alt: string; className?: string }) {
   const imagem = midias.find((m) => m.tipo === 'imagem' && m.caminho)
   const video = midias.find((m) => m.tipo === 'video')
   if (imagem?.caminho) return <img src={urlPublica(imagem.caminho)} alt={alt} loading="lazy" className={`object-cover ${className}`} />
+  if (video?.capa) return <img src={urlPublica(video.capa)} alt={alt} loading="lazy" className={`object-cover ${className}`} />
+  const miniaturaLink = video?.link ? analisarLink(video.link)?.miniatura : null
+  if (miniaturaLink) return <img src={miniaturaLink} alt={alt} loading="lazy" referrerPolicy="no-referrer" className={`object-cover ${className}`} />
   if (video?.caminho) {
     return <video src={`${urlPublica(video.caminho)}#t=0.1`} preload="metadata" muted playsInline aria-label={alt} className={`bg-texto object-cover ${className}`} />
   }

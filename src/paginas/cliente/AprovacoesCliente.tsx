@@ -65,7 +65,7 @@ export default function AprovacoesCliente({ cliente }: { cliente: Cliente }) {
       const [p, t] = await Promise.all([
         supabase
           .from('posts')
-          .select('*, cliente:clientes(nome, cor_destaque), post_tags(tag_id), post_midias(id, post_id, caminho_storage, ordem, tipo, link_externo)')
+          .select('*, cliente:clientes(nome, cor_destaque), post_tags(tag_id), post_midias(id, post_id, caminho_storage, ordem, tipo, link_externo, capa_storage)')
           .eq('rodada_id', escolhida)
           .order('data_publicacao')
           .order('horario', { nullsFirst: true }),

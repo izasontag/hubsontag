@@ -151,6 +151,7 @@ export interface Midia {
   ordem: number
   tipo: TipoMidia
   link_externo: string | null
+  capa_storage: string | null
 }
 
 // Mídia como o feed mostra (vem da área interna ou do portal)
@@ -158,6 +159,7 @@ export interface MidiaVista {
   tipo: TipoMidia
   caminho: string | null
   link: string | null
+  capa?: string | null
 }
 
 export interface Rodada {

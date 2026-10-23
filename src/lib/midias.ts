@@ -27,14 +27,20 @@ export function validarArquivo(arquivo: File): string | null {
 }
 
 // Envia o arquivo ao armazenamento e registra na tabela. Devolve uma mensagem se der erro.
-export async function enviarMidia(clienteId: string, postId: string, arquivo: File, ordem: number): Promise<string | null> {
+export async function enviarMidia(
+  clienteId: string,
+  postId: string,
+  arquivo: File,
+  ordem: number,
+  capa: string | null = null,
+): Promise<string | null> {
   const tipo = tipoDoArquivo(arquivo)
   if (!tipo) return validarArquivo(arquivo)
   const extensao = (arquivo.name.split('.').pop() || (tipo === 'video' ? 'mp4' : 'jpg')).toLowerCase().replace(/[^a-z0-9]/g, '')
   const caminho = `${clienteId}/${postId}/${crypto.randomUUID()}.${extensao}`
   const envio = await supabase.storage.from('posts').upload(caminho, arquivo, { contentType: arquivo.type })
   if (envio.error) return `Não foi possível enviar "${arquivo.name}".`
-  const linha = await supabase.from('post_midias').insert({ post_id: postId, caminho_storage: caminho, ordem, tipo })
+  const linha = await supabase.from('post_midias').insert({ post_id: postId, caminho_storage: caminho, ordem, tipo, capa_storage: capa })
   if (linha.error) {
     await supabase.storage.from('posts').remove([caminho])
     return `Não foi possível registrar "${arquivo.name}".`
@@ -42,10 +48,22 @@ export async function enviarMidia(clienteId: string, postId: string, arquivo: Fi
   return null
 }
 
-export const paraVista = (m: Pick<Midia, 'tipo' | 'caminho_storage' | 'link_externo'>): MidiaVista => ({
+// Envia a imagem de capa de um vídeo. Devolve o caminho, ou uma mensagem de erro.
+export async function enviarCapa(clienteId: string, postId: string, arquivo: File): Promise<{ caminho?: string; erro?: string }> {
+  if (tipoDoArquivo(arquivo) !== 'imagem') return { erro: `A capa "${arquivo.name}" precisa ser uma imagem.` }
+  if (arquivo.size > LIMITE_IMAGEM) return { erro: `A capa "${arquivo.name}" passa de 10 MB.` }
+  const extensao = (arquivo.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '')
+  const caminho = `${clienteId}/${postId}/capa-${crypto.randomUUID()}.${extensao}`
+  const envio = await supabase.storage.from('posts').upload(caminho, arquivo, { contentType: arquivo.type })
+  if (envio.error) return { erro: `Não foi possível enviar a capa "${arquivo.name}".` }
+  return { caminho }
+}
+
+export const paraVista = (m: Pick<Midia, 'tipo' | 'caminho_storage' | 'link_externo' | 'capa_storage'>): MidiaVista => ({
   tipo: m.tipo,
   caminho: m.caminho_storage,
   link: m.link_externo,
+  capa: m.capa_storage,
 })
 
 export const primeiraImagem = (midias: MidiaVista[]) => midias.find((m) => m.tipo === 'imagem' && m.caminho) ?? null

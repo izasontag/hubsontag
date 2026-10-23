@@ -20,7 +20,7 @@ export function useCalendario(mes: string, clienteId?: string) {
       const { inicio, fim } = limitesDoMes(mes)
       let consulta = supabase
         .from('posts')
-        .select('*, cliente:clientes(nome, cor_destaque), post_tags(tag_id), post_midias(id, post_id, caminho_storage, ordem, tipo, link_externo)')
+        .select('*, cliente:clientes(nome, cor_destaque), post_tags(tag_id), post_midias(id, post_id, caminho_storage, ordem, tipo, link_externo, capa_storage)')
         .gte('data_publicacao', inicio)
         .lte('data_publicacao', fim)
         .order('data_publicacao')

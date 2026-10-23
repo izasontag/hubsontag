@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import { dataDeHoje } from '../lib/datas'
-import { enviarMidia, linkValido, paraVista, validarArquivo } from '../lib/midias'
+import { enviarCapa, enviarMidia, linkValido, paraVista, urlPublica, validarArquivo } from '../lib/midias'
 import { supabase } from '../lib/supabase'
 import {
   DESEMPENHO_ROTULO,
@@ -178,9 +178,33 @@ export default function PostEditor({ post, dataInicial, clienteIdInicial, client
     onSalvo()
   }
 
+  async function trocarCapa(m: Midia, arquivo: File | undefined) {
+    if (!arquivo || !postId) return
+    setErro('')
+    const { caminho, erro: problema } = await enviarCapa(clienteId, postId, arquivo)
+    if (!caminho) return setErro(problema ?? 'Não foi possível enviar a capa.')
+    const { error } = await supabase.from('post_midias').update({ capa_storage: caminho }).eq('id', m.id)
+    if (error) {
+      await supabase.storage.from('posts').remove([caminho])
+      return setErro('Não foi possível salvar a capa.')
+    }
+    if (m.capa_storage) await supabase.storage.from('posts').remove([m.capa_storage])
+    await carregarMidias(postId)
+    onSalvo()
+  }
+
+  async function tirarCapa(m: Midia) {
+    if (!postId || !m.capa_storage) return
+    await supabase.from('post_midias').update({ capa_storage: null }).eq('id', m.id)
+    await supabase.storage.from('posts').remove([m.capa_storage])
+    await carregarMidias(postId)
+    onSalvo()
+  }
+
   async function removerArte(m: Midia) {
     if (!postId || !window.confirm('Remover este item?')) return
-    if (m.caminho_storage) await supabase.storage.from('posts').remove([m.caminho_storage])
+    const arquivos = [m.caminho_storage, m.capa_storage].filter((c): c is string => Boolean(c))
+    if (arquivos.length) await supabase.storage.from('posts').remove(arquivos)
     await supabase.from('post_midias').delete().eq('id', m.id)
     await carregarMidias(postId)
     onSalvo()
@@ -188,7 +212,7 @@ export default function PostEditor({ post, dataInicial, clienteIdInicial, client
 
   async function apagarPost() {
     if (!postId || !window.confirm('Apagar este post e as artes dele? Não dá para desfazer.')) return
-    const caminhos = midias.map((m) => m.caminho_storage).filter((c): c is string => Boolean(c))
+    const caminhos = midias.flatMap((m) => [m.caminho_storage, m.capa_storage]).filter((c): c is string => Boolean(c))
     if (caminhos.length) await supabase.storage.from('posts').remove(caminhos)
     const { error } = await supabase.from('posts').delete().eq('id', postId)
     if (error) return setErro('Não foi possível apagar o post.')
@@ -356,6 +380,24 @@ export default function PostEditor({ post, dataInicial, clienteIdInicial, client
                 {midias.map((m, i) => (
                   <li key={m.id} className="space-y-2 rounded-sm border border-linha bg-superficie p-2">
                     <MidiaItem midia={paraVista(m)} alt={`Item ${i + 1}`} className="aspect-square w-full rounded-sm object-cover" />
+                    {m.tipo === 'video' && (
+                      <div className="space-y-1">
+                        {m.capa_storage ? (
+                          <img src={urlPublica(m.capa_storage)} alt={`Capa do vídeo ${i + 1}`} className="h-16 w-full rounded-sm object-cover" />
+                        ) : (
+                          <p className="text-xs text-texto-suave">Sem capa</p>
+                        )}
+                        <label className={`${btnSecundario} w-full focus-within:ring-2 focus-within:ring-marrom`}>
+                          {m.capa_storage ? 'Trocar capa' : 'Adicionar capa'}
+                          <input type="file" accept="image/*" className="sr-only" onChange={(e) => { void trocarCapa(m, e.target.files?.[0]); e.target.value = '' }} />
+                        </label>
+                        {m.capa_storage && (
+                          <button type="button" className={`${btnSecundario} w-full`} onClick={() => void tirarCapa(m)}>
+                            Tirar capa
+                          </button>
+                        )}
+                      </div>
+                    )}
                     <div className="flex items-center justify-between gap-1">
                       <span className="text-xs text-texto-suave">
                         {m.tipo === 'video' ? 'Vídeo' : 'Arte'} {i + 1}

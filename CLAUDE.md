@@ -102,7 +102,7 @@ Nomes de tabelas e colunas em português, sem acento, em `snake_case`. Toda tabe
   - `status`: `ideia`, `roteiro`, `design`, `em_aprovacao`, `ajuste_pedido`, `aprovado`, `agendado`, `publicado`
   - `prazo_interno` (só área interna)
   - Desempenho, preenchido depois de publicado: `desempenho` (`bom`, `media`, `abaixo` ou vazio), `alcance`, `salvamentos`, `compartilhamentos`, `comentarios_qtd`, `nota_desempenho` (minha explicação do resultado)
-- **post_midias**: `post_id`, `tipo` (`imagem`, `video`), `caminho_storage` (arquivo) ou `link_externo` (vídeo em link, http/https), `ordem`. Imagens até 10 MB e vídeos até 50 MB (limite do plano gratuito do Supabase); vídeo maior entra por link
+- **post_midias**: `post_id`, `tipo` (`imagem`, `video`), `caminho_storage` (arquivo) ou `link_externo` (vídeo em link, http/https), `capa_storage` (imagem de capa opcional para vídeos), `ordem`. Imagens até 10 MB e vídeos até 50 MB (limite do plano gratuito do Supabase); vídeo maior entra por link. Links de YouTube e Google Drive viram player dentro do cartão (o endereço do player é montado pelo código a partir do ID do vídeo, nunca copiado do link); os outros links aparecem como capa com botão de play, ou botão "Assistir ao vídeo" se não houver capa
 - **rodadas**: `cliente_id`, `titulo`, `inicio`, `fim`, `status` (`rascunho`, `enviada`), `enviada_em`. Uma rodada é o lote de posts enviado de uma vez ao cliente, normalmente a quinzena. Em `posts`, `rodada_id` liga o post à rodada (do mesmo cliente). A função `enviar_rodada` passa todos os rascunhos da rodada para `em_aprovacao` de uma vez
 - **tags**: `nome`, `cor`, `cliente_id` (vazio = tag geral)
 - **post_tags**: `post_id`, `tag_id`

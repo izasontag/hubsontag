@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import { dataDeHoje } from '../lib/datas'
-import { enviarMidia, linkValido, tipoDoArquivo, validarArquivo } from '../lib/midias'
+import { enviarCapa, enviarMidia, linkValido, tipoDoArquivo, validarArquivo } from '../lib/midias'
 import { supabase } from '../lib/supabase'
 import { FORMATO_ROTULO, FORMATOS } from '../lib/tipos'
 import type { Cliente, FormatoPost, Rodada } from '../lib/tipos'
@@ -12,6 +12,8 @@ interface Item {
   arquivo?: File
   link?: string
   previa?: string
+  capa?: File
+  capaPrevia?: string
 }
 
 interface Props {
@@ -79,6 +81,15 @@ export default function NovoPostRapido({ cliente, rodada, onFechar, onCriado }: 
     setLinkVideo('')
   }
 
+  function definirCapa(id: string, arquivo: File | undefined) {
+    if (!arquivo) return
+    if (tipoDoArquivo(arquivo) !== 'imagem') return setErros([`A capa "${arquivo.name}" precisa ser uma imagem.`])
+    const capaPrevia = URL.createObjectURL(arquivo)
+    previas.current.push(capaPrevia)
+    setErros([])
+    setItens((atual) => atual.map((it) => (it.id === id ? { ...it, capa: arquivo, capaPrevia } : it)))
+  }
+
   const mover = (i: number, delta: -1 | 1) => {
     const alvo = i + delta
     if (alvo < 0 || alvo >= itens.length) return
@@ -116,13 +127,19 @@ export default function NovoPostRapido({ cliente, rodada, onFechar, onCriado }: 
     for (let i = 0; i < itens.length; i += 1) {
       const item = itens[i]
       setProgresso(`Enviando ${i + 1} de ${itens.length}...`)
+      let capa: string | null = null
+      if (item.capa) {
+        const r = await enviarCapa(cliente.id, criado.id as string, item.capa)
+        if (r.caminho) capa = r.caminho
+        else if (r.erro) falhas.push(r.erro)
+      }
       if (item.arquivo) {
-        const problema = await enviarMidia(cliente.id, criado.id as string, item.arquivo, i)
+        const problema = await enviarMidia(cliente.id, criado.id as string, item.arquivo, i, capa)
         if (problema) falhas.push(problema)
       } else if (item.link) {
         const { error: erroLink } = await supabase
           .from('post_midias')
-          .insert({ post_id: criado.id, tipo: 'video', link_externo: item.link, ordem: i })
+          .insert({ post_id: criado.id, tipo: 'video', link_externo: item.link, ordem: i, capa_storage: capa })
         if (erroLink) falhas.push('Não foi possível salvar o link do vídeo.')
       }
     }
@@ -193,6 +210,15 @@ export default function NovoPostRapido({ cliente, rodada, onFechar, onCriado }: 
                   {it.link && (
                     <div className="flex aspect-square w-full items-center justify-center rounded-sm bg-fundo p-2 text-center text-xs text-texto-suave">
                       Vídeo por link
+                    </div>
+                  )}
+                  {(it.link || (it.arquivo && tipoDoArquivo(it.arquivo) === 'video')) && (
+                    <div className="space-y-1">
+                      {it.capaPrevia && <img src={it.capaPrevia} alt={`Capa do vídeo ${i + 1}`} className="h-16 w-full rounded-sm object-cover" />}
+                      <label className={`${btnSecundario} w-full focus-within:ring-2 focus-within:ring-marrom`}>
+                        {it.capa ? 'Trocar capa' : 'Adicionar capa'}
+                        <input type="file" accept="image/*" className="sr-only" disabled={salvando} onChange={(e) => { definirCapa(it.id, e.target.files?.[0]); e.target.value = '' }} />
+                      </label>
                     </div>
                   )}
                   <div className="flex items-center justify-between gap-1">
