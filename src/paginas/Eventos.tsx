@@ -102,7 +102,7 @@ export default function Eventos() {
   return (
     <div className="space-y-8">
       <CabecalhoPagina
-        rotulo="Coberturas e eventos"
+        rotulo="Cobertura de stories"
         titulo="Eventos"
         acoes={
           dona ? (
