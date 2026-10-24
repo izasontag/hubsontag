@@ -360,6 +360,8 @@ export interface Tarefa {
   responsavel: Responsavel
   visivel_cliente: boolean
   material: string | null
+  resposta_cliente?: string | null
+  respondida_em?: string | null
   cliente: { nome: string } | null
 }
 
@@ -386,6 +388,8 @@ export interface PortalTarefa {
   status: StatusTarefa
   responsavel: Responsavel
   material: string | null
+  resposta?: string | null
+  respondida_em?: string | null
 }
 
 // ---------------- Financeiro ----------------

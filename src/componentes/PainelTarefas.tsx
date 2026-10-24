@@ -62,6 +62,12 @@ function LinhaTarefa({
             Material
           </a>
         )}
+        {t.resposta_cliente && (
+          <p className="mt-2 whitespace-pre-wrap border-l-2 border-musgo pl-3 text-sm">
+            <span className="eyebrow block">Resposta do cliente{t.respondida_em ? ` · ${new Date(t.respondida_em).toLocaleDateString('pt-BR')}` : ''}</span>
+            {t.resposta_cliente}
+          </p>
+        )}
       </div>
       <button className={btnSecundario} onClick={() => onEditar(t)}>
         Editar
@@ -297,6 +303,9 @@ export default function PainelTarefas({ clienteId }: { clienteId?: string }) {
             <input type="checkbox" className="h-5 w-5" disabled={!form.cliente_id} checked={form.visivel_cliente && Boolean(form.cliente_id)} onChange={(e) => setForm({ ...form, visivel_cliente: e.target.checked })} />
             Mostrar no Plano de ação do portal do cliente
           </label>
+          {form.visivel_cliente && form.cliente_id && form.responsavel === 'cliente' && (
+            <p className="text-sm text-texto-suave">Como o item é "com o cliente", ele poderá marcar como feito e escrever uma resposta no portal. Você vê a resposta aqui.</p>
+          )}
           <div className="flex gap-3">
             <button type="submit" className={btnPrimario}>
               Salvar
