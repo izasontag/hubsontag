@@ -22,6 +22,15 @@ const parametrosDe = (c: ConfigPrecificacao): Parametros => ({
   aplicarAdicional: false,
 })
 
+function Mini({ rotulo, children }: { rotulo: string; children: React.ReactNode }) {
+  return (
+    <label className="block text-xs text-texto-suave">
+      {rotulo}
+      <span className="mt-1 block">{children}</span>
+    </label>
+  )
+}
+
 interface Opcao {
   id: string
   nome: string
@@ -159,7 +168,7 @@ export default function OrcamentoPagina() {
 
   const alertas: string[] = []
   if (!r.folga) alertas.push('Imposto mais lucro estão altos demais; o cálculo foi limitado.')
-  if (p.valorHora <= 0) alertas.push('O valor da hora está zerado. Defina na tela anterior, em "Minha hora".')
+  if (p.valorHora <= 0) alertas.push('O valor da hora está zerado, por isso o tempo não entra no preço. Preencha "Valor da sua hora" acima.')
   if (r.precoFinal > 0 && r.lucroReal < 0) alertas.push('Atenção: com este valor você paga para trabalhar. Está abaixo do custo.')
   else if (r.precoFinal > 0 && r.lucroReal < r.custoTotal * 0.1) alertas.push('Margem baixa: sobra pouco depois dos custos e impostos.')
 
@@ -170,7 +179,7 @@ export default function OrcamentoPagina() {
   ]
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 pb-24 lg:pb-0">
       <Link to="/app/precificacao" className="inline-flex min-h-11 items-center text-sm text-texto-suave underline decoration-linha underline-offset-4 hover:text-marrom">
         &larr; Voltar para precificação
       </Link>
@@ -206,6 +215,19 @@ export default function OrcamentoPagina() {
             </div>
           </Cartao>
 
+          <Cartao className={`space-y-3 ${p.valorHora <= 0 ? 'border-mostarda bg-mostarda/30' : ''}`}>
+            <Titulo>Valor da sua hora</Titulo>
+            <p className="text-sm text-texto-suave">
+              É ele que transforma as horas em dinheiro. {p.valorHora <= 0 ? 'Está zerado, então o tempo ainda não entra no preço. Digite abaixo ou calcule a sua hora ideal.' : 'Para calcular a sua hora ideal, use "Minha hora" na tela de precificação.'}
+            </p>
+            <div className="flex flex-wrap items-end gap-3">
+              <div className="w-40">
+                <Campo rotulo="R$ por hora"><NumInput rotulo="Valor da hora" valor={p.valorHora} onChange={(n) => mudarP('valorHora', n)} /></Campo>
+              </div>
+              <Link to="/app/precificacao" className={btnSecundario}>Calcular minha hora ideal</Link>
+            </div>
+          </Cartao>
+
           <Cartao className="space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <Titulo>Tempo de trabalho</Titulo>
@@ -218,10 +240,10 @@ export default function OrcamentoPagina() {
               <section key={f} className="space-y-2" aria-label={f}>
                 <h3 className="eyebrow">{f}</h3>
                 {dados.tempo.filter((l) => l.fase === f).map((l) => (
-                  <div key={l.id} className="grid grid-cols-[1fr_5rem_5rem_2.75rem] items-center gap-2">
-                    <input className={inputCls} aria-label="Descrição" value={l.descricao} onChange={(e) => mudarTempo(l.id, { descricao: e.target.value })} />
-                    <NumInput rotulo={`Horas de ${l.descricao}`} valor={l.horas} onChange={(n) => mudarTempo(l.id, { horas: n })} />
-                    <NumInput rotulo={`Quantidade de ${l.descricao}`} valor={l.qtd} onChange={(n) => mudarTempo(l.id, { qtd: n })} />
+                  <div key={l.id} className="grid grid-cols-[1fr_1fr_2.75rem] items-end gap-2 rounded-md border border-linha bg-superficie p-3 sm:grid-cols-[1fr_5.5rem_5.5rem_2.75rem] sm:border-0 sm:bg-transparent sm:p-0">
+                    <input className={`${inputCls} col-span-3 sm:col-span-1`} aria-label="Descrição" placeholder="O que será feito" value={l.descricao} onChange={(e) => mudarTempo(l.id, { descricao: e.target.value })} />
+                    <Mini rotulo="Horas"><NumInput rotulo={`Horas de ${l.descricao}`} valor={l.horas} onChange={(n) => mudarTempo(l.id, { horas: n })} /></Mini>
+                    <Mini rotulo="Vezes ou dias"><NumInput rotulo={`Quantidade de ${l.descricao}`} valor={l.qtd} onChange={(n) => mudarTempo(l.id, { qtd: n })} /></Mini>
                     <button className="min-h-11 cursor-pointer text-lg text-texto-suave hover:text-red-800" aria-label={`Remover ${l.descricao}`} onClick={() => setDados({ ...dados, tempo: dados.tempo.filter((x) => x.id !== l.id) })}>×</button>
                   </div>
                 ))}
@@ -231,7 +253,7 @@ export default function OrcamentoPagina() {
               </section>
             ))}
             <button className={btnSecundario} onClick={() => setDados({ ...dados, tempo: [...dados.tempo, { id: novoId(), fase: 'Nova fase', descricao: '', horas: 1, qtd: 1 }] })}>Nova fase</button>
-            <p className="text-xs text-texto-suave">Colunas: descrição, horas de cada vez, quantidade de vezes.</p>
+            
           </Cartao>
 
           <Cartao className="space-y-4">
@@ -241,10 +263,10 @@ export default function OrcamentoPagina() {
             </div>
             <p className="text-sm text-texto-suave">Gasta só por causa deste trabalho: deslocamento, alimentação, assistente, aluguel de equipamento.</p>
             {dados.custos.map((c) => (
-              <div key={c.id} className="grid grid-cols-[1fr_6rem_5rem_2.75rem] items-center gap-2">
-                <input className={inputCls} aria-label="Descrição do custo" value={c.descricao} onChange={(e) => mudarCusto(c.id, { descricao: e.target.value })} />
-                <NumInput rotulo={`Valor de ${c.descricao}`} valor={c.valor} onChange={(n) => mudarCusto(c.id, { valor: n })} />
-                <NumInput rotulo={`Quantidade de ${c.descricao}`} valor={c.qtd} onChange={(n) => mudarCusto(c.id, { qtd: n })} />
+              <div key={c.id} className="grid grid-cols-[1fr_1fr_2.75rem] items-end gap-2 rounded-md border border-linha bg-superficie p-3 sm:grid-cols-[1fr_6rem_5.5rem_2.75rem] sm:border-0 sm:bg-transparent sm:p-0">
+                <input className={`${inputCls} col-span-3 sm:col-span-1`} aria-label="Descrição do custo" placeholder="Qual é o gasto" value={c.descricao} onChange={(e) => mudarCusto(c.id, { descricao: e.target.value })} />
+                <Mini rotulo="Valor (R$)"><NumInput rotulo={`Valor de ${c.descricao}`} valor={c.valor} onChange={(n) => mudarCusto(c.id, { valor: n })} /></Mini>
+                <Mini rotulo="Quantidade"><NumInput rotulo={`Quantidade de ${c.descricao}`} valor={c.qtd} onChange={(n) => mudarCusto(c.id, { qtd: n })} /></Mini>
                 <button className="min-h-11 cursor-pointer text-lg text-texto-suave hover:text-red-800" aria-label={`Remover ${c.descricao}`} onClick={() => setDados({ ...dados, custos: dados.custos.filter((x) => x.id !== c.id) })}>×</button>
               </div>
             ))}
@@ -253,13 +275,12 @@ export default function OrcamentoPagina() {
               <button className={btnSecundario} onClick={() => setDados({ ...dados, custos: [...dados.custos, { id: novoId(), descricao: 'Deslocamento (km)', valor: Number(config.custo_km), qtd: 40 }] })}>Deslocamento por km</button>
               <button className={btnSecundario} onClick={() => setDados({ ...dados, custos: [...dados.custos, { id: novoId(), descricao: 'Assistente (diária)', valor: 200, qtd: 1 }] })}>Assistente</button>
             </div>
-            <p className="text-xs text-texto-suave">Colunas: descrição, valor de cada, quantidade.</p>
+            
           </Cartao>
 
           <Cartao className="space-y-4">
             <Titulo>Ajustes deste orçamento</Titulo>
             <div className="grid gap-4 sm:grid-cols-2">
-              <Campo rotulo="Valor da hora (R$)"><NumInput key="vh" rotulo="Valor da hora" valor={p.valorHora} onChange={(n) => mudarP('valorHora', n)} /></Campo>
               <Campo rotulo="Lucro desejado (% do preço)"><NumInput rotulo="Lucro desejado" valor={p.lucroPct} onChange={(n) => mudarP('lucroPct', n)} /></Campo>
               <Campo rotulo="Impostos (% do preço)"><NumInput rotulo="Impostos" valor={p.impostoPct} onChange={(n) => mudarP('impostoPct', n)} /></Campo>
               <Campo rotulo="Desconto para o cliente (%)"><NumInput rotulo="Desconto" valor={p.descontoPct} onChange={(n) => mudarP('descontoPct', n)} /></Campo>
@@ -322,6 +343,13 @@ export default function OrcamentoPagina() {
           </div>
           {msg && <Aviso tipo="ok">{msg}</Aviso>}
         </aside>
+      </div>
+      <div className="fixed inset-x-0 bottom-0 z-30 flex items-center justify-between gap-3 border-t border-linha bg-superficie px-4 py-3 shadow-elevada lg:hidden">
+        <div>
+          <p className="eyebrow">Preço recomendado</p>
+          <p className="numeros-grandes text-2xl">{reais(r.precoSugerido)}</p>
+        </div>
+        <button className={btnPrimario} disabled={salvando} onClick={() => void salvar()}>Salvar</button>
       </div>
     </div>
   )
