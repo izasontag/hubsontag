@@ -1,5 +1,6 @@
 import { DIAS_SEMANA_CURTO, diaSemanaLongo, diasDoMes, dataDeHoje, nomeDoMes, somarMeses } from '../lib/datas'
-import type { PostCompleto, Tag } from '../lib/tipos'
+import { Link } from 'react-router-dom'
+import type { Evento, PostCompleto, Tag } from '../lib/tipos'
 import CartaoPost from './CartaoPost'
 import { btnSecundario } from './ui'
 
@@ -8,6 +9,7 @@ interface Props {
   posts: PostCompleto[]
   tags: Tag[]
   mostrarCliente?: boolean
+  eventos?: Evento[]
   onNovo: (data: string) => void
   onAbrir: (post: PostCompleto) => void
 }
@@ -26,10 +28,23 @@ export function NavegacaoMes({ mes, onMes }: { mes: string; onMes: (m: string) =
   )
 }
 
-export default function CalendarioMensal({ mes, posts, tags, mostrarCliente, onNovo, onAbrir }: Props) {
+function ChipEvento({ e }: { e: Evento }) {
+  return (
+    <Link
+      to={`/app/eventos/${e.id}`}
+      className="block min-h-11 rounded-md border border-dashed border-oliva bg-areia px-2 py-1.5 text-xs leading-snug text-marrom-escuro transition-transform duration-200 hover:-translate-y-0.5 lg:min-h-0"
+    >
+      <span className="eyebrow !text-[0.6rem]">{e.categoria ?? 'Evento'}{e.horario ? ` · ${e.horario.slice(0, 5)}` : ''}</span>
+      <span className="block font-medium">{e.nome}</span>
+    </Link>
+  )
+}
+
+export default function CalendarioMensal({ mes, posts, tags, mostrarCliente, eventos = [], onNovo, onAbrir }: Props) {
   const dias = diasDoMes(mes)
   const hoje = dataDeHoje()
   const porDia = (data: string) => posts.filter((p) => p.data_publicacao === data)
+  const eventosDoDia = (data: string) => eventos.filter((e) => e.data_evento === data)
   const cartao = (p: PostCompleto, vertical = false) => (
     <CartaoPost
       key={p.id}
@@ -72,6 +87,7 @@ export default function CalendarioMensal({ mes, posts, tags, mostrarCliente, onN
                   +
                 </button>
               </div>
+              {eventosDoDia(d.data).map((e) => <ChipEvento key={e.id} e={e} />)}
               {porDia(d.data).map((p) => cartao(p, true))}
             </div>
           ))}
@@ -80,9 +96,9 @@ export default function CalendarioMensal({ mes, posts, tags, mostrarCliente, onN
 
       {/* Celular: lista por dia */}
       <div className="space-y-4 lg:hidden">
-        {posts.length === 0 && <p className="text-texto-suave">Nenhum post neste mês.</p>}
+        {posts.length === 0 && eventos.length === 0 && <p className="text-texto-suave">Nenhum post neste mês.</p>}
         {dias
-          .filter((d) => porDia(d.data).length > 0)
+          .filter((d) => porDia(d.data).length > 0 || eventosDoDia(d.data).length > 0)
           .map((d) => (
             <section key={d.data} className="space-y-2">
               <div className="flex items-center justify-between">
@@ -93,6 +109,7 @@ export default function CalendarioMensal({ mes, posts, tags, mostrarCliente, onN
                   Novo neste dia
                 </button>
               </div>
+              {eventosDoDia(d.data).map((e) => <ChipEvento key={e.id} e={e} />)}
               {porDia(d.data).map((p) => cartao(p))}
             </section>
           ))}

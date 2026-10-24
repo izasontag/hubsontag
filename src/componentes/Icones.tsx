@@ -73,3 +73,9 @@ export const IconeFechar = () => (
     <path d="M6 6l12 12M18 6L6 18" />
   </Icone>
 )
+export const IconePrecificacao = () => (
+  <Icone>
+    <rect x="5" y="3" width="14" height="18" rx="2" />
+    <path d="M8.5 7.5h7M8.5 12h1.5M12 12h1.5M15.5 12H16M8.5 16h1.5M12 16h1.5M15.5 16H16" />
+  </Icone>
+)

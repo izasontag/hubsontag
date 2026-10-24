@@ -14,6 +14,8 @@ import Equipe from './paginas/Equipe'
 import EventoPagina from './paginas/EventoPagina'
 import Eventos from './paginas/Eventos'
 import Ideias from './paginas/Ideias'
+import OrcamentoPagina from './paginas/OrcamentoPagina'
+import Precificacao from './paginas/Precificacao'
 import Painel from './paginas/Painel'
 import Tarefas from './paginas/Tarefas'
 import PortalAprovacoes from './paginas/portal/PortalAprovacoes'
@@ -47,6 +49,8 @@ export default function App() {
             <Route path="tarefas" element={<Tarefas />} />
             <Route path="eventos" element={<Eventos />} />
             <Route path="eventos/:id" element={<EventoPagina />} />
+            <Route path="precificacao" element={<Precificacao />} />
+            <Route path="precificacao/:id" element={<OrcamentoPagina />} />
             <Route path="equipe" element={<Equipe />} />
             <Route path="financeiro" element={<Financeiro />}>
               <Route index element={<Agencia />} />

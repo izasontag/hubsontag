@@ -11,6 +11,7 @@ import {
   IconeFechar,
   IconeFinanceiro,
   IconeIdeias,
+  IconePrecificacao,
   IconeMenu,
   IconePainel,
   IconeTarefas,
@@ -56,6 +57,12 @@ function Navegacao() {
           <IconeIdeias />
           Ideias
         </NavLink>
+        {dona && (
+          <NavLink to="/app/precificacao" className={item}>
+            <IconePrecificacao />
+            Precificação
+          </NavLink>
+        )}
       </Grupo>
       <Grupo titulo="Coberturas">
         <NavLink to="/app/eventos" className={item}>

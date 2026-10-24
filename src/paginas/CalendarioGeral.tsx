@@ -1,12 +1,13 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import CalendarioMensal, { NavegacaoMes } from '../componentes/CalendarioMensal'
 import CartaoPost from '../componentes/CartaoPost'
 import PostEditor from '../componentes/PostEditor'
 import { Aviso, btnPrimario, CabecalhoPagina, inputCls } from '../componentes/ui'
 import { useAuth } from '../lib/auth'
-import { mesDeHoje } from '../lib/datas'
+import { limitesDoMes, mesDeHoje } from '../lib/datas'
+import { supabase } from '../lib/supabase'
 import { STATUS_POST, STATUS_POST_ROTULO } from '../lib/tipos'
-import type { PostCompleto } from '../lib/tipos'
+import type { Evento, PostCompleto } from '../lib/tipos'
 import { useCalendario } from '../lib/useCalendario'
 
 interface Editor {
@@ -21,7 +22,22 @@ export default function CalendarioGeral() {
   const [filtroCliente, setFiltroCliente] = useState('')
   const [filtroTag, setFiltroTag] = useState('')
   const [editor, setEditor] = useState<Editor | null>(null)
+  const [eventos, setEventos] = useState<Evento[]>([])
+  const [mostrarEventos, setMostrarEventos] = useState(true)
   const { posts, tags, clientes, carregando, erro, recarregar } = useCalendario(mes)
+
+  // clientes de eventos aparecem no dia do evento
+  useEffect(() => {
+    const { inicio, fim } = limitesDoMes(mes)
+    supabase
+      .from('eventos')
+      .select('*')
+      .gte('data_evento', inicio)
+      .lte('data_evento', fim)
+      .neq('status', 'cancelado')
+      .order('data_evento')
+      .then(({ data }) => setEventos((data as Evento[]) ?? []))
+  }, [mes])
 
   const tagsFiltro = tags.filter((t) => !filtroCliente || t.cliente_id === null || t.cliente_id === filtroCliente)
   const filtrados = posts.filter(
@@ -93,6 +109,10 @@ export default function CalendarioGeral() {
           </select>
         </label>
       </div>
+      <label className="flex min-h-11 items-center gap-3 text-sm">
+        <input type="checkbox" className="h-5 w-5" checked={mostrarEventos} onChange={(e) => setMostrarEventos(e.target.checked)} />
+        Mostrar clientes de eventos no calendário (aparecem quando o filtro de cliente e de tag está em "Todos")
+      </label>
       {erro && <Aviso tipo="erro">{erro}</Aviso>}
       {carregando && <p className="text-sm text-texto-suave">Carregando...</p>}
 
@@ -102,6 +122,7 @@ export default function CalendarioGeral() {
           posts={filtrados}
           tags={tags}
           mostrarCliente
+          eventos={mostrarEventos && !filtroCliente && !filtroTag ? eventos : []}
           onNovo={(data) => setEditor({ post: null, data })}
           onAbrir={abrir}
         />

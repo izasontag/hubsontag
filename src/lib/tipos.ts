@@ -656,3 +656,31 @@ export interface PortalEventoDados {
   acesso: { usuario: string; enviado_em: string } | null
   perguntas: { id: string; secao: string; pergunta: string; resposta: string | null }[]
 }
+
+// ---------------- Precificação (só dona) ----------------
+
+export interface ConfigPrecificacao {
+  renda_desejada: number
+  custos_fixos: number
+  dias_mes: number
+  horas_dia: number
+  pct_faturavel: number
+  valor_hora: number
+  imposto_pct: number
+  lucro_pct: number
+  adicional_pct: number
+  custo_km: number
+}
+
+export interface Orcamento {
+  id: string
+  nome: string
+  tipo: 'evento' | 'mensal' | 'avulso'
+  cliente_id: string | null
+  evento_id: string | null
+  status: 'rascunho' | 'enviado' | 'fechado' | 'perdido'
+  dados: import('./precificacao').DadosOrcamento
+  horas_total: number
+  preco_sugerido: number
+  preco_final: number
+}
