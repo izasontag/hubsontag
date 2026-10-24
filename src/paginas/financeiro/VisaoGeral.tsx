@@ -13,6 +13,7 @@ interface CobrancaMin {
   vencimento: string
   status: string
   pago_em: string | null
+  valor_recebido?: number | null // só nas cobranças da agência
 }
 interface Atrasada {
   id: string
@@ -49,7 +50,7 @@ export default function VisaoGeral({ mes, onMes }: { mes: string; onMes: (m: str
     const fim = limitesDoMes(mes).fim
     const janela = `and(vencimento.gte.${ini},vencimento.lte.${fim}),and(pago_em.gte.${ini},pago_em.lte.${fim})`
     Promise.all([
-      supabase.from('cobrancas').select('valor, vencimento, status, pago_em').or(janela),
+      supabase.from('cobrancas').select('*').or(janela),
       supabase.from('despesas').select('data, valor').gte('data', ini).lte('data', fim),
       supabase.from('cobrancas').select('id, descricao, valor, vencimento, cliente:clientes(nome)').eq('status', 'atrasado').order('vencimento'),
       supabase.from('contratos').select('id, plano, valor_mensal, renovacao, cliente:clientes(nome)').eq('status', 'ativo'),
@@ -77,7 +78,7 @@ export default function VisaoGeral({ mes, onMes }: { mes: string; onMes: (m: str
   const meses = [-5, -4, -3, -2, -1, 0].map((n) => somarMeses(mes, n))
   const serie: PontoMes[] = meses.map((m) => ({
     mes: m,
-    receita: soma((cobrancas ?? []).filter((c) => c.status === 'pago' && c.pago_em?.startsWith(m)), (c) => Number(c.valor)),
+    receita: soma((cobrancas ?? []).filter((c) => c.status === 'pago' && c.pago_em?.startsWith(m)), (c) => Number(c.valor_recebido ?? c.valor)),
     despesa: soma(despesas.filter((d) => d.data.startsWith(m)), (d) => Number(d.valor)),
   }))
   const atual = serie[serie.length - 1]

@@ -3,9 +3,11 @@ import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { textoSobre } from '../componentes/animacao'
 import { Aviso, Esqueleto, STATUS_ROTULO } from '../componentes/ui'
 import { iniciais } from './Clientes'
+import { useAuth } from '../lib/auth'
 import { supabase } from '../lib/supabase'
 import type { Cliente } from '../lib/tipos'
 import FichaCliente from './cliente/FichaCliente'
+import Recebimentos from './cliente/Recebimentos'
 import Relatorios from './cliente/Relatorios'
 import PainelTarefas from '../componentes/PainelTarefas'
 import AbaPortal from './cliente/AbaPortal'
@@ -17,10 +19,12 @@ import ManualMarca from './cliente/ManualMarca'
 export default function ClientePagina() {
   const { id } = useParams()
   const [params, setParams] = useSearchParams()
+  const { perfil } = useAuth()
+  const dona = perfil?.papel === 'dona'
   const [cliente, setCliente] = useState<Cliente | null>(null)
   const [erro, setErro] = useState('')
   const abaParam = params.get('aba')
-  const aba = abaParam === 'manual' || abaParam === 'calendario' || abaParam === 'portal' || abaParam === 'aprovacoes' || abaParam === 'plano' || abaParam === 'relatorios' || abaParam === 'roteiros' ? abaParam : 'ficha'
+  const aba = abaParam === 'manual' || abaParam === 'calendario' || abaParam === 'portal' || abaParam === 'aprovacoes' || abaParam === 'plano' || abaParam === 'relatorios' || abaParam === 'roteiros' || (abaParam === 'recebimentos' && dona) ? abaParam : 'ficha'
 
   useEffect(() => {
     if (!id) return
@@ -35,7 +39,7 @@ export default function ClientePagina() {
       })
   }, [id])
 
-  const botaoAba = (chave: 'ficha' | 'aprovacoes' | 'calendario' | 'plano' | 'roteiros' | 'manual' | 'relatorios' | 'portal', rotulo: string) => (
+  const botaoAba = (chave: 'ficha' | 'aprovacoes' | 'calendario' | 'plano' | 'roteiros' | 'recebimentos' | 'manual' | 'relatorios' | 'portal', rotulo: string) => (
     <button
       onClick={() => setParams(chave === 'ficha' ? {} : { aba: chave })}
       aria-current={aba === chave ? 'page' : undefined}
@@ -79,6 +83,7 @@ export default function ClientePagina() {
             {botaoAba('roteiros', 'Roteiros')}
             {botaoAba('manual', 'Manual da marca')}
             {botaoAba('relatorios', 'Relatórios')}
+            {dona && botaoAba('recebimentos', 'Recebimentos')}
             {botaoAba('portal', 'Portal')}
           </nav>
           <div key={aba} className="anim-entrar">
@@ -89,6 +94,7 @@ export default function ClientePagina() {
             {aba === 'roteiros' && <Roteiros clienteId={cliente.id} />}
             {aba === 'manual' && <ManualMarca cliente={cliente} />}
             {aba === 'relatorios' && <Relatorios cliente={cliente} />}
+            {aba === 'recebimentos' && dona && <Recebimentos cliente={cliente} />}
             {aba === 'portal' && <AbaPortal cliente={cliente} onChange={setCliente} />}
           </div>
         </>

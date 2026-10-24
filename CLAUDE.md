@@ -115,7 +115,7 @@ Nomes de tabelas e colunas em português, sem acento, em `snake_case`. Toda tabe
 ### Financeiro da agência (só dona)
 
 - **contratos**: `cliente_id`, `plano`, `escopo` (posts, reels e stories por mês), `valor_mensal`, `inicio`, `renovacao`, `arquivo_storage`
-- **cobrancas**: `contrato_id` ou `projeto_id`, `vencimento`, `valor`, `forma_pagamento`, `status` (`a_vencer`, `pago`, `atrasado`), `pago_em`
+- **cobrancas**: `contrato_id` ou `projeto_id`, `cliente_id`, `vencimento`, `valor`, `forma_pagamento`, `status` (`a_vencer`, `pago`, `atrasado`), `pago_em`, `valor_recebido` (quanto entrou de fato; vazio = o valor combinado), `nota_storage` e `nota_nome` (nota fiscal ou recibo, bucket privado `notas`, só dona; migração `014_recebimentos_notas.sql`)
 - **despesas**: `data`, `categoria` (ferramentas, freelancers, impostos, cursos, outros), `descricao`, `valor`
 - **projetos_avulsos**: `cliente_id`, `nome`, `valor`, `status`, `data`
 
@@ -198,6 +198,7 @@ Segurança: dona vê e faz tudo. Equipe lê e edita só os eventos atribuídos (
   - **Manual da marca**: os 8 capítulos e as metas
   - **Aprovações**: rodadas quinzenais. Cria a rodada, adiciona posts (arrasta as imagens do carrossel ou o vídeo, escreve a legenda), vê o feed como o cliente verá, envia a rodada de uma vez e acompanha esperando, ajustes pedidos e aprovados
   - **Roteiros**: roteiros do cliente (título, formato, status, data prevista, texto e arquivo anexo de até 50 MB, bucket privado `roteiros`)
+  - **Recebimentos** (só dona): quanto já entrou em cada mês do cliente (recebido de previsto, barra, total do ano), cobranças com situação (recebido, recebido em parte, atrasado, a receber), "Marcar como recebido" com valor, data e forma, "Nova cobrança do mês" e **subir a nota** de cada pagamento (PDF, imagem ou XML, até 20 MB, link assinado), com aviso de pagamentos sem nota. A Visão geral do financeiro usa o valor recebido.
   - **Portal**: link secreto, recado, prints do feed atual e links de materiais
   - **Materiais** e **Relatórios**
 - **Ideias** (`/app/ideias`) e **Tarefas** (`/app/tarefas`, com os modelos de checklist) já existem desde a Fase 3. Na ficha do cliente há também as abas **Plano de ação** e, no Manual da marca, a seção **Prompts e skills**.

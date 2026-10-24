@@ -431,6 +431,9 @@ export interface Cobranca {
   forma_pagamento: FormaPagamento | null
   status: StatusCobranca
   pago_em: string | null
+  valor_recebido: number | null
+  nota_storage: string | null
+  nota_nome: string | null
   cliente: { nome: string } | null
 }
 
