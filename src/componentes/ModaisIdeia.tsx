@@ -16,15 +16,17 @@ function Moldura({ titulo, onFechar, children }: { titulo: string; onFechar: () 
   useEscape(onFechar)
   return (
     <Portal>
-    <div className="modal-fundo rola-modal fixed inset-0 z-50 overflow-y-auto bg-texto/50" role="dialog" aria-modal="true" aria-label={titulo}>
-      <div className="modal-painel mx-auto min-h-full max-w-2xl bg-fundo p-4 sm:my-6 sm:min-h-0 sm:rounded-md sm:border sm:border-linha sm:p-6">
-        <div className="mb-4 flex items-center justify-between gap-3">
+    <div className="modal-fundo fixed inset-0 z-50 flex items-stretch justify-center bg-texto/50 sm:items-center sm:p-4" role="dialog" aria-modal="true" aria-label={titulo}>
+      <div className="modal-painel flex h-dvh w-full max-w-2xl flex-col bg-fundo sm:h-auto sm:max-h-[92dvh] sm:rounded-md sm:border sm:border-linha">
+        <div className="flex shrink-0 items-center justify-between gap-3 border-b border-linha px-4 py-3 sm:px-6">
           <h2 className="titulo-secao">{titulo}</h2>
           <button type="button" className={btnSecundario} onClick={onFechar}>
             Fechar
           </button>
         </div>
+        <div className="rola-modal min-h-0 flex-1 overflow-y-auto px-4 pb-6 pt-4 sm:px-6">
         {children}
+        </div>
       </div>
     </div>
     </Portal>

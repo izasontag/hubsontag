@@ -516,3 +516,12 @@ button:not(:disabled):active {
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
 }
+
+/* celular: campos com 16px evitam o zoom automático do iPhone ao tocar (o zoom deixava a janela maior que a tela) */
+@media (max-width: 767px) {
+  input:not([type='checkbox']):not([type='radio']),
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}

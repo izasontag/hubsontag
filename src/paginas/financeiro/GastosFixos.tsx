@@ -340,7 +340,7 @@ export default function GastosFixos({ area, mes: mesFora, onMes, onResumo }: { a
               {!form.id && (
                 <Campo rotulo="Como é cobrado">
                   <select className={inputCls} value={form.como} onChange={(e) => setForm({ ...form, como: e.target.value as Como })}>
-                    <option value="todo_mes">Todo mês, sem data para acabar</option>
+                    <option value="todo_mes">Todo mês (repete sozinho, sem data para acabar)</option>
                     <option value="parcelado">Parcelado (tem número de parcelas)</option>
                     <option value="unico">Só neste mês (conta avulsa)</option>
                   </select>

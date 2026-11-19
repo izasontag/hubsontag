@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import type { FormEvent } from 'react'
 import { NavegacaoMes } from '../../componentes/CalendarioMensal'
 import { Aviso, btnPrimario, btnSecundario, Campo, Cartao, formatarData, inputCls, Titulo } from '../../componentes/ui'
@@ -24,6 +25,10 @@ const COR_SAIDA = '#c98b4f'
 
 export default function Pessoal() {
   const [mes, setMes] = useState(mesDeHoje())
+  const [params, setParams] = useSearchParams()
+  const pedida = params.get('aba')
+  // a aba "Gastos fixos" abre primeiro
+  const aba: 'gastos' | 'lancamentos' | 'metas' = pedida === 'lancamentos' || pedida === 'metas' ? pedida : 'gastos'
   const [itens, setItens] = useState<Lancamento[] | null>(null)
   const [metas, setMetas] = useState<MetaPessoal[]>([])
   const [form, setForm] = useState<Rascunho | null>(null)
@@ -100,9 +105,6 @@ export default function Pessoal() {
       <p className="text-sm text-texto-suave">Área pessoal: o que está aqui não entra nas contas da agência.</p>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <NavegacaoMes mes={mes} onMes={setMes} />
-        <button className={btnPrimario} onClick={() => setForm({ id: null, data: dataDeHoje().startsWith(mes) ? dataDeHoje() : `${mes}-01`, tipo: 'saida', categoria: 'outros', descricao: '', valor: '' })}>
-          Novo lançamento
-        </button>
       </div>
 
       <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -120,9 +122,33 @@ export default function Pessoal() {
         ))}
       </ul>
 
-      <GastosFixos area="pessoal" mes={mes} onMes={setMes} onResumo={setFixos} />
+      <nav className="flex gap-6 overflow-x-auto border-b border-linha" aria-label="Seções do financeiro pessoal">
+        {([['gastos', 'Gastos fixos'], ['lancamentos', 'Entradas e saídas'], ['metas', 'Metas']] as const).map(([chave, rotulo]) => (
+          <button
+            key={chave}
+            onClick={() => setParams(chave === 'gastos' ? {} : { aba: chave })}
+            aria-current={aba === chave ? 'page' : undefined}
+            className={`relative min-h-11 shrink-0 cursor-pointer px-1 text-sm tracking-wide transition-colors duration-200 after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:origin-left after:bg-marrom after:transition-transform after:duration-300 ${
+              aba === chave ? 'font-medium text-marrom after:scale-x-100' : 'text-texto-suave after:scale-x-0 hover:text-texto hover:after:scale-x-50'
+            }`}
+          >
+            {rotulo}
+          </button>
+        ))}
+      </nav>
 
-      <h2 className="titulo-secao">Entradas e <em>saídas</em></h2>
+      {/* sempre montada (só escondida) para os totais de cima continuarem certos */}
+      <div hidden={aba !== 'gastos'}>
+        <GastosFixos area="pessoal" mes={mes} onMes={setMes} onResumo={setFixos} />
+      </div>
+
+      <div hidden={aba !== 'lancamentos'} className="space-y-6">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 className="titulo-secao">Entradas e <em>saídas</em></h2>
+        <button className={btnPrimario} onClick={() => setForm({ id: null, data: dataDeHoje().startsWith(mes) ? dataDeHoje() : `${mes}-01`, tipo: 'saida', categoria: 'outros', descricao: '', valor: '' })}>
+          Novo lançamento
+        </button>
+      </div>
       {form && (
         <Cartao>
           <form onSubmit={salvar} className="space-y-4">
@@ -209,6 +235,9 @@ export default function Pessoal() {
         ))}
       </ul>
 
+      </div>
+
+      <div hidden={aba !== 'metas'}>
       <Cartao className="space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <Titulo>Metas pessoais</Titulo>
@@ -264,6 +293,7 @@ export default function Pessoal() {
           })}
         </ul>
       </Cartao>
+      </div>
     </div>
   )
 }
