@@ -180,16 +180,16 @@ body {
 }
 
 .anim-entrar {
-  animation: entrar 0.65s var(--ease-suave) both;
+  animation: entrar 0.65s var(--ease-suave) backwards;
   animation-delay: calc(var(--i, 0) * 70ms);
 }
 
 .anim-aparecer {
-  animation: aparecer 0.4s ease both;
+  animation: aparecer 0.4s ease backwards;
 }
 
 .anim-surgir {
-  animation: surgir 0.35s var(--ease-suave) both;
+  animation: surgir 0.35s var(--ease-suave) backwards;
 }
 
 .anim-crescer {
@@ -222,7 +222,7 @@ body {
 }
 
 .modal-painel {
-  animation: surgir 0.4s var(--ease-suave) both;
+  animation: surgir 0.4s var(--ease-suave) backwards;
 }
 
 /* aparece ao rolar a página (ver componentes/animacao.tsx) */

@@ -40,7 +40,8 @@ export function useCalendario(mes: string, clienteId?: string) {
       }
       const lista = (resPosts.data as PostCompleto[]).map((p) => ({
         ...p,
-        post_midias: [...p.post_midias].sort((a, b) => a.ordem - b.ordem),
+        post_tags: p.post_tags ?? [],
+        post_midias: [...(p.post_midias ?? [])].sort((a, b) => a.ordem - b.ordem),
       }))
       setErro('')
       setPosts(lista)
