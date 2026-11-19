@@ -79,3 +79,14 @@ export const IconePrecificacao = () => (
     <path d="M8.5 7.5h7M8.5 12h1.5M12 12h1.5M15.5 12H16M8.5 16h1.5M12 16h1.5M15.5 16H16" />
   </Icone>
 )
+export const IconeBusca = () => (
+  <Icone>
+    <circle cx="11" cy="11" r="6.5" />
+    <path d="M16 16l4.5 4.5" />
+  </Icone>
+)
+export const IconeMais = () => (
+  <Icone>
+    <path d="M12 5v14M5 12h14" />
+  </Icone>
+)

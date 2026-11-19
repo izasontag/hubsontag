@@ -1,10 +1,15 @@
-import AssistenteIA from './AssistenteIA'
-import { LogoCompleta } from './Logo'
-import { useEffect, useState } from 'react'
+import { lazy, Suspense, useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
+import { LogoCompleta } from './Logo'
+import { Esqueleto } from './ui'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { useAuth } from '../lib/auth'
+import { useContadores } from '../lib/contadores'
+import type { Contadores } from '../lib/contadores'
+import { antecipar } from '../lib/paginas'
+import { travar } from '../lib/trava'
 import {
+  IconeBusca,
   IconeCalendario,
   IconeClientes,
   IconeEquipe,
@@ -13,10 +18,26 @@ import {
   IconeFinanceiro,
   IconeIdeias,
   IconePrecificacao,
+  IconeMais,
   IconeMenu,
   IconePainel,
   IconeTarefas,
 } from './Icones'
+
+// partes pesadas só baixam quando usadas
+const Paleta = lazy(() => import('./Paleta'))
+const LancamentoRapido = lazy(() => import('./LancamentoRapido'))
+const AssistenteIA = lazy(() => import('./AssistenteIA'))
+const ASSISTENTE_LIGADO = import.meta.env.VITE_ASSISTENTE_IA === 'sim'
+
+function Numero({ n, rotulo }: { n: number; rotulo: string }) {
+  if (n <= 0) return null
+  return (
+    <span className="anim-surgir ml-auto flex h-6 min-w-6 items-center justify-center rounded-full bg-mostarda px-1.5 text-xs font-medium text-marrom-escuro" role="status" aria-label={`${n} ${rotulo}`}>
+      {n > 99 ? '99+' : n}
+    </span>
+  )
+}
 
 const item = ({ isActive }: { isActive: boolean }) =>
   `group relative flex min-h-11 items-center gap-3 rounded-full px-4 text-sm tracking-wide transition duration-200 ${
@@ -32,7 +53,7 @@ function Grupo({ titulo, children }: { titulo: string; children: ReactNode }) {
   )
 }
 
-function Navegacao() {
+function Navegacao({ contadores }: { contadores: Contadores }) {
   const { perfil } = useAuth()
   const dona = perfil?.papel === 'dona'
   return (
@@ -42,42 +63,45 @@ function Navegacao() {
         Painel
       </NavLink>
       <Grupo titulo="Trabalho">
-        <NavLink to="/app/clientes" className={item}>
+        <NavLink to="/app/clientes" className={item} onMouseEnter={() => antecipar('/app/clientes')} onTouchStart={() => antecipar('/app/clientes')}>
           <IconeClientes />
           Clientes
+          <Numero n={contadores.ajustes} rotulo="posts com ajuste pedido" />
         </NavLink>
-        <NavLink to="/app/calendario" className={item}>
+        <NavLink to="/app/calendario" className={item} onMouseEnter={() => antecipar('/app/calendario')} onTouchStart={() => antecipar('/app/calendario')}>
           <IconeCalendario />
           Calendário
         </NavLink>
-        <NavLink to="/app/tarefas" className={item}>
+        <NavLink to="/app/tarefas" className={item} onMouseEnter={() => antecipar('/app/tarefas')} onTouchStart={() => antecipar('/app/tarefas')}>
           <IconeTarefas />
           Tarefas
+          <Numero n={contadores.tarefas} rotulo="tarefas atrasadas" />
         </NavLink>
-        <NavLink to="/app/ideias" className={item}>
+        <NavLink to="/app/ideias" className={item} onMouseEnter={() => antecipar('/app/ideias')} onTouchStart={() => antecipar('/app/ideias')}>
           <IconeIdeias />
           Ideias
         </NavLink>
         {dona && (
-          <NavLink to="/app/precificacao" className={item}>
+          <NavLink to="/app/precificacao" className={item} onMouseEnter={() => antecipar('/app/precificacao')} onTouchStart={() => antecipar('/app/precificacao')}>
             <IconePrecificacao />
             Precificação
           </NavLink>
         )}
       </Grupo>
       <Grupo titulo="Coberturas">
-        <NavLink to="/app/eventos" className={item}>
+        <NavLink to="/app/eventos" className={item} onMouseEnter={() => antecipar('/app/eventos')} onTouchStart={() => antecipar('/app/eventos')}>
           <IconeEventos />
           Eventos
         </NavLink>
       </Grupo>
       {dona && (
         <Grupo titulo="Agência">
-          <NavLink to="/app/financeiro" className={item}>
+          <NavLink to="/app/financeiro" className={item} onMouseEnter={() => antecipar('/app/financeiro')} onTouchStart={() => antecipar('/app/financeiro')}>
             <IconeFinanceiro />
             Financeiro
+            <Numero n={contadores.financeiro} rotulo="contas atrasadas" />
           </NavLink>
-          <NavLink to="/app/equipe" className={item}>
+          <NavLink to="/app/equipe" className={item} onMouseEnter={() => antecipar('/app/equipe')} onTouchStart={() => antecipar('/app/equipe')}>
             <IconeEquipe />
             Equipe
           </NavLink>
@@ -96,6 +120,20 @@ function Marca() {
   )
 }
 
+function BotaoBusca() {
+  return (
+    <button
+      type="button"
+      onClick={() => window.dispatchEvent(new Event('abrir-paleta'))}
+      className="mx-3 mb-2 flex min-h-11 cursor-pointer items-center gap-3 rounded-full border border-linha bg-fundo px-4 text-sm text-texto-suave transition-colors hover:bg-areia"
+    >
+      <IconeBusca />
+      <span className="flex-1 text-left">Buscar</span>
+      <kbd className="hidden rounded-md border border-linha bg-superficie px-1.5 text-[0.65rem] lg:inline">Ctrl K</kbd>
+    </button>
+  )
+}
+
 function Rodape() {
   const { perfil, sair } = useAuth()
   return (
@@ -110,7 +148,33 @@ function Rodape() {
 
 export default function LayoutApp() {
   const { pathname } = useLocation()
+  const { perfil } = useAuth()
+  const dona = perfil?.papel === 'dona'
   const [aberto, setAberto] = useState(false)
+  const [paleta, setPaleta] = useState(false)
+  const [rapido, setRapido] = useState(false)
+  const contadores = useContadores(dona, pathname)
+
+  // Ctrl+K (ou Cmd+K, ou "/") abre a busca rápida
+  useEffect(() => {
+    const abrir = () => setPaleta(true)
+    const aoApertar = (e: KeyboardEvent) => {
+      const digitando = /^(INPUT|TEXTAREA|SELECT)$/.test((e.target as HTMLElement)?.tagName ?? '') || (e.target as HTMLElement)?.isContentEditable
+      if ((e.key === 'k' || e.key === 'K') && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault()
+        setPaleta(true)
+      } else if (e.key === '/' && !digitando) {
+        e.preventDefault()
+        setPaleta(true)
+      }
+    }
+    window.addEventListener('abrir-paleta', abrir)
+    document.addEventListener('keydown', aoApertar)
+    return () => {
+      window.removeEventListener('abrir-paleta', abrir)
+      document.removeEventListener('keydown', aoApertar)
+    }
+  }, [])
 
   // o menu do celular fecha sozinho ao trocar de página ou apertar Esc
   useEffect(() => setAberto(false), [pathname])
@@ -118,11 +182,10 @@ export default function LayoutApp() {
     if (!aberto) return
     const aoApertar = (e: KeyboardEvent) => e.key === 'Escape' && setAberto(false)
     document.addEventListener('keydown', aoApertar)
-    const anterior = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
+    const liberar = travar()
     return () => {
       document.removeEventListener('keydown', aoApertar)
-      document.body.style.overflow = anterior
+      liberar()
     }
   }, [aberto])
 
@@ -131,7 +194,8 @@ export default function LayoutApp() {
       {/* computador: barra lateral fixa, com borda festonada */}
       <aside className="nao-imprimir festao-direita sticky top-0 z-30 hidden h-screen flex-col bg-superficie lg:flex">
         <Marca />
-        <Navegacao />
+        <BotaoBusca />
+        <Navegacao contadores={contadores} />
         <Rodape />
       </aside>
 
@@ -140,9 +204,14 @@ export default function LayoutApp() {
         <NavLink to="/app" end className="py-3" aria-label="Sontag, início">
           <LogoCompleta />
         </NavLink>
+        <div className="flex items-center">
+        <button type="button" onClick={() => setPaleta(true)} aria-label="Buscar" className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-full text-azul-escuro transition-colors hover:bg-azul-pastel">
+          <IconeBusca />
+        </button>
         <button type="button" onClick={() => setAberto(true)} aria-label="Abrir menu" aria-expanded={aberto} className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-full text-azul-escuro transition-colors hover:bg-azul-pastel">
           <IconeMenu />
         </button>
+        </div>
       </header>
 
       {aberto && (
@@ -153,7 +222,8 @@ export default function LayoutApp() {
               <IconeFechar />
             </button>
             <Marca />
-            <Navegacao />
+            <BotaoBusca />
+            <Navegacao contadores={contadores} />
             <Rodape />
           </div>
         </div>
@@ -161,10 +231,26 @@ export default function LayoutApp() {
 
       <main className="min-w-0 px-4 py-10 sm:px-8 lg:px-14 lg:py-12">
         <div key={pathname} className="anim-entrar mx-auto max-w-6xl">
-          <Outlet />
+          <Suspense fallback={<div className="space-y-4"><Esqueleto className="h-24" /><Esqueleto className="h-48" /></div>}>
+            <Outlet />
+          </Suspense>
         </div>
       </main>
-      <AssistenteIA />
+
+      <button
+        type="button"
+        onClick={() => setRapido(true)}
+        aria-label="Lançamento rápido"
+        className="nao-imprimir fixed bottom-24 right-4 z-40 flex h-14 cursor-pointer items-center gap-2 rounded-full bg-azul px-5 text-sm font-medium text-superficie shadow-elevada transition-transform duration-300 hover:-translate-y-0.5 active:scale-95 lg:bottom-6 lg:right-6"
+      >
+        <IconeMais />
+        Lançar
+      </button>
+      <Suspense fallback={null}>
+        {paleta && <Paleta dona={dona} onFechar={() => setPaleta(false)} onLancar={() => setRapido(true)} />}
+        {rapido && <LancamentoRapido dona={dona} onFechar={() => setRapido(false)} />}
+        {ASSISTENTE_LIGADO && <AssistenteIA />}
+      </Suspense>
     </div>
   )
 }

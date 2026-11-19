@@ -125,7 +125,16 @@ Nomes de tabelas e colunas em português, sem acento, em `snake_case`. Toda tabe
 - **financas_pessoais**: `data`, `tipo` (`entrada`, `saida`), `categoria` (pró-labore, contas fixas, lazer etc.), `descricao`, `valor`
 - **metas_pessoais**: `nome`, `valor_meta`, `valor_atual`, `prazo`
 
-### Assistente de IA (só dona)
+### Lançamento rápido, busca (Ctrl+K), números no menu e velocidade
+
+- **Lançamento rápido** (botão "Lançar" no canto de todas as telas, sem custo e sem IA): formulário curto para Gasto (pessoal ou agência), Recebimento (cliente, evento ou entrada pessoal), Roteiro, Evento novo (com valor, entrada e parcelas), Valor do evento, Tarefa e Ideia. A equipe só vê Roteiro, Tarefa e Ideia. Usa as mesmas regras de `src/lib/assistente.ts` (`prepararAcao`: confere ids, valores e datas; recebimento marca a cobrança em aberto do cliente ou a parcela do evento, senão cria já paga).
+- **Busca rápida** (Ctrl+K, "/" ou botão Buscar): vai para qualquer tela, cliente ou evento, e abre o lançamento rápido.
+- **Números no menu** (`src/lib/contadores.ts`): Clientes (posts com ajuste pedido), Tarefas (atrasadas) e Financeiro (cobranças e gastos fixos atrasados, só dona); atualiza ao trocar de tela, ao voltar para a aba e a cada 90 s.
+- **Velocidade:** páginas carregam sob demanda (`src/lib/paginas.ts`, `React.lazy`) e o menu antecipa o download ao passar o mouse; fontes pré-carregadas no `index.html`; busca, lançamento rápido e assistente de IA só baixam quando usados.
+- **Janelas (modais):** sempre desenhadas no `<body>` via `Portal`, com trava de rolagem contada (`src/lib/trava.ts`: `useTravaRolagem`, `useEscape`) e rolagem própria (`.rola-modal`); sem `backdrop-blur` nas janelas roláveis (trava a rolagem em alguns celulares).
+- O botão do assistente de IA só aparece se a variável `VITE_ASSISTENTE_IA=sim` estiver no Netlify (a IA exige conta paga na Anthropic; por padrão fica desligada).
+
+### Assistente de IA (só dona, desligado por padrão)
 
 - Botão flutuante "Assistente" em todas as telas internas (só a dona vê). A dona escreve em português ("gastei 60 no Canva", "recebi 2.500 da Aurora", "cria o evento X dia 20/12 valor 6000 em 3x", "coloca esse roteiro no cliente Y: ...") e o assistente **prepara um plano**; ela confere e toca em **Confirmar** (nada é gravado antes). Dá para desmarcar itens do plano.
 - Ações: `adicionar_roteiro` (cliente ou evento), `registrar_gasto` (agência em `despesas` ou pessoal), `registrar_recebimento` (marca a cobrança em aberto do cliente como recebida, ou a parcela do evento, ou entrada pessoal; se não houver, cria já paga), `criar_evento` (com valor, entrada e parcelas), `definir_valor_evento`, `criar_tarefa`, `anotar_ideia`, `criar_gasto_fixo`. Não apaga nada.
@@ -135,7 +144,7 @@ Nomes de tabelas e colunas em português, sem acento, em `snake_case`. Toda tabe
 ### Gastos fixos do mês (só dona)
 
 - **gastos_fixos** (`area` pessoal ou agencia, `nome`, `categoria`, `valor`, `dia_vencimento`, `mes_inicio`, `parcelas_total` vazio = todo mês, `ativo`, `observacao`) e **gastos_fixos_mes** (uma linha por gasto e por mês: `valor` que pode mudar no mês, `vencimento`, `parcela_numero`, `status` a_pagar/pago, `pago_em`; único por gasto e mês). A função `gerar_gastos_fixos(area, mes)` cria o que falta do mês sem duplicar, respeita o fim das parcelas e ajusta dia 31 em mês curto. Migração `016_gastos_fixos.sql`.
-- Interface: em Financeiro > **Pessoal** (topo, "Gastos fixos do mês") e em Financeiro > **Agência** (aba "Gastos fixos"): checklist pago/não pago, falta pagar, atrasados, valor do mês editável (conta de luz), novo gasto todo mês ou parcelado ("este mês é a parcela X"), encerrar, editar e apagar.
+- Interface: em Financeiro > **Pessoal** (topo, "Gastos fixos do mês") e em Financeiro > **Agência** (aba "Gastos fixos"): checklist pago/não pago, falta pagar com barra, comparação com o mês anterior, atrasados (com "marcar vencidas como pagas"), vencimentos da semana, gráfico por categoria, filtros (todos, a pagar, atrasados, pagos), agrupar por vencimento ou categoria, detalhes do pagamento (data, forma, observação), valor do mês editável (conta de luz), gasto todo mês, parcelado ("este mês é a parcela X") ou **só neste mês** (`parcelas_total = 1`, migração `017_gastos_fixos_mais.sql`), encerrar, editar e apagar. No **Pessoal**, os gastos fixos pagos entram nas Saídas do mês e há um **Saldo previsto** (depois de pagar o que falta). No **Painel** (dona) o cartão "Contas a pagar" lista o que venceu ou vence em 7 dias.
 
 ### Roteiros (por cliente e por evento)
 

@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react'
+import Portal from '../../componentes/Portal'
+import { useEscape, useTravaRolagem } from '../../lib/trava'
 import { NavegacaoMes } from '../../componentes/CalendarioMensal'
 import ConteudoPost, { FormComentario } from '../../componentes/portal/ConteudoPost'
 import PainelDecisao from '../../componentes/portal/PainelDecisao'
@@ -42,6 +44,8 @@ export default function PortalCalendario() {
   const doMes = posts.filter((p) => p.data_publicacao.startsWith(mes))
   const porDia = (d: string) => doMes.filter((p) => p.data_publicacao === d)
   const atual = posts.find((p) => p.id === aberto) ?? null
+  useTravaRolagem(Boolean(atual))
+  useEscape(() => setAberto(null), Boolean(atual))
 
   useEffect(() => {
     if (!aberto) return
@@ -93,7 +97,8 @@ export default function PortalCalendario() {
       </div>
 
       {atual && (
-        <div className="modal-fundo fixed inset-0 z-50 overflow-y-auto bg-texto/50 backdrop-blur-[2px]" role="dialog" aria-modal="true" aria-label={atual.tema || 'Post'}>
+        <Portal>
+        <div className="modal-fundo rola-modal fixed inset-0 z-50 overflow-y-auto bg-texto/50" role="dialog" aria-modal="true" aria-label={atual.tema || 'Post'}>
           <div className="modal-painel mx-auto min-h-full max-w-2xl bg-fundo p-4 sm:my-6 sm:min-h-0 sm:rounded-md sm:border sm:border-linha sm:p-6">
             <div className="mb-4 flex justify-end">
               <button type="button" className={btnSecundario} onClick={() => setAberto(null)}>
@@ -105,6 +110,7 @@ export default function PortalCalendario() {
             </ConteudoPost>
           </div>
         </div>
+        </Portal>
       )}
     </div>
   )

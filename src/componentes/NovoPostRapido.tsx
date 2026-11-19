@@ -1,3 +1,5 @@
+import { useEscape, useTravaRolagem } from '../lib/trava'
+import Portal from './Portal'
 import { useEffect, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import { dataDeHoje } from '../lib/datas'
@@ -39,18 +41,15 @@ export default function NovoPostRapido({ cliente, rodada, onFechar, onCriado }: 
   const [concluido, setConcluido] = useState(false)
   const previas = useRef<string[]>([])
 
+  useTravaRolagem()
+  useEscape(() => {
+    if (!salvando) onFechar()
+  })
+  // as prévias das imagens só são liberadas quando a janela fecha de vez
   useEffect(() => {
-    const aoApertar = (e: KeyboardEvent) => e.key === 'Escape' && !salvando && onFechar()
-    document.addEventListener('keydown', aoApertar)
-    const anterior = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
     const urls = previas.current
-    return () => {
-      document.removeEventListener('keydown', aoApertar)
-      document.body.style.overflow = anterior
-      urls.forEach((u) => URL.revokeObjectURL(u))
-    }
-  }, [onFechar, salvando])
+    return () => urls.forEach((u) => URL.revokeObjectURL(u))
+  }, [])
 
   function adicionarArquivos(lista: FileList | File[]) {
     const novos: Item[] = []
@@ -152,7 +151,8 @@ export default function NovoPostRapido({ cliente, rodada, onFechar, onCriado }: 
   }
 
   return (
-    <div className="modal-fundo fixed inset-0 z-50 overflow-y-auto bg-texto/50 backdrop-blur-[2px]" role="dialog" aria-modal="true" aria-label="Novo post na rodada">
+    <Portal>
+    <div className="modal-fundo rola-modal fixed inset-0 z-50 overflow-y-auto bg-texto/50" role="dialog" aria-modal="true" aria-label="Novo post na rodada">
       <div className="modal-painel mx-auto min-h-full max-w-2xl bg-fundo p-4 sm:my-6 sm:min-h-0 sm:rounded-md sm:border sm:border-linha sm:p-6">
         <div className="mb-4 flex items-start justify-between gap-3">
           <div>
@@ -300,5 +300,6 @@ export default function NovoPostRapido({ cliente, rodada, onFechar, onCriado }: 
         </form>
       </div>
     </div>
+    </Portal>
   )
 }

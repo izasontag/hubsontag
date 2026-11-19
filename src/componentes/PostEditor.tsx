@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import { dataDeHoje } from '../lib/datas'
+import { useEscape, useTravaRolagem } from '../lib/trava'
+import Portal from './Portal'
 import { enviarCapa, enviarMidia, linkValido, paraVista, urlPublica, validarArquivo } from '../lib/midias'
 import { supabase } from '../lib/supabase'
 import {
@@ -65,16 +67,8 @@ export default function PostEditor({ post, dataInicial, clienteIdInicial, client
   const tagsDoCliente = tags.filter((t) => t.cliente_id === null || t.cliente_id === clienteId)
   const mostrarDesempenho = status === 'publicado' || Boolean(post?.desempenho)
 
-  useEffect(() => {
-    const aoApertar = (e: KeyboardEvent) => e.key === 'Escape' && onFechar()
-    document.addEventListener('keydown', aoApertar)
-    const anterior = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-    return () => {
-      document.removeEventListener('keydown', aoApertar)
-      document.body.style.overflow = anterior
-    }
-  }, [onFechar])
+  useTravaRolagem()
+  useEscape(onFechar)
 
   const carregarMidias = useCallback(async (id: string) => {
     const { data: linhas } = await supabase.from('post_midias').select('*').eq('post_id', id).order('ordem')
@@ -250,7 +244,8 @@ export default function PostEditor({ post, dataInicial, clienteIdInicial, client
   }
 
   return (
-    <div className="modal-fundo fixed inset-0 z-50 overflow-y-auto bg-texto/50 backdrop-blur-[2px]" role="dialog" aria-modal="true" aria-label={postId ? 'Editar post' : 'Novo post'}>
+    <Portal>
+    <div className="modal-fundo rola-modal fixed inset-0 z-50 overflow-y-auto bg-texto/50" role="dialog" aria-modal="true" aria-label={postId ? 'Editar post' : 'Novo post'}>
       <div className="modal-painel mx-auto min-h-full max-w-3xl bg-fundo p-4 sm:my-6 sm:min-h-0 sm:rounded-md sm:border sm:border-linha sm:p-6">
         <div className="mb-4 flex items-center justify-between gap-3">
           <h2 className="titulo-secao">{postId ? 'Editar post' : 'Novo post'}</h2>
@@ -471,5 +466,6 @@ export default function PostEditor({ post, dataInicial, clienteIdInicial, client
         {postId && <ConversaPost postId={postId} onMudou={onSalvo} />}
       </div>
     </div>
+    </Portal>
   )
 }

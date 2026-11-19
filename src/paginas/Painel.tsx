@@ -3,6 +3,7 @@ import type { CSSProperties } from 'react'
 import { Link } from 'react-router-dom'
 import { NumeroAnimado, Revelar } from '../componentes/animacao'
 import AtalhosPainel from '../componentes/AtalhosPainel'
+import ContasProximas from '../componentes/ContasProximas'
 import { Carimbo, giro, Ticker } from '../componentes/Decor'
 import { MiniaturaMidia } from '../componentes/Midias'
 import { SeloStatus } from '../componentes/Selos'
@@ -176,6 +177,7 @@ export default function Painel() {
               Ver todas as tarefas
             </Link>
           </Cartao>
+          {dona && <ContasProximas />}
         </aside>
 
         <div className="space-y-10 xl:col-start-1 xl:row-start-1">

@@ -716,6 +716,8 @@ export interface GastoFixoMes {
   parcela_numero: number | null
   status: 'a_pagar' | 'pago'
   pago_em: string | null
+  forma_pagamento?: FormaPagamento | null
+  observacao?: string | null
 }
 
 export const CATEGORIAS_GASTO_FIXO: Record<'pessoal' | 'agencia', string[]> = {

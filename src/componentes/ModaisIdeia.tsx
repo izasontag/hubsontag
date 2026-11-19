@@ -1,4 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useEscape, useTravaRolagem } from '../lib/trava'
+import Portal from './Portal'
+import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { dataDeHoje } from '../lib/datas'
@@ -10,18 +12,11 @@ import type { ArquivoIdeia, ClienteResumo, Ideia, TipoIdeia } from '../lib/tipos
 import { Aviso, btnPrimario, btnSecundario, Campo, inputCls } from './ui'
 
 function Moldura({ titulo, onFechar, children }: { titulo: string; onFechar: () => void; children: React.ReactNode }) {
-  useEffect(() => {
-    const aoApertar = (e: KeyboardEvent) => e.key === 'Escape' && onFechar()
-    document.addEventListener('keydown', aoApertar)
-    const anterior = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-    return () => {
-      document.removeEventListener('keydown', aoApertar)
-      document.body.style.overflow = anterior
-    }
-  }, [onFechar])
+  useTravaRolagem()
+  useEscape(onFechar)
   return (
-    <div className="modal-fundo fixed inset-0 z-50 overflow-y-auto bg-texto/50 backdrop-blur-[2px]" role="dialog" aria-modal="true" aria-label={titulo}>
+    <Portal>
+    <div className="modal-fundo rola-modal fixed inset-0 z-50 overflow-y-auto bg-texto/50" role="dialog" aria-modal="true" aria-label={titulo}>
       <div className="modal-painel mx-auto min-h-full max-w-2xl bg-fundo p-4 sm:my-6 sm:min-h-0 sm:rounded-md sm:border sm:border-linha sm:p-6">
         <div className="mb-4 flex items-center justify-between gap-3">
           <h2 className="titulo-secao">{titulo}</h2>
@@ -32,6 +27,7 @@ function Moldura({ titulo, onFechar, children }: { titulo: string; onFechar: () 
         {children}
       </div>
     </div>
+    </Portal>
   )
 }
 

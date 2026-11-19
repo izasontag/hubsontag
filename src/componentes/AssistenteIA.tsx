@@ -4,6 +4,7 @@ import { useAuth } from '../lib/auth'
 import { montarContexto, prepararAcao } from '../lib/assistente'
 import type { AcaoBruta, AcaoPronta } from '../lib/assistente'
 import { supabase } from '../lib/supabase'
+import Portal from './Portal'
 import { btnPrimario, btnSecundario } from './ui'
 
 interface Mensagem {
@@ -128,7 +129,7 @@ export default function AssistenteIA() {
         type="button"
         onClick={() => setAberto(true)}
         aria-label="Abrir o assistente"
-        className="nao-imprimir fixed bottom-24 right-4 z-40 flex min-h-14 cursor-pointer items-center gap-2 rounded-full bg-azul px-5 text-sm font-medium text-superficie shadow-elevada transition-transform duration-300 hover:-translate-y-0.5 lg:bottom-6 lg:right-6"
+        className="nao-imprimir fixed bottom-40 right-4 z-40 flex min-h-14 cursor-pointer items-center gap-2 rounded-full bg-areia px-5 text-sm font-medium text-marrom-escuro shadow-elevada transition-transform duration-300 hover:-translate-y-0.5 lg:bottom-24 lg:right-6"
       >
         <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor" aria-hidden>
           <path d="M12 2l2.2 6.8L21 11l-6.8 2.2L12 20l-2.2-6.8L3 11l6.8-2.2z" />
@@ -137,7 +138,8 @@ export default function AssistenteIA() {
       </button>
 
       {aberto && (
-        <div className="nao-imprimir fixed inset-0 z-50 flex justify-end bg-texto/30 backdrop-blur-[2px]" role="dialog" aria-modal="true" aria-label="Assistente">
+        <Portal>
+        <div className="nao-imprimir fixed inset-0 z-50 flex justify-end bg-texto/30" role="dialog" aria-modal="true" aria-label="Assistente">
           <button className="hidden flex-1 cursor-default sm:block" aria-label="Fechar o assistente" onClick={() => setAberto(false)} />
           <section className="anim-gaveta flex h-full w-full flex-col bg-superficie shadow-elevada sm:max-w-md">
             <header className="flex items-center justify-between gap-2 border-b border-linha px-4 py-3">
@@ -237,6 +239,7 @@ export default function AssistenteIA() {
             </form>
           </section>
         </div>
+        </Portal>
       )}
     </>
   )

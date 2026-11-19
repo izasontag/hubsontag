@@ -8,6 +8,7 @@ import { supabase } from '../../lib/supabase'
 import { CATEGORIA_PESSOAL_ROTULO, CATEGORIAS_PESSOAL } from '../../lib/tipos'
 import type { Lancamento, MetaPessoal } from '../../lib/tipos'
 import GastosFixos from './GastosFixos'
+import type { ResumoGastos } from './GastosFixos'
 
 interface Rascunho {
   id: string | null
@@ -27,6 +28,7 @@ export default function Pessoal() {
   const [metas, setMetas] = useState<MetaPessoal[]>([])
   const [form, setForm] = useState<Rascunho | null>(null)
   const [novaMeta, setNovaMeta] = useState<{ nome: string; valor_meta: string; prazo: string } | null>(null)
+  const [fixos, setFixos] = useState<ResumoGastos>({ total: 0, pago: 0, falta: 0 })
   const [erro, setErro] = useState('')
 
   const carregar = useCallback(async () => {
@@ -85,8 +87,11 @@ export default function Pessoal() {
 
   const lista = itens ?? []
   const entradas = soma(lista.filter((l) => l.tipo === 'entrada'), (l) => Number(l.valor))
-  const saidas = soma(lista.filter((l) => l.tipo === 'saida'), (l) => Number(l.valor))
+  const saidasLancadas = soma(lista.filter((l) => l.tipo === 'saida'), (l) => Number(l.valor))
+  // os gastos fixos já pagos entram nas saídas do mês (sem lançar duas vezes)
+  const saidas = saidasLancadas + fixos.pago
   const saldo = entradas - saidas
+  const saldoPrevisto = saldo - fixos.falta
   const porCategoria = CATEGORIAS_PESSOAL.map((c) => ({ c, v: soma(lista.filter((l) => l.tipo === 'saida' && l.categoria === c), (l) => Number(l.valor)) })).filter((x) => x.v > 0)
   const maior = Math.max(1, ...porCategoria.map((x) => x.v))
 
@@ -100,20 +105,22 @@ export default function Pessoal() {
         </button>
       </div>
 
-      <ul className="grid gap-4 sm:grid-cols-3">
+      <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {[
-          { r: 'Entradas', v: entradas, alerta: false },
-          { r: 'Saídas', v: saidas, alerta: false },
-          { r: 'Saldo do mês', v: saldo, alerta: saldo < 0 },
+          { r: 'Entradas', v: entradas, alerta: false, nota: 'o que entrou no mês' },
+          { r: 'Saídas', v: saidas, alerta: false, nota: fixos.pago > 0 ? `inclui ${reaisInteiro(fixos.pago)} de gastos fixos pagos` : 'o que já saiu' },
+          { r: 'Saldo do mês', v: saldo, alerta: saldo < 0, nota: 'entradas menos saídas' },
+          { r: 'Saldo previsto', v: saldoPrevisto, alerta: saldoPrevisto < 0, nota: fixos.falta > 0 ? `depois de pagar ${reaisInteiro(fixos.falta)} que faltam` : 'sem contas fixas a pagar' },
         ].map((t) => (
-          <li key={t.r} className={`rounded-md border p-5 shadow-suave ${t.alerta ? 'border-marrom bg-marrom-claro' : 'border-linha bg-superficie'}`}>
+          <li key={t.r} className={`rounded-md border p-5 shadow-suave transition-transform duration-300 hover:-translate-y-0.5 ${t.alerta ? 'border-marrom bg-marrom-claro' : 'border-linha bg-superficie'}`}>
             <p className="eyebrow">{t.r}</p>
             <p className="numeros-grandes mt-3 text-3xl font-medium leading-none">{reaisInteiro(t.v)}</p>
+            <p className="mt-2 text-xs text-texto-suave">{t.nota}</p>
           </li>
         ))}
       </ul>
 
-      <GastosFixos area="pessoal" mes={mes} onMes={setMes} />
+      <GastosFixos area="pessoal" mes={mes} onMes={setMes} onResumo={setFixos} />
 
       <h2 className="titulo-secao">Entradas e <em>saídas</em></h2>
       {form && (
