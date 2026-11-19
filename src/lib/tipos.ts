@@ -691,3 +691,34 @@ export interface Orcamento {
   preco_sugerido: number
   preco_final: number
 }
+
+// ---------------- Gastos fixos (só dona) ----------------
+
+export interface GastoFixo {
+  id: string
+  area: 'pessoal' | 'agencia'
+  nome: string
+  categoria: string
+  valor: number
+  dia_vencimento: number
+  mes_inicio: string
+  parcelas_total: number | null
+  ativo: boolean
+  observacao: string | null
+}
+
+export interface GastoFixoMes {
+  id: string
+  gasto_id: string
+  mes: string
+  valor: number
+  vencimento: string
+  parcela_numero: number | null
+  status: 'a_pagar' | 'pago'
+  pago_em: string | null
+}
+
+export const CATEGORIAS_GASTO_FIXO: Record<'pessoal' | 'agencia', string[]> = {
+  pessoal: ['Moradia', 'Contas da casa', 'Internet e celular', 'Mercado', 'Transporte', 'Saúde', 'Educação', 'Assinaturas', 'Cartão e parcelamentos', 'Lazer', 'Outros'],
+  agencia: ['Ferramentas e assinaturas', 'Internet e telefone', 'Contador', 'Impostos', 'Freelancers', 'Aluguel e espaço', 'Equipamentos', 'Marketing', 'Cursos', 'Outros'],
+}

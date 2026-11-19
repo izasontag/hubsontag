@@ -7,12 +7,14 @@ import Avulsos from './Avulsos'
 import Cobrancas from './Cobrancas'
 import Contratos from './Contratos'
 import Despesas from './Despesas'
+import GastosFixos from './GastosFixos'
 import VisaoGeral from './VisaoGeral'
 
 const ABAS = [
   ['visao', 'Visão geral'],
   ['cobrancas', 'Cobranças'],
   ['contratos', 'Contratos'],
+  ['gastos', 'Gastos fixos'],
   ['despesas', 'Despesas'],
   ['avulsos', 'Avulsos'],
 ] as const
@@ -52,6 +54,7 @@ export default function Agencia() {
           {aba === 'visao' && <VisaoGeral mes={mes} onMes={setMes} />}
           {aba === 'cobrancas' && <Cobrancas mes={mes} onMes={setMes} />}
           {aba === 'contratos' && <Contratos />}
+          {aba === 'gastos' && <GastosFixos area="agencia" mes={mes} onMes={setMes} />}
           {aba === 'despesas' && <Despesas mes={mes} onMes={setMes} />}
           {aba === 'avulsos' && <Avulsos />}
         </div>

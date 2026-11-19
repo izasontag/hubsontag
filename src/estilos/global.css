@@ -476,3 +476,9 @@ body::after {
 @media print {
   body::after { display: none; }
 }
+
+/* caixas de marcar na cor do site */
+input[type='checkbox'],
+input[type='radio'] {
+  accent-color: var(--color-azul);
+}

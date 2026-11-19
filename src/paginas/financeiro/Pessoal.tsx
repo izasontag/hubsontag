@@ -7,6 +7,7 @@ import { numero, reais, reaisInteiro, soma } from '../../lib/dinheiro'
 import { supabase } from '../../lib/supabase'
 import { CATEGORIA_PESSOAL_ROTULO, CATEGORIAS_PESSOAL } from '../../lib/tipos'
 import type { Lancamento, MetaPessoal } from '../../lib/tipos'
+import GastosFixos from './GastosFixos'
 
 interface Rascunho {
   id: string | null
@@ -112,6 +113,9 @@ export default function Pessoal() {
         ))}
       </ul>
 
+      <GastosFixos area="pessoal" mes={mes} onMes={setMes} />
+
+      <h2 className="titulo-secao">Entradas e <em>saídas</em></h2>
       {form && (
         <Cartao>
           <form onSubmit={salvar} className="space-y-4">
