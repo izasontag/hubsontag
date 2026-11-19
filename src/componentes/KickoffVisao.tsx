@@ -1,9 +1,8 @@
 import type { Kickoff } from '../lib/tipos'
-import { urlPublica } from '../lib/midias'
 import { formatarData } from './ui'
 import Texto from './Texto'
 
-type Dados = Pick<Kickoff, 'data_inicio' | 'resumo' | 'diagnostico' | 'pontos_fortes' | 'oportunidades' | 'metricas' | 'prints'>
+type Dados = Pick<Kickoff, 'data_inicio' | 'resumo' | 'diagnostico' | 'pontos_fortes' | 'oportunidades' | 'metricas'>
 
 const numero = (t: string) => {
   const n = Number(t.replace(/[^\d,.-]/g, '').replace(/\./g, '').replace(',', '.'))
@@ -11,9 +10,8 @@ const numero = (t: string) => {
 }
 
 // "Ponto de partida": como o perfil estava no início do trabalho. `urlDe` deixa a dona ver as imagens antes de publicar.
-export default function KickoffVisao({ k, cor, urlDe }: { k: Dados; cor?: string; urlDe?: (caminho: string) => string | undefined }) {
+export default function KickoffVisao({ k, cor }: { k: Dados; cor?: string }) {
   const destaque = cor || 'var(--color-azul)'
-  const url = urlDe ?? urlPublica
   return (
     <article className="space-y-8">
       <header className="space-y-2">
@@ -77,25 +75,6 @@ export default function KickoffVisao({ k, cor, urlDe }: { k: Dados; cor?: string
         </section>
       )}
 
-      {k.prints.length > 0 && (
-        <section className="space-y-3" aria-label="Prints do perfil no início">
-          <h3 className="titulo-sub">O perfil <em>no início</em></h3>
-          <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-            {k.prints.map((c) => {
-              const u = url(c)
-              return (
-                <li key={c} className="overflow-hidden rounded-[14px] border border-linha bg-areia">
-                  {u && (
-                    <a href={u} target="_blank" rel="noreferrer noopener" aria-label="Abrir print em tamanho grande">
-                      <img src={u} alt="Print do perfil no início do trabalho" loading="lazy" className="h-full w-full object-cover" />
-                    </a>
-                  )}
-                </li>
-              )
-            })}
-          </ul>
-        </section>
-      )}
     </article>
   )
 }

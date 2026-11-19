@@ -18,13 +18,14 @@ export function useContadores(dona: boolean, gatilho: string) {
     let ativo = true
     async function carregar() {
       const hoje = dataDeHoje()
-      const [a, t, co, gf] = await Promise.all([
+      const [a, t, co, gf, ca] = await Promise.all([
         supabase.from('posts').select('id', { count: 'exact', head: true }).eq('status', 'ajuste_pedido'),
         supabase.from('tarefas').select('id', { count: 'exact', head: true }).neq('status', 'feito').lt('data', hoje),
         dona ? supabase.from('cobrancas').select('id', { count: 'exact', head: true }).neq('status', 'pago').lt('vencimento', hoje) : Promise.resolve({ count: 0 }),
         dona ? supabase.from('gastos_fixos_mes').select('id', { count: 'exact', head: true }).eq('status', 'a_pagar').lt('vencimento', hoje) : Promise.resolve({ count: 0 }),
+        supabase.from('calendarios_mensais').select('id', { count: 'exact', head: true }).eq('status', 'ajuste_pedido'),
       ])
-      if (ativo) setC({ ajustes: a.count ?? 0, tarefas: t.count ?? 0, financeiro: (co.count ?? 0) + (gf.count ?? 0) })
+      if (ativo) setC({ ajustes: (a.count ?? 0) + (ca.count ?? 0), tarefas: t.count ?? 0, financeiro: (co.count ?? 0) + (gf.count ?? 0) })
     }
     void carregar()
     const timer = window.setInterval(() => void carregar(), 90000)

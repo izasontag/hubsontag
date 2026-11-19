@@ -7,6 +7,7 @@ import { mesDeHoje } from '../../lib/datas'
 import { STATUS_POST, STATUS_POST_ROTULO } from '../../lib/tipos'
 import type { Cliente, PostCompleto } from '../../lib/tipos'
 import { useCalendario } from '../../lib/useCalendario'
+import AprovacaoCalendario from './AprovacaoCalendario'
 import GerenciarTags from './GerenciarTags'
 
 interface Editor {
@@ -63,6 +64,7 @@ export default function CalendarioCliente({ cliente }: { cliente: Cliente }) {
           </select>
         </label>
       </div>
+      <AprovacaoCalendario cliente={cliente} mes={mes} posts={posts} />
       {erro && <Aviso tipo="erro">{erro}</Aviso>}
       {carregando && <p className="text-sm text-texto-suave">Carregando...</p>}
       <CalendarioMensal

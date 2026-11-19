@@ -23,6 +23,7 @@ const carregadores = {
   portalInicio: () => import('../paginas/portal/PortalInicio'),
   portalEstrategia: () => import('../paginas/portal/PortalEstrategia'),
   portalKickoff: () => import('../paginas/portal/PortalKickoff'),
+  portalCalendarioEditorial: () => import('../paginas/portal/PortalCalendarioEditorial'),
   portalAprovacoes: () => import('../paginas/portal/PortalAprovacoes'),
   portalFeed: () => import('../paginas/portal/PortalFeed'),
   portalPlano: () => import('../paginas/portal/PortalPlano'),

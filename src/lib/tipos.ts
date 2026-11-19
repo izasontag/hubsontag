@@ -228,6 +228,8 @@ export interface PortalDados {
   suporte: string | null
   tem_estrategia?: boolean
   tem_kickoff?: boolean
+  tem_calendario?: boolean
+  calendario_aguardando?: number
 }
 
 export interface PortalComentario {
@@ -774,4 +776,53 @@ export interface Kickoff {
   prints: string[]
   publicado: boolean
   publicado_em: string | null
+}
+
+// ---------------- Calendário editorial enviado para aprovação ----------------
+
+export type StatusCalendario = 'rascunho' | 'enviado' | 'aprovado' | 'ajuste_pedido'
+export const STATUS_CALENDARIO_ROTULO: Record<StatusCalendario, string> = {
+  rascunho: 'Ainda não enviado',
+  enviado: 'Aguardando aprovação',
+  aprovado: 'Aprovado',
+  ajuste_pedido: 'Ajustes pedidos',
+}
+
+export interface AjusteCalendario {
+  post_id: string
+  nota: string
+}
+
+export interface CalendarioMensal {
+  id: string
+  cliente_id: string
+  mes: string
+  status: StatusCalendario
+  rodada: number
+  enviado_em: string | null
+  decidido_em: string | null
+  mensagem: string | null
+  ajustes: AjusteCalendario[]
+}
+
+export interface PortalItemCalendario {
+  id: string
+  data_publicacao: string
+  horario: string | null
+  formato: FormatoPost
+  pilar: string | null
+  formato_cbs: string | null
+  tema: string | null
+  gancho: string | null
+  legenda: string | null
+}
+
+export interface PortalCalendarioMes {
+  mes: string
+  status: StatusCalendario
+  enviado_em: string | null
+  decidido_em: string | null
+  mensagem: string | null
+  ajustes: AjusteCalendario[]
+  posts: PortalItemCalendario[]
 }

@@ -54,6 +54,7 @@ export default function PortalInicio() {
       <Revelar ordem={1}>
         <nav aria-label="Páginas do seu espaço" className="grid gap-3 sm:grid-cols-2">
           {[
+            ...(dados?.tem_calendario ? [{ para: 'calendario-editorial', t: 'Calendário editorial', d: (dados.calendario_aguardando ?? 0) > 0 ? 'Tem um calendário esperando a sua aprovação' : 'O planejamento de temas de cada mês' }] : []),
             ...(dados?.tem_estrategia ? [{ para: 'estrategia', t: 'Estratégia do mês', d: 'Objetivo, pilares, metas e datas importantes' }] : []),
             { para: 'calendario', t: 'Calendário', d: 'Todos os posts planejados, dia a dia' },
             { para: 'aprovacoes', t: 'Aprovações', d: 'Veja, aprove ou peça ajuste' },

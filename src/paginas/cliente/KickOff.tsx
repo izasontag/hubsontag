@@ -6,8 +6,6 @@ import { Aviso, btnPrimario, btnSecundario, Campo, Cartao, inputCls, Titulo } fr
 import { supabase } from '../../lib/supabase'
 import type { Cliente, Kickoff, Metrica } from '../../lib/tipos'
 
-const LIMITE_IMAGEM = 10 * 1024 * 1024
-
 interface Form {
   data_inicio: string
   resumo: string
@@ -15,29 +13,20 @@ interface Form {
   pontos_fortes: string
   oportunidades: string
   metricas: Metrica[]
-  prints: string[]
   publicado: boolean
   publicadoEm: string | null
 }
 
-const vazio: Form = { data_inicio: '', resumo: '', diagnostico: '', pontos_fortes: '', oportunidades: '', metricas: [], prints: [], publicado: false, publicadoEm: null }
+const vazio: Form = { data_inicio: '', resumo: '', diagnostico: '', pontos_fortes: '', oportunidades: '', metricas: [], publicado: false, publicadoEm: null }
 const METRICAS_SUGERIDAS = ['Seguidores', 'Alcance médio por post', 'Engajamento', 'Posts por semana', 'Visitas ao perfil']
 
-// Aba "Kick-off": o retrato do perfil no começo do trabalho (números, prints e diagnóstico), para o cliente ver a evolução.
+// Aba "Kick-off": o retrato do perfil no começo do trabalho (resumo, números e diagnóstico), para o cliente ver a evolução.
 export default function KickOff({ cliente }: { cliente: Cliente }) {
   const [form, setForm] = useState<Form | null>(null)
-  const [links, setLinks] = useState<Record<string, string>>({})
   const [previa, setPrevia] = useState(false)
   const [erro, setErro] = useState('')
   const [msg, setMsg] = useState('')
   const [salvando, setSalvando] = useState(false)
-  const [enviando, setEnviando] = useState(false)
-
-  const assinar = useCallback(async (caminhos: string[]) => {
-    if (caminhos.length === 0) return setLinks({})
-    const { data } = await supabase.storage.from('posts').createSignedUrls(caminhos, 3600)
-    setLinks(Object.fromEntries((data ?? []).filter((l) => l.path && l.signedUrl).map((l) => [l.path as string, l.signedUrl as string])))
-  }, [])
 
   const carregar = useCallback(async () => {
     const { data, error } = await supabase.from('kickoffs').select('*').eq('cliente_id', cliente.id).maybeSingle()
@@ -46,11 +35,10 @@ export default function KickOff({ cliente }: { cliente: Cliente }) {
     setErro('')
     setForm(
       k
-        ? { data_inicio: k.data_inicio ?? '', resumo: k.resumo ?? '', diagnostico: k.diagnostico ?? '', pontos_fortes: k.pontos_fortes ?? '', oportunidades: k.oportunidades ?? '', metricas: k.metricas ?? [], prints: k.prints ?? [], publicado: k.publicado, publicadoEm: k.publicado_em }
+        ? { data_inicio: k.data_inicio ?? '', resumo: k.resumo ?? '', diagnostico: k.diagnostico ?? '', pontos_fortes: k.pontos_fortes ?? '', oportunidades: k.oportunidades ?? '', metricas: k.metricas ?? [], publicado: k.publicado, publicadoEm: k.publicado_em }
         : { ...vazio, data_inicio: cliente.data_inicio ?? '' },
     )
-    void assinar(k?.prints ?? [])
-  }, [cliente.id, cliente.data_inicio, assinar])
+  }, [cliente.id, cliente.data_inicio])
 
   useEffect(() => {
     void carregar()
@@ -74,7 +62,6 @@ export default function KickOff({ cliente }: { cliente: Cliente }) {
         pontos_fortes: f.pontos_fortes.trim() || null,
         oportunidades: f.oportunidades.trim() || null,
         metricas: f.metricas.filter((m) => m.nome.trim()).map((m) => ({ nome: m.nome.trim(), inicio: m.inicio.trim(), atual: m.atual.trim() })),
-        prints: f.prints,
         publicado: f.publicado,
         publicado_em: f.publicado ? (f.publicadoEm ?? agora) : null,
       },
@@ -92,39 +79,6 @@ export default function KickOff({ cliente }: { cliente: Cliente }) {
     void carregar()
   }
 
-  async function enviarPrints(arquivos: FileList | null) {
-    if (!arquivos || !form) return
-    setErro('')
-    setEnviando(true)
-    const novos: string[] = []
-    for (const arquivo of Array.from(arquivos)) {
-      if (!arquivo.type.startsWith('image/') || arquivo.size > LIMITE_IMAGEM) {
-        setErro(`"${arquivo.name}" precisa ser uma imagem de até 10 MB.`)
-        continue
-      }
-      const extensao = (arquivo.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '')
-      const caminho = `${cliente.id}/kickoff/${crypto.randomUUID()}.${extensao}`
-      const envio = await supabase.storage.from('posts').upload(caminho, arquivo, { contentType: arquivo.type })
-      if (envio.error) setErro('Não foi possível enviar uma das imagens.')
-      else novos.push(caminho)
-    }
-    if (novos.length) {
-      const proximo = { ...form, prints: [...form.prints, ...novos] }
-      setForm(proximo)
-      await gravar(proximo)
-      await assinar(proximo.prints)
-    }
-    setEnviando(false)
-  }
-
-  async function removerPrint(caminho: string) {
-    if (!form || !window.confirm('Remover esta imagem?')) return
-    await supabase.storage.from('posts').remove([caminho])
-    const proximo = { ...form, prints: form.prints.filter((c) => c !== caminho) }
-    setForm(proximo)
-    await gravar(proximo)
-  }
-
   async function copiarLink() {
     setErro('')
     try {
@@ -138,7 +92,7 @@ export default function KickOff({ cliente }: { cliente: Cliente }) {
   return (
     <div className="space-y-6">
       <p className="max-w-2xl text-sm text-texto-suave">
-        O retrato do perfil no começo do trabalho: números, prints e diagnóstico. Com o tempo, atualize a coluna "Agora" para o cliente ver a evolução. Aparece no portal dele, em <strong>Kick-off</strong>, quando você marcar "Mostrar ao cliente".
+        O retrato do perfil no começo do trabalho, escrito por você: resumo, números e diagnóstico. Com o tempo, atualize a coluna "Agora" para o cliente ver a evolução. Aparece no portal dele, em <strong>Kick-off</strong>, quando você marcar "Mostrar ao cliente".
       </p>
       {erro && <Aviso tipo="erro">{erro}</Aviso>}
       {msg && <Aviso tipo="ok">{msg}</Aviso>}
@@ -151,7 +105,7 @@ export default function KickOff({ cliente }: { cliente: Cliente }) {
 
       {previa ? (
         <div className="rounded-[18px] border border-linha bg-fundo p-4 sm:p-6">
-          <KickoffVisao k={{ data_inicio: form.data_inicio || null, resumo: form.resumo || null, diagnostico: form.diagnostico || null, pontos_fortes: form.pontos_fortes || null, oportunidades: form.oportunidades || null, metricas: form.metricas, prints: form.prints }} cor={cliente.cor_destaque} urlDe={(c) => links[c]} />
+          <KickoffVisao k={{ data_inicio: form.data_inicio || null, resumo: form.resumo || null, diagnostico: form.diagnostico || null, pontos_fortes: form.pontos_fortes || null, oportunidades: form.oportunidades || null, metricas: form.metricas }} cor={cliente.cor_destaque} />
         </div>
       ) : (
         <form onSubmit={salvar} className="space-y-6">
@@ -190,25 +144,6 @@ export default function KickOff({ cliente }: { cliente: Cliente }) {
               <Campo rotulo="O que já funcionava"><textarea className={`${inputCls} min-h-28`} maxLength={4000} value={form.pontos_fortes} onChange={(e) => mudar('pontos_fortes', e.target.value)} /></Campo>
               <Campo rotulo="Onde vamos melhorar"><textarea className={`${inputCls} min-h-28`} maxLength={4000} value={form.oportunidades} onChange={(e) => mudar('oportunidades', e.target.value)} /></Campo>
             </div>
-          </Cartao>
-
-          <Cartao className="space-y-4">
-            <Titulo>Prints do perfil no início</Titulo>
-            <p className="text-xs text-texto-suave">Imagens de até 10 MB (perfil, feed, números do Instagram). São salvas na hora.</p>
-            {form.prints.length > 0 && (
-              <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                {form.prints.map((c) => (
-                  <li key={c} className="space-y-1">
-                    <div className="aspect-[4/5] overflow-hidden rounded-md border border-linha bg-areia">{links[c] && <img src={links[c]} alt="Print do perfil" className="h-full w-full object-cover" />}</div>
-                    <button type="button" className="min-h-11 cursor-pointer text-sm text-red-800 underline" onClick={() => void removerPrint(c)}>Remover</button>
-                  </li>
-                ))}
-              </ul>
-            )}
-            <label className={`${btnSecundario} cursor-pointer`}>
-              {enviando ? 'Enviando…' : 'Adicionar imagens'}
-              <input type="file" accept="image/*" multiple className="sr-only" aria-label="Adicionar prints do perfil" disabled={enviando} onChange={(e) => { void enviarPrints(e.target.files); e.target.value = '' }} />
-            </label>
           </Cartao>
 
           <Cartao className="space-y-3">

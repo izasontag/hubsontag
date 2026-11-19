@@ -74,6 +74,11 @@ function Estrutura() {
               Estratégia
             </NavLink>
           )}
+          {dados.tem_calendario && (
+            <NavLink to={`${base}/calendario-editorial`} className={link}>
+              Calendário editorial{(dados.calendario_aguardando ?? 0) > 0 ? ` (${dados.calendario_aguardando})` : ''}
+            </NavLink>
+          )}
           <NavLink to={`${base}/calendario`} className={link}>
             Calendário
           </NavLink>
