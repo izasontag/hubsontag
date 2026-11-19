@@ -41,7 +41,8 @@ Princípios:
 - Segurança dos dados com **Row Level Security (RLS)** do Supabase em todas as tabelas. Nenhuma tabela fica sem RLS.
 - Migrações do banco em arquivos SQL dentro de `supabase/migrations/`, para eu poder rodar no painel do Supabase.
 - Para o Netlify funcionar com as rotas do React, incluir `public/_redirects` com `/* /index.html 200`.
-- Variáveis de ambiente: `VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY`. Nunca usar a chave `service_role` no front-end.
+- Variáveis de ambiente: `VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY`. Se faltarem, `src/lib/supabase.ts` usa o endereço e a chave **pública** do projeto como padrão (a chave anon/publishable não é segredo; quem protege os dados é o RLS). Nunca usar a chave `service_role` no front-end.
+- **Hospedagem atual: Cloudflare Pages** (gratuito, sem limite de créditos de publicação): build `npm run build`, saída `dist`, branch `main`, `public/_redirects` e `.node-version` (22). O Netlify estourou os créditos do plano gratuito.
 
 ## Identidade visual
 
