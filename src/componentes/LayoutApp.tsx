@@ -134,14 +134,19 @@ function BotaoBusca() {
   )
 }
 
+declare const __VERSAO__: string
+
 function Rodape() {
   const { perfil, sair } = useAuth()
   return (
-    <div className="mx-3 mb-3 flex items-center justify-between gap-3 rounded-full bg-areia px-5 py-2 text-sm">
+    <div className="mb-3">
+    <div className="mx-3 mb-1 flex items-center justify-between gap-3 rounded-full bg-areia px-5 py-2 text-sm">
       <span className="min-w-0 truncate text-texto-suave">{perfil?.nome}</span>
       <button onClick={() => void sair()} className="inline-flex min-h-11 cursor-pointer items-center px-1 underline decoration-linha underline-offset-4 transition-colors hover:text-azul">
         Sair
       </button>
+    </div>
+    <p className="text-center text-[0.65rem] text-texto-suave">versão {__VERSAO__}</p>
     </div>
   )
 }
