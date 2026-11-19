@@ -4,11 +4,11 @@
 // ela confirma, e quem grava é o próprio site, com as permissões dela (RLS).
 //
 // Segredo necessário (Supabase > Edge Functions > Secrets): ANTHROPIC_API_KEY
-// Opcional: ASSISTENTE_MODELO (padrão claude-opus-5-5; para gastar bem menos use claude-haiku-5-5)
+// Opcional: ASSISTENTE_MODELO (padrão claude-haiku-5-5, bem barato; para mais capricho use claude-opus-5-5)
 
 import Anthropic from "npm:@anthropic-ai/sdk@^1";
 
-const MODELO = Deno.env.get("ASSISTENTE_MODELO") || "claude-opus-5-5";
+const MODELO = Deno.env.get("ASSISTENTE_MODELO") || "claude-haiku-5-5";
 // o parâmetro "fallbacks" só existe nestes modelos
 const COM_FALLBACK = /^claude-(opus-5|opus-5-5|sonnet-5-5|fable-5)/.test(MODELO);
 // "esforço" baixo: respostas rápidas e baratas (modelos da geração 5)
