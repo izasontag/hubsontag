@@ -14,6 +14,8 @@ import AbaPortal from './cliente/AbaPortal'
 import AprovacoesCliente from './cliente/AprovacoesCliente'
 import CalendarioCliente from './cliente/CalendarioCliente'
 import Roteiros from '../componentes/Roteiros'
+import EstrategiaMensal from './cliente/EstrategiaMensal'
+import KickOff from './cliente/KickOff'
 import ManualMarca from './cliente/ManualMarca'
 
 export default function ClientePagina() {
@@ -24,7 +26,7 @@ export default function ClientePagina() {
   const [cliente, setCliente] = useState<Cliente | null>(null)
   const [erro, setErro] = useState('')
   const abaParam = params.get('aba')
-  const aba = abaParam === 'manual' || abaParam === 'calendario' || abaParam === 'portal' || abaParam === 'aprovacoes' || abaParam === 'plano' || abaParam === 'relatorios' || abaParam === 'roteiros' || (abaParam === 'recebimentos' && dona) ? abaParam : 'ficha'
+  const aba = abaParam === 'manual' || abaParam === 'calendario' || abaParam === 'portal' || abaParam === 'aprovacoes' || abaParam === 'plano' || abaParam === 'relatorios' || abaParam === 'roteiros' || abaParam === 'estrategia' || abaParam === 'kickoff' || (abaParam === 'recebimentos' && dona) ? abaParam : 'ficha'
 
   useEffect(() => {
     if (!id) return
@@ -39,7 +41,7 @@ export default function ClientePagina() {
       })
   }, [id])
 
-  const botaoAba = (chave: 'ficha' | 'aprovacoes' | 'calendario' | 'plano' | 'roteiros' | 'recebimentos' | 'manual' | 'relatorios' | 'portal', rotulo: string) => (
+  const botaoAba = (chave: 'ficha' | 'aprovacoes' | 'calendario' | 'plano' | 'roteiros' | 'estrategia' | 'kickoff' | 'recebimentos' | 'manual' | 'relatorios' | 'portal', rotulo: string) => (
     <button
       onClick={() => setParams(chave === 'ficha' ? {} : { aba: chave })}
       aria-current={aba === chave ? 'page' : undefined}
@@ -79,6 +81,8 @@ export default function ClientePagina() {
             {botaoAba('ficha', 'Ficha')}
             {botaoAba('aprovacoes', 'Aprovações')}
             {botaoAba('calendario', 'Calendário')}
+            {botaoAba('estrategia', 'Estratégia')}
+            {botaoAba('kickoff', 'Kick-off')}
             {botaoAba('plano', 'Plano de ação')}
             {botaoAba('roteiros', 'Roteiros')}
             {botaoAba('manual', 'Manual da marca')}
@@ -90,6 +94,8 @@ export default function ClientePagina() {
             {aba === 'ficha' && <FichaCliente cliente={cliente} onChange={setCliente} />}
             {aba === 'aprovacoes' && <AprovacoesCliente cliente={cliente} />}
             {aba === 'calendario' && <CalendarioCliente cliente={cliente} />}
+            {aba === 'estrategia' && <EstrategiaMensal cliente={cliente} />}
+            {aba === 'kickoff' && <KickOff cliente={cliente} />}
             {aba === 'plano' && <PainelTarefas clienteId={cliente.id} />}
             {aba === 'roteiros' && <Roteiros clienteId={cliente.id} />}
             {aba === 'manual' && <ManualMarca cliente={cliente} />}

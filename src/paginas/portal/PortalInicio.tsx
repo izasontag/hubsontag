@@ -51,6 +51,23 @@ export default function PortalInicio() {
           </Cartao>
         </Revelar>
       )}
+      <Revelar ordem={1}>
+        <nav aria-label="Páginas do seu espaço" className="grid gap-3 sm:grid-cols-2">
+          {[
+            ...(dados?.tem_estrategia ? [{ para: 'estrategia', t: 'Estratégia do mês', d: 'Objetivo, pilares, metas e datas importantes' }] : []),
+            { para: 'calendario', t: 'Calendário', d: 'Todos os posts planejados, dia a dia' },
+            { para: 'aprovacoes', t: 'Aprovações', d: 'Veja, aprove ou peça ajuste' },
+            ...(dados?.tem_kickoff ? [{ para: 'kickoff', t: 'Kick-off', d: 'Como o seu perfil estava no início' }] : []),
+            { para: 'manual', t: 'Manual da marca', d: 'Identidade, tom de voz e regras' },
+          ].map((x) => (
+            <Link key={x.para} to={`/portal/${token}/${x.para}`} className="group rounded-[18px] border border-linha bg-superficie p-4 shadow-suave transition-transform duration-300 hover:-translate-y-1">
+              <span className="block font-titulo text-xl font-semibold">{x.t}</span>
+              <span className="block text-sm text-texto-suave">{x.d}</span>
+              <span aria-hidden className="mt-2 inline-block text-azul transition-transform duration-300 group-hover:translate-x-1">&rarr;</span>
+            </Link>
+          ))}
+        </nav>
+      </Revelar>
       <Revelar ordem={2}>
         <Cartao className="space-y-3">
           <Titulo>Esperando a sua aprovação</Titulo>

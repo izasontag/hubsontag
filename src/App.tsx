@@ -41,6 +41,8 @@ export default function App() {
           </Route>
           <Route path="/portal/:token" element={<Pagina.portalLayout />}>
             <Route index element={<Pagina.portalInicio />} />
+            <Route path="estrategia" element={<Pagina.portalEstrategia />} />
+            <Route path="kickoff" element={<Pagina.portalKickoff />} />
             <Route path="aprovacoes" element={<Pagina.portalAprovacoes />} />
             <Route path="feed" element={<Pagina.portalFeed />} />
             <Route path="plano" element={<Pagina.portalPlano />} />

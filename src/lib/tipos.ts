@@ -226,6 +226,8 @@ export interface PortalDados {
   recado: string | null
   objetivo: string | null
   suporte: string | null
+  tem_estrategia?: boolean
+  tem_kickoff?: boolean
 }
 
 export interface PortalComentario {
@@ -723,4 +725,53 @@ export interface GastoFixoMes {
 export const CATEGORIAS_GASTO_FIXO: Record<'pessoal' | 'agencia', string[]> = {
   pessoal: ['Moradia', 'Contas da casa', 'Internet e celular', 'Mercado', 'Transporte', 'Saúde', 'Educação', 'Assinaturas', 'Cartão e parcelamentos', 'Lazer', 'Outros'],
   agencia: ['Ferramentas e assinaturas', 'Internet e telefone', 'Contador', 'Impostos', 'Freelancers', 'Aluguel e espaço', 'Equipamentos', 'Marketing', 'Cursos', 'Outros'],
+}
+
+// ---------------- Estratégia mensal e Kick-off (painel do cliente) ----------------
+
+export interface Pilar {
+  nome: string
+  percentual: number
+  descricao: string
+}
+export interface MetaEstrategia {
+  nome: string
+  alvo: string
+}
+export interface DataImportante {
+  data: string
+  titulo: string
+}
+
+export interface EstrategiaMensal {
+  id: string
+  cliente_id: string
+  mes: string
+  titulo: string
+  objetivo: string | null
+  texto: string | null
+  pilares: Pilar[]
+  metas: MetaEstrategia[]
+  datas: DataImportante[]
+  publicado: boolean
+  publicado_em: string | null
+}
+
+export interface Metrica {
+  nome: string
+  inicio: string
+  atual: string
+}
+
+export interface Kickoff {
+  cliente_id: string
+  data_inicio: string | null
+  resumo: string | null
+  diagnostico: string | null
+  pontos_fortes: string | null
+  oportunidades: string | null
+  metricas: Metrica[]
+  prints: string[]
+  publicado: boolean
+  publicado_em: string | null
 }

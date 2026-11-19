@@ -69,6 +69,14 @@ function Estrutura() {
           <NavLink to={base} end className={link}>
             Início
           </NavLink>
+          {dados.tem_estrategia && (
+            <NavLink to={`${base}/estrategia`} className={link}>
+              Estratégia
+            </NavLink>
+          )}
+          <NavLink to={`${base}/calendario`} className={link}>
+            Calendário
+          </NavLink>
           <NavLink to={`${base}/aprovacoes`} className={link}>
             Aprovações{aguardando > 0 ? ` (${aguardando})` : ''}
           </NavLink>
@@ -78,9 +86,11 @@ function Estrutura() {
           <NavLink to={`${base}/plano`} className={link}>
             Plano de ação
           </NavLink>
-          <NavLink to={`${base}/calendario`} className={link}>
-            Calendário
-          </NavLink>
+          {dados.tem_kickoff && (
+            <NavLink to={`${base}/kickoff`} className={link}>
+              Kick-off
+            </NavLink>
+          )}
           <NavLink to={`${base}/manual`} className={link}>
             Manual da marca
           </NavLink>
