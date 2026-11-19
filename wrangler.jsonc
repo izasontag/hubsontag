@@ -1,0 +1,10 @@
+{
+  // Hospedagem no Cloudflare (Workers com arquivos estáticos): publica a pasta "dist" e
+  // devolve index.html para qualquer endereço do site (o React Router cuida das rotas).
+  "name": "hubsontag",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application"
+  }
+}
