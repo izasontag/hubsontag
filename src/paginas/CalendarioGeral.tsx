@@ -2,12 +2,12 @@ import { useEffect, useState } from 'react'
 import CalendarioMensal, { NavegacaoMes } from '../componentes/CalendarioMensal'
 import CartaoPost from '../componentes/CartaoPost'
 import PostEditor from '../componentes/PostEditor'
-import { Aviso, btnPrimario, CabecalhoPagina, inputCls } from '../componentes/ui'
+import { Aviso, btnPrimario, btnSecundario, CabecalhoPagina, formatarData, inputCls } from '../componentes/ui'
 import { useAuth } from '../lib/auth'
 import { limitesDoMes, mesDeHoje } from '../lib/datas'
 import { supabase } from '../lib/supabase'
 import { STATUS_POST, STATUS_POST_ROTULO } from '../lib/tipos'
-import type { Evento, PostCompleto } from '../lib/tipos'
+import type { Evento, PostCompleto, StatusPost } from '../lib/tipos'
 import { useCalendario } from '../lib/useCalendario'
 
 interface Editor {
@@ -21,6 +21,9 @@ export default function CalendarioGeral() {
   const [visao, setVisao] = useState<'mes' | 'quadro'>('mes')
   const [filtroCliente, setFiltroCliente] = useState('')
   const [filtroTag, setFiltroTag] = useState('')
+  const [filtroStatus, setFiltroStatus] = useState<StatusPost | ''>('')
+  const [busca, setBusca] = useState('')
+  const [aviso, setAviso] = useState<{ tipo: 'ok' | 'erro'; texto: string } | null>(null)
   const [editor, setEditor] = useState<Editor | null>(null)
   const [eventos, setEventos] = useState<Evento[]>([])
   const [mostrarEventos, setMostrarEventos] = useState(true)
@@ -40,11 +43,33 @@ export default function CalendarioGeral() {
   }, [mes])
 
   const tagsFiltro = tags.filter((t) => !filtroCliente || t.cliente_id === null || t.cliente_id === filtroCliente)
-  const filtrados = posts.filter(
+  const termo = busca.trim().toLowerCase()
+  const base = posts.filter(
     (p) =>
       (!filtroCliente || p.cliente_id === filtroCliente) &&
-      (!filtroTag || p.post_tags.some((t) => t.tag_id === filtroTag)),
+      (!filtroTag || p.post_tags.some((t) => t.tag_id === filtroTag)) &&
+      (!termo || `${p.tema ?? ''} ${p.gancho ?? ''} ${p.legenda ?? ''} ${p.cliente?.nome ?? ''}`.toLowerCase().includes(termo)),
   )
+  const filtrados = base.filter((p) => !filtroStatus || p.status === filtroStatus)
+  const contagem = (s: StatusPost) => base.filter((p) => p.status === s).length
+
+  // reagendar arrastando o post para outro dia (computador)
+  async function mover(id: string, data: string) {
+    const alvo = posts.find((p) => p.id === id)
+    if (!alvo || alvo.data_publicacao === data) return
+    setAviso(null)
+    const { error } = await supabase.from('posts').update({ data_publicacao: data }).eq('id', id)
+    if (error) return setAviso({ tipo: 'erro', texto: 'Não foi possível mudar a data do post.' })
+    setAviso({ tipo: 'ok', texto: `"${alvo.tema || 'Post'}" agora está em ${formatarData(data)}.` })
+    recarregar()
+  }
+
+  async function mudarStatus(p: PostCompleto, status: StatusPost) {
+    setAviso(null)
+    const { error } = await supabase.from('posts').update({ status }).eq('id', p.id)
+    if (error) return setAviso({ tipo: 'erro', texto: 'Não foi possível mudar o status.' })
+    recarregar()
+  }
   const abrir = (post: PostCompleto) => setEditor({ post })
 
   const botaoVisao = (chave: 'mes' | 'quadro', rotulo: string) => (
@@ -72,7 +97,10 @@ export default function CalendarioGeral() {
         }
       />
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <NavegacaoMes mes={mes} onMes={setMes} />
+        <div className="flex flex-wrap items-center gap-2">
+          <NavegacaoMes mes={mes} onMes={setMes} />
+          <button className={btnSecundario} onClick={() => setMes(mesDeHoje())} disabled={mes === mesDeHoje()}>Hoje</button>
+        </div>
         <div className="flex gap-2">
           {botaoVisao('mes', 'Mês')}
           {botaoVisao('quadro', 'Quadro por status')}
@@ -109,6 +137,21 @@ export default function CalendarioGeral() {
           </select>
         </label>
       </div>
+      <label className="block text-sm text-texto-suave">
+        Buscar por tema, legenda ou cliente
+        <input className={`${inputCls} mt-1`} value={busca} onChange={(e) => setBusca(e.target.value)} placeholder="Digite para filtrar o mês" />
+      </label>
+      <div className="flex flex-wrap gap-2" role="group" aria-label="Filtrar por status">
+        <button type="button" aria-pressed={filtroStatus === ''} onClick={() => setFiltroStatus('')} className={`min-h-11 cursor-pointer rounded-full border px-4 text-sm ${filtroStatus === '' ? 'border-marrom bg-superficie font-medium text-marrom' : 'border-linha text-texto-suave'}`}>
+          Todos ({base.length})
+        </button>
+        {STATUS_POST.filter((s) => contagem(s) > 0 || filtroStatus === s).map((s) => (
+          <button key={s} type="button" aria-pressed={filtroStatus === s} onClick={() => setFiltroStatus(filtroStatus === s ? '' : s)} className={`min-h-11 cursor-pointer rounded-full border px-4 text-sm ${filtroStatus === s ? 'border-marrom bg-superficie font-medium text-marrom' : 'border-linha text-texto-suave'}`}>
+            {STATUS_POST_ROTULO[s]} ({contagem(s)})
+          </button>
+        ))}
+      </div>
+      {aviso && <Aviso tipo={aviso.tipo}>{aviso.texto}</Aviso>}
       <label className="flex min-h-11 items-center gap-3 text-sm">
         <input type="checkbox" className="h-5 w-5" checked={mostrarEventos} onChange={(e) => setMostrarEventos(e.target.checked)} />
         Mostrar clientes de eventos no calendário (aparecem quando o filtro de cliente e de tag está em "Todos")
@@ -122,7 +165,8 @@ export default function CalendarioGeral() {
           posts={filtrados}
           tags={tags}
           mostrarCliente
-          eventos={mostrarEventos && !filtroCliente && !filtroTag ? eventos : []}
+          eventos={mostrarEventos && !filtroCliente && !filtroTag && !filtroStatus && !termo ? eventos : []}
+          onMover={mover}
           onNovo={(data) => setEditor({ post: null, data })}
           onAbrir={abrir}
         />
@@ -138,7 +182,14 @@ export default function CalendarioGeral() {
                   </h3>
                   {coluna.length === 0 && <p className="px-1 text-xs text-texto-suave">Vazio</p>}
                   {coluna.map((p) => (
-                    <CartaoPost key={p.id} post={p} tags={tags} mostrarCliente mostrarData onAbrir={abrir} />
+                    <div key={p.id} className="space-y-1">
+                      <CartaoPost post={p} tags={tags} mostrarCliente mostrarData onAbrir={abrir} />
+                      <select aria-label={`Status de ${p.tema || 'post'}`} className={`${inputCls} !min-h-9 !py-1 text-xs`} value={p.status} onChange={(e) => void mudarStatus(p, e.target.value as StatusPost)}>
+                        {STATUS_POST.map((st) => (
+                          <option key={st} value={st}>{STATUS_POST_ROTULO[st]}</option>
+                        ))}
+                      </select>
+                    </div>
                   ))}
                 </section>
               )
@@ -146,7 +197,7 @@ export default function CalendarioGeral() {
           </div>
         </div>
       )}
-      {visao === 'quadro' && <p className="text-sm text-texto-suave">Mostra os posts do mês selecionado. Para mudar o status, abra o post.</p>}
+      {visao === 'quadro' && <p className="text-sm text-texto-suave">Mostra os posts do mês selecionado. Troque o status direto no cartão. No calendário do mês, arraste um post para outro dia para reagendar.</p>}
       {editor && (
         <PostEditor
           key={editor.post?.id ?? `novo-${editor.data ?? ''}`}

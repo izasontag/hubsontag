@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { DIAS_SEMANA_CURTO, diaSemanaLongo, diasDoMes, dataDeHoje, nomeDoMes, somarMeses } from '../lib/datas'
 import { Link } from 'react-router-dom'
 import type { Evento, PostCompleto, Tag } from '../lib/tipos'
@@ -10,6 +11,7 @@ interface Props {
   tags: Tag[]
   mostrarCliente?: boolean
   eventos?: Evento[]
+  onMover?: (postId: string, data: string) => void
   onNovo: (data: string) => void
   onAbrir: (post: PostCompleto) => void
 }
@@ -40,7 +42,8 @@ function ChipEvento({ e }: { e: Evento }) {
   )
 }
 
-export default function CalendarioMensal({ mes, posts, tags, mostrarCliente, eventos = [], onNovo, onAbrir }: Props) {
+export default function CalendarioMensal({ mes, posts, tags, mostrarCliente, eventos = [], onMover, onNovo, onAbrir }: Props) {
+  const [sobre, setSobre] = useState<string | null>(null)
   const dias = diasDoMes(mes)
   const hoje = dataDeHoje()
   const porDia = (data: string) => posts.filter((p) => p.data_publicacao === data)
@@ -52,6 +55,7 @@ export default function CalendarioMensal({ mes, posts, tags, mostrarCliente, eve
       post={p}
       tags={tags}
       mostrarCliente={mostrarCliente}
+      arrastavel={Boolean(onMover) && vertical}
       onAbrir={onAbrir}
     />
   )
@@ -72,7 +76,11 @@ export default function CalendarioMensal({ mes, posts, tags, mostrarCliente, eve
           {dias.map((d) => (
             <div
               key={d.data}
-              className={`min-h-28 space-y-1 p-1.5 ${d.data === hoje ? 'bg-fundo ring-2 ring-inset ring-musgo' : 'bg-superficie'}`}
+              onDragOver={onMover ? (e) => { e.preventDefault(); setSobre(d.data) } : undefined}
+              onDragLeave={onMover ? () => setSobre((a) => (a === d.data ? null : a)) : undefined}
+              onDrop={onMover ? (e) => { e.preventDefault(); setSobre(null); const id = e.dataTransfer.getData('text/plain'); if (id) onMover(id, d.data) } : undefined}
+              data-dia={d.data}
+              className={`min-h-28 space-y-1 p-1.5 transition-colors ${sobre === d.data ? 'bg-areia ring-2 ring-inset ring-azul' : d.data === hoje ? 'bg-fundo ring-2 ring-inset ring-musgo' : 'bg-superficie'}`}
             >
               <div className="flex items-center justify-between">
                 <span className={`text-sm ${d.data === hoje ? 'font-semibold text-musgo' : 'text-texto-suave'}`}>

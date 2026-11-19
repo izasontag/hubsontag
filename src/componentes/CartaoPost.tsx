@@ -12,16 +12,20 @@ interface Props {
   mostrarCliente?: boolean
   mostrarData?: boolean
   vertical?: boolean
+  arrastavel?: boolean
   onAbrir: (post: PostCompleto) => void
 }
 
-export default function CartaoPost({ post, tags, mostrarCliente, mostrarData, vertical, onAbrir }: Props) {
+export default function CartaoPost({ post, tags, mostrarCliente, mostrarData, vertical, arrastavel, onAbrir }: Props) {
   const tagsDoPost = tags.filter((t) => post.post_tags.some((pt) => pt.tag_id === t.id))
   const cor = post.cliente?.cor_destaque
   return (
     <button
       type="button"
       onClick={() => onAbrir(post)}
+      draggable={arrastavel}
+      onDragStart={arrastavel ? (e) => { e.dataTransfer.setData('text/plain', post.id); e.dataTransfer.effectAllowed = 'move' } : undefined}
+      title={arrastavel ? 'Arraste para outro dia para reagendar' : undefined}
       className={`flex w-full cursor-pointer gap-2 rounded-sm border border-linha bg-superficie p-2 text-left hover:border-marrom ${vertical ? 'flex-col' : ''}`}
       style={mostrarCliente && cor ? { borderLeft: `4px solid ${cor}` } : undefined}
     >

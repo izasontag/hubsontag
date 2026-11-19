@@ -210,6 +210,35 @@ export default function PostEditor({ post, dataInicial, clienteIdInicial, client
     onSalvo()
   }
 
+  // cópia do post (sem as artes): útil para repetir uma ideia em outro dia
+  async function duplicarPost() {
+    if (!postId) return
+    setErro('')
+    setOk('')
+    const { data: nova, error } = await supabase
+      .from('posts')
+      .insert({
+        cliente_id: clienteId,
+        data_publicacao: data,
+        horario: horario || null,
+        formato,
+        status: 'ideia',
+        pilar: nuloSeVazio(pilar),
+        formato_cbs: nuloSeVazio(formatoCbs),
+        tema: `${tema.trim() || 'Post'} (cópia)`,
+        gancho: nuloSeVazio(gancho),
+        copy: nuloSeVazio(copia),
+        legenda: nuloSeVazio(legenda),
+      })
+      .select('id')
+      .single()
+    if (error || !nova) return setErro('Não foi possível duplicar o post.')
+    const validas = tagsEscolhidas.filter((t) => tagsDoCliente.some((x) => x.id === t))
+    if (validas.length) await supabase.from('post_tags').insert(validas.map((tag_id) => ({ post_id: nova.id as string, tag_id })))
+    onSalvo()
+    onFechar()
+  }
+
   async function apagarPost() {
     if (!postId || !window.confirm('Apagar este post e as artes dele? Não dá para desfazer.')) return
     const caminhos = midias.flatMap((m) => [m.caminho_storage, m.capa_storage]).filter((c): c is string => Boolean(c))
@@ -358,6 +387,11 @@ export default function PostEditor({ post, dataInicial, clienteIdInicial, client
             <button type="submit" disabled={salvando} className={btnPrimario}>
               {salvando ? 'Salvando...' : postId ? 'Salvar alterações' : 'Criar post'}
             </button>
+            {postId && (
+              <button type="button" className={btnSecundario} onClick={() => void duplicarPost()}>
+                Duplicar (vira uma ideia)
+              </button>
+            )}
             {postId && podeApagar && (
               <button type="button" className={btnSecundario} onClick={() => void apagarPost()}>
                 Apagar post
