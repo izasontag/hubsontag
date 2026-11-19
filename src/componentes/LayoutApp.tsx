@@ -1,3 +1,4 @@
+import AssistenteIA from './AssistenteIA'
 import { LogoCompleta } from './Logo'
 import { useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
@@ -163,6 +164,7 @@ export default function LayoutApp() {
           <Outlet />
         </div>
       </main>
+      <AssistenteIA />
     </div>
   )
 }

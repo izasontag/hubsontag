@@ -125,6 +125,13 @@ Nomes de tabelas e colunas em português, sem acento, em `snake_case`. Toda tabe
 - **financas_pessoais**: `data`, `tipo` (`entrada`, `saida`), `categoria` (pró-labore, contas fixas, lazer etc.), `descricao`, `valor`
 - **metas_pessoais**: `nome`, `valor_meta`, `valor_atual`, `prazo`
 
+### Assistente de IA (só dona)
+
+- Botão flutuante "Assistente" em todas as telas internas (só a dona vê). A dona escreve em português ("gastei 60 no Canva", "recebi 2.500 da Aurora", "cria o evento X dia 20/12 valor 6000 em 3x", "coloca esse roteiro no cliente Y: ...") e o assistente **prepara um plano**; ela confere e toca em **Confirmar** (nada é gravado antes). Dá para desmarcar itens do plano.
+- Ações: `adicionar_roteiro` (cliente ou evento), `registrar_gasto` (agência em `despesas` ou pessoal), `registrar_recebimento` (marca a cobrança em aberto do cliente como recebida, ou a parcela do evento, ou entrada pessoal; se não houver, cria já paga), `criar_evento` (com valor, entrada e parcelas), `definir_valor_evento`, `criar_tarefa`, `anotar_ideia`, `criar_gasto_fixo`. Não apaga nada.
+- Arquitetura: a função do Supabase `supabase/functions/assistente/index.ts` (Deno, SDK `@anthropic-ai/sdk`) confere que quem chama é a dona (`eh_dona`), manda ao Claude a conversa + lista de clientes/eventos e devolve só o **plano** (uso de ferramentas). **Quem grava é o site** (`src/lib/assistente.ts`), com o login da dona (RLS valendo), depois de revalidar cada dado (ids existem, valores e datas válidos). A chave `ANTHROPIC_API_KEY` fica só nos Secrets do Supabase, nunca no site. Modelo padrão `claude-opus-5-5` (esforço baixo, com `fallbacks`); `ASSISTENTE_MODELO` troca (ex.: `claude-haiku-5-5` gasta bem menos). Os nomes de clientes e eventos vão para a Anthropic em cada pedido.
+- Para ligar: criar chave em console.anthropic.com (com créditos), publicar a função (Edge Functions > Via Editor, nome `assistente`, colar o arquivo) e criar o Secret `ANTHROPIC_API_KEY`. Sem isso o painel do assistente explica o passo a passo.
+
 ### Gastos fixos do mês (só dona)
 
 - **gastos_fixos** (`area` pessoal ou agencia, `nome`, `categoria`, `valor`, `dia_vencimento`, `mes_inicio`, `parcelas_total` vazio = todo mês, `ativo`, `observacao`) e **gastos_fixos_mes** (uma linha por gasto e por mês: `valor` que pode mudar no mês, `vencimento`, `parcela_numero`, `status` a_pagar/pago, `pago_em`; único por gasto e mês). A função `gerar_gastos_fixos(area, mes)` cria o que falta do mês sem duplicar, respeita o fim das parcelas e ajusta dia 31 em mês curto. Migração `016_gastos_fixos.sql`.
