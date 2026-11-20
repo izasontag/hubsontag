@@ -57,6 +57,7 @@ export default function PortalInicio() {
             ...(dados?.tem_calendario ? [{ para: 'calendario-editorial', t: 'Calendário editorial', d: (dados.calendario_aguardando ?? 0) > 0 ? 'Tem um calendário esperando a sua aprovação' : 'O planejamento de temas de cada mês' }] : []),
             ...(dados?.tem_estrategia ? [{ para: 'estrategia', t: 'Estratégia do mês', d: 'Objetivo, pilares, metas e datas importantes' }] : []),
             { para: 'calendario', t: 'Calendário', d: 'Todos os posts planejados, dia a dia' },
+            ...(dados?.tem_roteiros ? [{ para: 'roteiros', t: 'Roteiros', d: (dados.roteiros_aguardando ?? 0) > 0 ? 'Tem roteiro esperando a sua aprovação' : 'Os roteiros que você já aprovou' }] : []),
             { para: 'aprovacoes', t: 'Aprovações', d: 'Veja, aprove ou peça ajuste' },
             ...(dados?.tem_kickoff ? [{ para: 'kickoff', t: 'Kick-off', d: 'Como o seu perfil estava no início' }] : []),
             { para: 'manual', t: 'Manual da marca', d: 'Identidade, tom de voz e regras' },

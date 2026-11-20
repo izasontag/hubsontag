@@ -230,6 +230,8 @@ export interface PortalDados {
   tem_kickoff?: boolean
   tem_calendario?: boolean
   calendario_aguardando?: number
+  tem_roteiros?: boolean
+  roteiros_aguardando?: number
 }
 
 export interface PortalComentario {
@@ -620,6 +622,26 @@ export const STATUS_ROTEIRO_ROTULO: Record<StatusRoteiro, string> = {
   publicado: 'Publicado',
 }
 
+export type AprovacaoRoteiro = 'nao_enviado' | 'enviado' | 'aprovado' | 'ajuste_pedido'
+export const APROVACAO_ROTEIRO_ROTULO: Record<AprovacaoRoteiro, string> = {
+  nao_enviado: 'Não enviado ao cliente',
+  enviado: 'Aguardando o cliente',
+  aprovado: 'Aprovado pelo cliente',
+  ajuste_pedido: 'Cliente pediu ajuste',
+}
+
+export interface PortalRoteiro {
+  id: string
+  titulo: string
+  formato: FormatoRoteiro
+  data_prevista: string | null
+  texto: string | null
+  aprovacao: AprovacaoRoteiro
+  enviado_em: string | null
+  decidido_em: string | null
+  mensagem: string | null
+}
+
 export interface Roteiro {
   id: string
   cliente_id: string | null
@@ -631,6 +653,11 @@ export interface Roteiro {
   texto: string | null
   arquivo_storage: string | null
   arquivo_nome: string | null
+  aprovacao: AprovacaoRoteiro
+  rodada: number
+  enviado_em: string | null
+  decidido_em: string | null
+  mensagem_cliente: string | null
 }
 
 // Sugestões para "Que tipo de evento é?" (a dona também pode escrever outro).
@@ -666,6 +693,7 @@ export interface PortalEventoDados {
   chave_publica: string | null
   acesso: { usuario: string; enviado_em: string } | null
   perguntas: { id: string; secao: string; pergunta: string; resposta: string | null }[]
+  roteiros?: PortalRoteiro[]
 }
 
 // ---------------- Precificação (só dona) ----------------
@@ -819,7 +847,7 @@ export interface PortalItemCalendario {
 
 export interface PortalCalendarioMes {
   mes: string
-  status: StatusCalendario
+  status: StatusCalendario | 'historico'
   enviado_em: string | null
   decidido_em: string | null
   mensagem: string | null

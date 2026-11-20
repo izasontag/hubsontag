@@ -7,14 +7,17 @@ import { supabase } from '../../lib/supabase'
 import { FORMATO_ROTULO, STATUS_CALENDARIO_ROTULO } from '../../lib/tipos'
 import type { PortalCalendarioMes, StatusCalendario } from '../../lib/tipos'
 
+type StatusPortal = StatusCalendario | 'historico'
+
 interface Resumo {
   mes: string
-  status: StatusCalendario
+  status: StatusPortal
   enviado_em: string | null
   decidido_em: string | null
 }
 
-const COR: Record<StatusCalendario, string> = {
+const COR: Record<StatusPortal, string> = {
+  historico: 'border-linha bg-areia text-texto-suave',
   rascunho: 'border-linha bg-areia text-texto-suave',
   enviado: 'border-mostarda bg-mostarda/60 text-marrom-escuro',
   aprovado: 'border-musgo bg-musgo-claro text-musgo',
@@ -88,10 +91,10 @@ export default function PortalCalendarioEditorial() {
   return (
     <div className="space-y-8">
       {lista.length > 1 && (
-        <div className="flex flex-wrap gap-2" role="tablist" aria-label="Meses">
+        <div className="flex gap-2 overflow-x-auto pb-1" role="tablist" aria-label="Meses">
           {lista.map((x) => (
-            <button key={x.mes} role="tab" aria-selected={x.mes === aberto} onClick={() => setParams({ mes: x.mes })} className={`min-h-11 cursor-pointer rounded-full border px-4 text-sm first-letter:uppercase transition-colors ${x.mes === aberto ? 'border-marrom bg-superficie font-medium text-marrom' : 'border-linha text-texto-suave hover:bg-areia'}`}>
-              {nomeDoMes(x.mes)}{x.status === 'enviado' ? ' · aguardando você' : ''}
+            <button key={x.mes} role="tab" aria-selected={x.mes === aberto} onClick={() => setParams({ mes: x.mes })} className={`min-h-11 shrink-0 cursor-pointer rounded-full border px-4 text-sm first-letter:uppercase transition-colors ${x.mes === aberto ? 'border-marrom bg-superficie font-medium text-marrom' : 'border-linha text-texto-suave hover:bg-areia'}`}>
+              {nomeDoMes(x.mes)}{x.status === 'enviado' ? ' · aguardando você' : x.status === 'aprovado' ? ' · aprovado' : ''}
             </button>
           ))}
         </div>
@@ -100,7 +103,8 @@ export default function PortalCalendarioEditorial() {
       <header className="space-y-3">
         <p className="eyebrow first-letter:uppercase">Calendário editorial</p>
         <h2 className="titulo-pagina first-letter:uppercase">{nomeDoMes(aberto!)}</h2>
-        <span className={`inline-block rounded-full border px-3 py-1 text-sm ${COR[cal.status]}`}>{STATUS_CALENDARIO_ROTULO[cal.status]}</span>
+        <span className={`inline-block rounded-full border px-3 py-1 text-sm ${COR[cal.status]}`}>{cal.status === 'historico' ? 'Mês anterior' : STATUS_CALENDARIO_ROTULO[cal.status]}</span>
+        {cal.status === 'historico' && <p className="max-w-2xl text-texto-suave">Este é um mês que já passou: aqui ficam os posts que você já viu e aprovou, só para consulta.</p>}
         {podeDecidir && <p className="max-w-2xl text-texto-suave">Estes são os temas planejados para o mês. Leia com calma: você pode aprovar tudo, ou pedir ajuste em itens específicos e/ou deixar um recado geral.</p>}
       </header>
 

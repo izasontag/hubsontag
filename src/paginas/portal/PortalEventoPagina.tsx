@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import type { CSSProperties, FormEvent } from 'react'
 import { useParams } from 'react-router-dom'
 import { LogoCompleta } from '../../componentes/Logo'
+import RoteirosAprovacao from '../../componentes/portal/RoteirosAprovacao'
 import { Aviso, btnPrimario, Campo, Cartao, Esqueleto, formatarData, inputCls } from '../../componentes/ui'
 import { cifrar, LIMITE_BYTES } from '../../lib/cofre'
 import { supabase } from '../../lib/supabase'
@@ -175,6 +176,20 @@ export default function PortalEventoPagina() {
 
       <div className="mx-auto mt-8 max-w-2xl space-y-8 px-4 sm:px-8">
         {dados.recado && <p className="whitespace-pre-wrap rounded-md border border-linha bg-superficie p-4 text-sm">{dados.recado}</p>}
+        {(dados.roteiros ?? []).length > 0 && (
+          <section className="space-y-4" aria-label="Roteiros para aprovar">
+            <h2 className="titulo-secao">Roteiros para <em>aprovar</em></h2>
+            <RoteirosAprovacao
+              roteiros={dados.roteiros ?? []}
+              decidir={async (id, decisao, mensagem) => {
+                const { error } = await supabase.rpc('portal_evento_roteiro_decidir', { p_token: token, p_roteiro: id, p_decisao: decisao, p_mensagem: mensagem })
+                if (error) return error.message?.includes('roteiro_indisponivel') ? 'Este roteiro já foi respondido. Atualize a página.' : erroAmigavel(error.message)
+                await carregar()
+                return null
+              }}
+            />
+          </section>
+        )}
         <p className="text-sm text-texto-suave">
           Responda com calma, do seu jeito. Quanto mais detalhes, melhor fica a cobertura de stories do seu evento. Você pode voltar neste link quantas vezes quiser.
         </p>

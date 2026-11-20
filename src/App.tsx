@@ -43,6 +43,7 @@ export default function App() {
             <Route index element={<Pagina.portalInicio />} />
             <Route path="estrategia" element={<Pagina.portalEstrategia />} />
             <Route path="kickoff" element={<Pagina.portalKickoff />} />
+            <Route path="roteiros" element={<Pagina.portalRoteiros />} />
             <Route path="calendario-editorial" element={<Pagina.portalCalendarioEditorial />} />
             <Route path="aprovacoes" element={<Pagina.portalAprovacoes />} />
             <Route path="feed" element={<Pagina.portalFeed />} />

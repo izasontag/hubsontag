@@ -82,6 +82,11 @@ function Estrutura() {
           <NavLink to={`${base}/calendario`} className={link}>
             Calendário
           </NavLink>
+          {dados.tem_roteiros && (
+            <NavLink to={`${base}/roteiros`} className={link}>
+              Roteiros{(dados.roteiros_aguardando ?? 0) > 0 ? ` (${dados.roteiros_aguardando})` : ''}
+            </NavLink>
+          )}
           <NavLink to={`${base}/aprovacoes`} className={link}>
             Aprovações{aguardando > 0 ? ` (${aguardando})` : ''}
           </NavLink>

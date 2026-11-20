@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import { Aviso, btnPrimario, btnSecundario, Campo, Cartao, formatarData, inputCls } from './ui'
 import { supabase } from '../lib/supabase'
-import { FORMATO_ROTEIRO_ROTULO, FORMATOS_ROTEIRO, STATUS_ROTEIRO, STATUS_ROTEIRO_ROTULO } from '../lib/tipos'
+import { APROVACAO_ROTEIRO_ROTULO, FORMATO_ROTEIRO_ROTULO, FORMATOS_ROTEIRO, STATUS_ROTEIRO, STATUS_ROTEIRO_ROTULO } from '../lib/tipos'
 import type { FormatoRoteiro, Roteiro, StatusRoteiro } from '../lib/tipos'
 
 const LIMITE = 50 * 1024 * 1024
@@ -26,7 +26,10 @@ export default function Roteiros({ clienteId, eventoId }: { clienteId?: string; 
   const [form, setForm] = useState<Form | null>(null)
   const [aberto, setAberto] = useState<string | null>(null)
   const [erro, setErro] = useState('')
+  const [msg, setMsg] = useState('')
   const [salvando, setSalvando] = useState(false)
+  const [marcados, setMarcados] = useState<Set<string>>(new Set())
+  const [portal, setPortal] = useState<{ token: string; ativo: boolean } | null>(null)
 
   const carregar = useCallback(async () => {
     const { data, error } = await supabase.from('roteiros').select('*').eq(coluna, donoId).order('criado_em', { ascending: false })
@@ -37,6 +40,41 @@ export default function Roteiros({ clienteId, eventoId }: { clienteId?: string; 
   useEffect(() => {
     void carregar()
   }, [carregar])
+
+  // o link de aprovação é o portal do cliente (ou o portal do evento)
+  useEffect(() => {
+    void (async () => {
+      const { data } = await supabase.from(clienteId ? 'clientes' : 'eventos').select('token_portal, portal_ativo').eq('id', donoId).maybeSingle()
+      const d = data as { token_portal: string; portal_ativo: boolean } | null
+      if (d) setPortal({ token: d.token_portal, ativo: d.portal_ativo })
+    })()
+  }, [clienteId, donoId])
+
+  const link = portal ? (clienteId ? `${window.location.origin}/portal/${portal.token}/roteiros` : `${window.location.origin}/evento/${portal.token}`) : ''
+
+  async function enviarAprovacao(ids: string[]) {
+    setErro('')
+    setMsg('')
+    const validos = (lista ?? []).filter((r) => ids.includes(r.id))
+    if (validos.some((r) => !r.texto?.trim())) setErro('Roteiro sem texto escrito não vai ao cliente: ele precisa ler o roteiro aqui. Escreva o texto e envie de novo.')
+    const comTexto = validos.filter((r) => r.texto?.trim()).map((r) => r.id)
+    if (comTexto.length === 0) return
+    if (!window.confirm(`Enviar ${comTexto.length === 1 ? 'este roteiro' : `estes ${comTexto.length} roteiros`} para o cliente aprovar?`)) return
+    const { error } = await supabase.rpc('enviar_roteiros', { p_ids: comTexto })
+    if (error) return setErro('Não foi possível enviar. Confira se o arquivo 020_roteiros_aprovacao.sql foi rodado no Supabase.')
+    setMarcados(new Set())
+    setMsg(`${comTexto.length === 1 ? 'Roteiro enviado' : 'Roteiros enviados'}. Copie o link e mande para o cliente.`)
+    void carregar()
+  }
+
+  async function copiarLink() {
+    try {
+      await navigator.clipboard.writeText(link)
+      setMsg('Link copiado. É só enviar ao cliente.')
+    } catch {
+      setErro('Não deu para copiar sozinho.')
+    }
+  }
 
   async function salvar(e: FormEvent) {
     e.preventDefault()
@@ -109,6 +147,14 @@ export default function Roteiros({ clienteId, eventoId }: { clienteId?: string; 
         </button>
       </div>
       {erro && <Aviso tipo="erro">{erro}</Aviso>}
+      {msg && <Aviso tipo="ok">{msg}</Aviso>}
+      {portal && !portal.ativo && <Aviso tipo="erro">O portal está desativado: o cliente não consegue abrir o link.</Aviso>}
+      {(lista ?? []).length > 0 && (
+        <div className="flex flex-wrap items-center gap-2">
+          <button className={btnSecundario} disabled={marcados.size === 0} onClick={() => void enviarAprovacao([...marcados])}>Enviar selecionados para aprovação ({marcados.size})</button>
+          {(lista ?? []).some((r) => r.aprovacao !== 'nao_enviado') && <button className={btnSecundario} onClick={() => void copiarLink()}>Copiar link de aprovação</button>}
+        </div>
+      )}
 
       {form && (
         <Cartao>
@@ -152,6 +198,10 @@ export default function Roteiros({ clienteId, eventoId }: { clienteId?: string; 
           <Cartao key={r.id}>
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div className="min-w-0">
+                <label className="mb-1 flex min-h-8 cursor-pointer items-center gap-2 text-xs text-texto-suave">
+                  <input type="checkbox" className="h-4 w-4" checked={marcados.has(r.id)} onChange={(e) => setMarcados((m) => { const n = new Set(m); if (e.target.checked) n.add(r.id); else n.delete(r.id); return n })} aria-label={`Selecionar ${r.titulo} para enviar`} />
+                  Selecionar para enviar
+                </label>
                 <p className="eyebrow">
                   {FORMATO_ROTEIRO_ROTULO[r.formato]}
                   {r.data_prevista && ` · ${formatarData(r.data_prevista)}`}
@@ -168,6 +218,11 @@ export default function Roteiros({ clienteId, eventoId }: { clienteId?: string; 
                   <option key={s} value={s}>{STATUS_ROTEIRO_ROTULO[s]}</option>
                 ))}
               </select>
+            </div>
+            <div className="mt-2 space-y-1">
+              <span className={`inline-block rounded-full border px-3 py-0.5 text-xs ${r.aprovacao === 'aprovado' ? 'border-musgo bg-musgo-claro text-musgo' : r.aprovacao === 'ajuste_pedido' ? 'border-red-800 bg-red-50 text-red-800' : r.aprovacao === 'enviado' ? 'border-mostarda bg-mostarda/60 text-marrom-escuro' : 'border-linha bg-areia text-texto-suave'}`}>{APROVACAO_ROTEIRO_ROTULO[r.aprovacao]}</span>
+              {r.mensagem_cliente && <p className="whitespace-pre-wrap border-l-2 border-marrom pl-3 text-sm">Recado do cliente: {r.mensagem_cliente}</p>}
+              {r.decidido_em && <p className="text-xs text-texto-suave">Respondido em {new Date(r.decidido_em).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })}{r.rodada > 1 ? ` (envio ${r.rodada})` : ''}</p>}
             </div>
             {r.texto && (
               <div className="mt-3">
@@ -189,6 +244,9 @@ export default function Roteiros({ clienteId, eventoId }: { clienteId?: string; 
                 {r.arquivo_storage ? 'Trocar arquivo' : 'Anexar arquivo'}
                 <input type="file" className="sr-only" onChange={(e) => { void anexar(r, e.target.files?.[0]); e.target.value = '' }} />
               </label>
+              <button className={btnPrimario} onClick={() => void enviarAprovacao([r.id])}>
+                {r.aprovacao === 'nao_enviado' ? 'Enviar para aprovação' : 'Reenviar para aprovação'}
+              </button>
               <button
                 className={btnSecundario}
                 onClick={() => setForm({ id: r.id, titulo: r.titulo, formato: r.formato, status: r.status, data_prevista: r.data_prevista ?? '', texto: r.texto ?? '' })}
